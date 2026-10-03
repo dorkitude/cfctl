@@ -1,7 +1,6 @@
 # ☁️ cfctl
 
-The whole Cloudflare platform from your terminal, built with Go and Cobra in
-the style of [linctl](https://github.com/dorkitude/linctl): Workers, KV, R2,
+The whole Cloudflare platform from your terminal, built with Go and Cobra: Workers, KV, R2,
 D1 and the rest of the storage products, Pages, Workers AI, Tunnels, zone
 settings, SSL, cache, WAF, analytics, accounts and API tokens, Registrar
 domains and DNS. Plus a generated command for **every one of the 3,645
