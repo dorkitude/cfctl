@@ -128,6 +128,43 @@ Hand-written, wrangler-shaped command groups on top of the generated API tree.
 - Friendlier errors for products not enabled / missing token permissions.
 - Docs: `docs/commands/platform.md`, `docs/wrangler-map/platform.tsv`.
 
+### Admin
+
+#### Added (area D: zone and account administration)
+
+- `zones settings list|get|set`, `zones create|delete|pause|unpause|activation-check`.
+- `cache purge` (`--url`, `--tag`, `--host`, `--prefix`, `--everything`), `cache settings`, `cache dev-mode`.
+- `ssl status|mode|verification|universal`, `ssl packs list|get|order|delete`,
+  `ssl origin list|get|create|revoke` (key and CSR generated locally, key written to `--key-out` only),
+  `ssl custom list|get|upload|delete`.
+- `rulesets list|get|phase|versions|delete`, `rulesets rules add|update|delete` (phase aliases; entrypoints created on demand).
+- `redirects list|add|delete` (single redirects, wildcard `--from`), `redirects bulk lists|items|add|rules`.
+- `transform list|add|delete` (URL rewrites, request/response headers).
+- `waf overview|managed|rate-limits`, `waf custom list|add|delete`; `page-rules list|get|delete`.
+- `firewall access-rules list|create|delete`; `lists list|get|create|delete|items|items-add|items-remove|operation`.
+- `lb list|get|create|update|delete`, `lb pools ...` (+ `health`), `lb monitors ...`.
+- `analytics zone|paths|countries|firewall|workers|r2` (GraphQL presets, `--since`, `--json`).
+- `accounts list|get`, `members list|get|remove`, `roles list|get`.
+- `tokens list|get|verify|permission-groups|create|delete` (new token values go to `--value-out`, never printed).
+- `audit-logs list` (v2 API; `--since`, `--before`, `--actor`, `--action`, `--product`, `--zone`, `--v1`).
+- `billing subscriptions|zone|profile|history`; `logpush jobs list|get|create|update|delete`, `logpush fields`.
+- `notifications policies ...|destinations|available|history`; `healthchecks`, `waiting-rooms`, `spectrum apps`.
+- `access apps|policies|groups|idps list|get`, `access organization`; `user get|invites|memberships`.
+- `dns dnssec status|enable|disable`, `dns settings get|set`, `dns export|import`.
+- Friendly hints on 403 / plan / not-enabled / user-token-only errors.
+
+#### Changed
+
+- `--all` (on `api request` and generated commands) follows every pagination style in the spec:
+  page/per_page and variants (`page_no`, `page_size`, `pageSize`, `perPage`), `cursor`/`cursors.after`/`next_cursor`,
+  `page_token`/`next_page_token`, `continuation_token`, `continuationToken`/`nextContinuationToken`, `scan_cursor`,
+  offset/limit, and Stream's `before` windows; top-level lists (`{data, paging}`) page too.
+- `records delete` asks for confirmation; `--yes` skips it (required without a terminal).
+
+#### Docs
+
+- `docs/commands/admin.md`: reference for the administration commands.
+
 ## [0.2.003] - 2026-10-03
 
 ### Changed
