@@ -324,7 +324,7 @@ Examples:
 
 var rulesetsRulesUpdateCmd = &cobra.Command{
 	Use:   "update <ruleset-id> <rule-id>",
-	Short: "Update a rule (only the fields you pass change)",
+	Short: "Update a rule (only the fields you pass change; the rest are kept)",
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
@@ -343,7 +343,18 @@ var rulesetsRulesUpdateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		raw, err := send(ctx, s, "PATCH", rulesetBase(zone != "")+"/{ruleset_id}/rules/{rule_id}", map[string]string{"ruleset_id": args[0], "rule_id": args[1]}, nil, rule, "rulesets")
+		// PATCH replaces the whole rule definition, so merge the changes
+		// over the current rule (fields left out would otherwise be reset).
+		vals := map[string]string{"ruleset_id": args[0], "rule_id": args[1]}
+		cur, err := fetch(ctx, s, rulesetBase(zone != "")+"/{ruleset_id}", vals, nil, false, "rulesets")
+		if err != nil {
+			return err
+		}
+		full, err := mergeRule(cur, args[1], rule)
+		if err != nil {
+			return err
+		}
+		raw, err := send(ctx, s, "PATCH", rulesetBase(zone != "")+"/{ruleset_id}/rules/{rule_id}", vals, nil, full, "rulesets")
 		if err != nil {
 			return err
 		}
@@ -351,6 +362,29 @@ var rulesetsRulesUpdateCmd = &cobra.Command{
 			fmt.Println(ui.Success(fmt.Sprintf("Rule %s updated (ruleset %s version %s)", args[1], args[0], jstr(v, "version"))))
 		})
 	},
+}
+
+// mergeRule finds ruleID in a ruleset and returns it with changes applied,
+// minus the read-only fields.
+func mergeRule(ruleset json.RawMessage, ruleID string, changes map[string]any) (map[string]any, error) {
+	var rs struct {
+		Rules []map[string]any `json:"rules"`
+	}
+	if err := json.Unmarshal(ruleset, &rs); err != nil {
+		return nil, fmt.Errorf("unexpected ruleset response: %w", err)
+	}
+	for _, r := range rs.Rules {
+		if id, _ := r["id"].(string); id == ruleID {
+			for _, k := range []string{"id", "version", "last_updated"} {
+				delete(r, k)
+			}
+			for k, v := range changes {
+				r[k] = v
+			}
+			return r, nil
+		}
+	}
+	return nil, fmt.Errorf("rule %s not found in ruleset", ruleID)
 }
 
 var rulesetsRulesDeleteCmd = writeSpec{

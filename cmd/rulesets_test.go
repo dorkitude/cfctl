@@ -18,7 +18,7 @@ type writeCase struct {
 }
 
 var adminWrites = []writeCase{
-	{[]string{"zones", "settings", "set", "example.com", "min_tls_version", "1.2"}, "PATCH", zp + "/settings/min_tls_version", `"value":1.2`, false},
+	{[]string{"zones", "settings", "set", "example.com", "min_tls_version", "1.2"}, "PATCH", zp + "/settings/min_tls_version", `"value":"1.2"`, false},
 	{[]string{"zones", "settings", "set", "example.com", "always_use_https", "on"}, "PATCH", zp + "/settings/always_use_https", `"value":"on"`, false},
 	{[]string{"zones", "create", "new.example", "--type", "partial"}, "POST", "/zones", `"type":"partial"`, false},
 	{[]string{"zones", "delete", "example.com"}, "DELETE", zp, "", true},

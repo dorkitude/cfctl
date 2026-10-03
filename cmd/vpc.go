@@ -30,6 +30,9 @@ func vpcBody(c *cobra.Command, _ []string) (any, error) {
 	get := func(f string) string { v, _ := c.Flags().GetString(f); return v }
 	geti := func(f string) int { v, _ := c.Flags().GetInt(f); return v }
 	name, typ, tunnel := get("name"), get("type"), get("tunnel-id")
+	if c.Flags().Changed("data") && name == "" && typ == "" && tunnel == "" {
+		return nil, nil // the whole service comes from --data
+	}
 	if name == "" || tunnel == "" || (typ != "tcp" && typ != "http") {
 		return nil, fmt.Errorf("--name, --type (tcp|http), and --tunnel-id are required")
 	}
