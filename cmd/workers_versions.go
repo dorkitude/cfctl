@@ -303,6 +303,14 @@ Examples:
 				return err
 			}
 			defer p.Close()
+			if _, ok := p.Metadata["body_part"]; ok {
+				return fmt.Errorf("versions need an ES module Worker (service-worker scripts can only use 'deploy')")
+			}
+			// logpush and observability are per-script, not per-version
+			// settings: the versions endpoint doesn't take them (wrangler
+			// leaves them out too).
+			delete(p.Metadata, "logpush")
+			delete(p.Metadata, "observability")
 			if alias, _ := cmd.Flags().GetString("preview-alias"); alias != "" {
 				ann, _ := p.Metadata["annotations"].(map[string]any)
 				if ann == nil {

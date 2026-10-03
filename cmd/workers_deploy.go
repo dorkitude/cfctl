@@ -318,6 +318,35 @@ func wkUploadAssets(ctx context.Context, s *apiSession, sessionPath string, a *w
 	// token. api.New still uses the shared transport (read-only guard etc.).
 	up := api.New(sess.JWT, config.APIBaseURL())
 	completion := ""
+	if wkSingleAssetUploads(sess.JWT) {
+		// The session asked for one request per file (wrangler's
+		// "single asset upload" mode): raw bytes, Content-Type = the file's.
+		n := 0
+		for _, bucket := range sess.Buckets {
+			for _, h := range bucket {
+				n++
+				path, ct, ok := a.FileFor(h)
+				if !ok {
+					return "", fmt.Errorf("assets: server asked for unknown hash %s", h)
+				}
+				data, err := os.ReadFile(path)
+				if err != nil {
+					return "", err
+				}
+				resp, err := up.Do(ctx, api.Request{Method: "POST", Path: "/accounts/" + url.PathEscape(acct) + "/workers/assets/upload/" + url.PathEscape(h), Body: data, ContentType: ct})
+				if err != nil {
+					return "", fmt.Errorf("assets: file %d/%d upload failed: %w", n, total, err)
+				}
+				if jwt := wkEnvelopeJWT(resp); jwt != "" {
+					completion = jwt
+				}
+			}
+		}
+		if completion == "" {
+			return "", fmt.Errorf("assets: upload finished without a completion token")
+		}
+		return completion, nil
+	}
 	for i, bucket := range sess.Buckets {
 		if len(bucket) == 0 {
 			continue
@@ -347,19 +376,46 @@ func wkUploadAssets(ctx context.Context, s *apiSession, sessionPath string, a *w
 		if err != nil {
 			return "", fmt.Errorf("assets: bucket %d/%d upload failed: %w", i+1, len(sess.Buckets), err)
 		}
-		if resp.Envelope != nil {
-			var r struct {
-				JWT string `json:"jwt"`
-			}
-			if json.Unmarshal(resp.Envelope.Result, &r) == nil && r.JWT != "" {
-				completion = r.JWT
-			}
+		if jwt := wkEnvelopeJWT(resp); jwt != "" {
+			completion = jwt
 		}
 	}
 	if completion == "" {
 		return "", fmt.Errorf("assets: upload finished without a completion token")
 	}
 	return completion, nil
+}
+
+// wkEnvelopeJWT returns result.jwt of an assets upload response, if any.
+func wkEnvelopeJWT(resp *api.Response) string {
+	if resp == nil || resp.Envelope == nil {
+		return ""
+	}
+	var r struct {
+		JWT string `json:"jwt"`
+	}
+	if json.Unmarshal(resp.Envelope.Result, &r) != nil {
+		return ""
+	}
+	return r.JWT
+}
+
+// wkSingleAssetUploads reports whether an upload-session JWT asks for one
+// upload request per file (claim wrangler_single_asset_uploads, which
+// wrangler honors the same way). The JWT is only decoded, not verified.
+func wkSingleAssetUploads(jwt string) bool {
+	parts := strings.Split(jwt, ".")
+	if len(parts) != 3 {
+		return false
+	}
+	raw, err := base64.RawURLEncoding.DecodeString(strings.TrimRight(parts[1], "="))
+	if err != nil {
+		return false
+	}
+	var claims struct {
+		Single bool `json:"wrangler_single_asset_uploads"`
+	}
+	return json.Unmarshal(raw, &claims) == nil && claims.Single
 }
 
 // wkApplyMigrations sets metadata.migrations from the config's Durable
@@ -562,11 +618,13 @@ type wkTriggers struct {
 	Routes     []workers.Route `json:"routes,omitempty"`
 	Domains    []workers.Route `json:"custom_domains,omitempty"`
 	WorkersDev *bool           `json:"workers_dev,omitempty"`
-	Zone       string          `json:"-"`
+	// PreviewURLs is the config's preview_urls (previews_enabled).
+	PreviewURLs *bool  `json:"preview_urls,omitempty"`
+	Zone        string `json:"-"`
 }
 
 func (t wkTriggers) empty() bool {
-	return !t.SetCrons && len(t.Routes) == 0 && len(t.Domains) == 0 && t.WorkersDev == nil
+	return !t.SetCrons && len(t.Routes) == 0 && len(t.Domains) == 0 && t.WorkersDev == nil && t.PreviewURLs == nil
 }
 
 func wkTriggersFrom(cmd *cobra.Command, cfg *workers.Config) (wkTriggers, error) {
@@ -611,6 +669,9 @@ func wkTriggersFrom(cmd *cobra.Command, cfg *workers.Config) (wkTriggers, error)
 		// wrangler's default: no routes → serve on workers.dev.
 		v := true
 		t.WorkersDev = &v
+	}
+	if cfg != nil && cfg.PreviewURLs != nil {
+		t.PreviewURLs = cfg.PreviewURLs
 	}
 	if f.Lookup("zone") != nil {
 		t.Zone, _ = f.GetString("zone")
@@ -785,21 +846,40 @@ func wkApplyTriggers(ctx context.Context, s *apiSession, name string, t wkTrigge
 		applied["custom_domains"] = domainsOut
 		say("Custom domains: " + strings.Join(domainsOut, ", "))
 	}
-	if t.WorkersDev != nil {
+	if t.WorkersDev != nil || t.PreviewURLs != nil {
 		var cur struct {
-			Enabled bool `json:"enabled"`
+			Enabled         bool `json:"enabled"`
+			PreviewsEnabled bool `json:"previews_enabled"`
 		}
 		_, gerr := wkCall(ctx, s, "GET", wkScriptPath(name, "/subdomain"), nil, nil, &cur)
-		if gerr != nil || cur.Enabled != *t.WorkersDev {
-			if _, err := wkCall(ctx, s, "POST", wkScriptPath(name, "/subdomain"), nil, map[string]bool{"enabled": *t.WorkersDev}, nil); err != nil {
+		if gerr != nil && t.WorkersDev == nil {
+			return applied, fmt.Errorf("failed to read workers.dev settings: %w", gerr)
+		}
+		want := cur.Enabled
+		if t.WorkersDev != nil {
+			want = *t.WorkersDev
+		}
+		body := map[string]bool{"enabled": want}
+		changed := gerr != nil || cur.Enabled != want
+		if t.PreviewURLs != nil {
+			body["previews_enabled"] = *t.PreviewURLs
+			changed = changed || cur.PreviewsEnabled != *t.PreviewURLs
+		}
+		if changed {
+			if _, err := wkCall(ctx, s, "POST", wkScriptPath(name, "/subdomain"), nil, body, nil); err != nil {
 				return applied, fmt.Errorf("failed to update workers.dev: %w", err)
 			}
 		}
-		applied["workers_dev"] = *t.WorkersDev
-		if *t.WorkersDev {
-			say("workers.dev: enabled")
-		} else {
-			say("workers.dev: disabled")
+		if t.WorkersDev != nil {
+			applied["workers_dev"] = *t.WorkersDev
+			if *t.WorkersDev {
+				say("workers.dev: enabled")
+			} else {
+				say("workers.dev: disabled")
+			}
+		}
+		if t.PreviewURLs != nil {
+			applied["preview_urls"] = *t.PreviewURLs
 		}
 	}
 	return applied, nil
