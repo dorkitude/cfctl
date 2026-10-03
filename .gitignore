@@ -1,0 +1,22 @@
+# Binaries
+/cfctl
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go build/test artifacts
+*.test
+*.out
+coverage.out
+*.coverprofile
+dist/
+
+# Editor / OS files
+.DS_Store
+.vscode/
+.idea/
+
+# Local env / logs
+*.log
+.env
