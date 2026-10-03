@@ -19,6 +19,10 @@ import (
 const (
 	goodToken = "cfctl-test-SECRET-token-0123456789abcdef"
 	badToken  = "cfctl-test-BAD-token-fedcba9876543210"
+	// Account-owned tokens: with the cfat_ prefix, without it, and disabled.
+	acctToken         = "cfat_cfctl-test-SECRET-account-token-0123"
+	acctTokenNoPrefix = "cfctl-test-SECRET-account-token-noprefix"
+	disabledAcctToken = "cfat_cfctl-test-SECRET-disabled-token-99"
 
 	acctID   = "0123456789abcdef0123456789abcdef"
 	acctID2  = "fedcba9876543210fedcba9876543210"
@@ -117,7 +121,9 @@ func (f *fakeCF) serve(w http.ResponseWriter, r *http.Request) {
 	f.requests = append(f.requests, req)
 	f.mu.Unlock()
 
-	if req.Auth != "Bearer "+goodToken {
+	token := strings.TrimPrefix(req.Auth, "Bearer ")
+	accountToken := token == acctToken || token == acctTokenNoPrefix || token == disabledAcctToken
+	if token != goodToken && !accountToken {
 		writeJSON(w, http.StatusUnauthorized, fail(1000, "Invalid API Token"))
 		return
 	}
@@ -127,7 +133,23 @@ func (f *fakeCF) serve(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(strings.Trim(path, "/"), "/")
 	switch {
 	case r.Method == "GET" && path == "/user/tokens/verify":
+		if accountToken {
+			writeJSON(w, http.StatusUnauthorized, fail(1000, "Invalid API Token"))
+			return
+		}
 		writeJSON(w, 200, ok(map[string]interface{}{"id": "tok-id-123", "status": "active"}))
+
+	case r.Method == "GET" && len(parts) == 4 && parts[0] == "accounts" && parts[2] == "tokens" && parts[3] == "verify":
+		// Account-owned tokens verify only against their own account.
+		if !accountToken || parts[1] != acctID {
+			writeJSON(w, http.StatusUnauthorized, fail(1000, "Invalid API Token"))
+			return
+		}
+		status := "active"
+		if token == disabledAcctToken {
+			status = "disabled"
+		}
+		writeJSON(w, 200, ok(map[string]interface{}{"id": "acct-tok-id-456", "status": status}))
 
 	case r.Method == "GET" && path == "/user":
 		writeJSON(w, 403, fail(9109, "Unauthorized to access requested resource"))
@@ -135,6 +157,11 @@ func (f *fakeCF) serve(w http.ResponseWriter, r *http.Request) {
 	case r.Method == "GET" && path == "/accounts":
 		if lastPage {
 			writeJSON(w, 200, okList([]interface{}{}, 0))
+			return
+		}
+		if accountToken {
+			// An account token only sees its owning account.
+			writeJSON(w, 200, okList(f.accounts[:1], 1))
 			return
 		}
 		writeJSON(w, 200, okList(f.accounts, len(f.accounts)))
@@ -309,7 +336,7 @@ func login(t *testing.T) {
 func assertNoToken(t *testing.T, where string, ss ...string) {
 	t.Helper()
 	for _, s := range ss {
-		for _, tok := range []string{goodToken, badToken} {
+		for _, tok := range []string{goodToken, badToken, acctToken, acctTokenNoPrefix, disabledAcctToken} {
 			if strings.Contains(s, tok) {
 				t.Errorf("%s leaked the token: %q", where, s)
 			}

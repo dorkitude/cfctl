@@ -192,7 +192,17 @@ The token is never written to `config.yaml`, even when it comes from an env var.
 
 ## Token permissions
 
-Create a **Custom Token** at My Profile → API Tokens with:
+Both token kinds work:
+
+- **User tokens** (My Profile → API Tokens), verified via `/user/tokens/verify`
+- **Account-owned tokens** (Manage Account → Account API Tokens; they start
+  with `cfat_`), verified via `/accounts/{id}/tokens/verify`. `login` finds the
+  owning account itself; pass `--account <id>` if it can't.
+
+The token type is recorded in `config.yaml` (`token_type`) and shown by
+`whoami` and `auth status` (`auth status --verify` checks it live).
+
+Create a **Custom Token** with:
 
 | Scope | Permission | Access |
 |---|---|---|

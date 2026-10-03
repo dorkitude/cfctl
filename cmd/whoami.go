@@ -6,6 +6,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/accounts"
+	"github.com/dorkitude/cfctl/internal/config"
 	"github.com/dorkitude/cfctl/internal/ui"
 	"github.com/spf13/cobra"
 )
@@ -15,6 +16,7 @@ type Whoami struct {
 	Token struct {
 		ID        string `json:"id"`
 		Status    string `json:"status"`
+		Type      string `json:"type"` // "user" or "account"
 		ExpiresOn string `json:"expires_on,omitempty"`
 	} `json:"token"`
 	Account struct {
@@ -41,14 +43,18 @@ var whoamiCmd = &cobra.Command{
 			return err
 		}
 
-		tok, err := app.Client.User.Tokens.Verify(ctx)
+		tok, err := app.VerifyToken(ctx)
 		if err != nil {
-			return apiErr("whoami failed", err)
+			return fmt.Errorf("whoami failed: %w", err)
+		}
+		if tok.AccountID != "" {
+			app.AccountID = tok.AccountID
 		}
 
 		var w Whoami
 		w.Token.ID = tok.ID
-		w.Token.Status = string(tok.Status)
+		w.Token.Status = tok.Status
+		w.Token.Type = tok.Type
 		w.Token.ExpiresOn = timestamp(tok.ExpiresOn)
 		w.Account.ID = app.AccountID
 
@@ -59,12 +65,15 @@ var whoamiCmd = &cobra.Command{
 		w.Account.Name = acct.Name
 		w.Account.Type = string(acct.Type)
 
-		// GET /user needs User Details: Read, which cfctl doesn't require.
-		if u, err := app.Client.User.Get(ctx); err == nil {
-			w.User = &struct {
-				ID    string `json:"id"`
-				Email string `json:"email"`
-			}{u.ID, u.Email}
+		// GET /user needs User Details: Read, which cfctl doesn't require
+		// (and account-owned tokens never have).
+		if w.Token.Type != config.TokenTypeAccount {
+			if u, err := app.Client.User.Get(ctx); err == nil {
+				w.User = &struct {
+					ID    string `json:"id"`
+					Email string `json:"email"`
+				}{u.ID, u.Email}
+			}
 		}
 
 		if printJSON(w) {
@@ -77,6 +86,7 @@ var whoamiCmd = &cobra.Command{
 		fmt.Println(ui.SuccessStyle.Render("API Token"))
 		fmt.Printf("  %-14s %s\n", "ID:", w.Token.ID)
 		fmt.Printf("  %-14s %s\n", "Status:", w.Token.Status)
+		fmt.Printf("  %-14s %s\n", "Type:", tokenTypeLabel(w.Token.Type, w.Account.ID, w.Account.Name))
 		if w.Token.ExpiresOn != "" {
 			fmt.Printf("  %-14s %s\n", "Expires:", w.Token.ExpiresOn)
 		}

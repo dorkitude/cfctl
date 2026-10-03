@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/accounts"
@@ -20,6 +21,12 @@ import (
 type App struct {
 	Client    *cloudflare.Client
 	AccountID string
+	token     string
+}
+
+// VerifyToken verifies the App's token with the endpoint matching its type.
+func (a *App) VerifyToken(ctx context.Context) (*TokenInfo, error) {
+	return VerifyToken(ctx, a.Client, a.token, []string{a.AccountID}, config.TokenType())
 }
 
 // NewClient builds a Cloudflare SDK client that authenticates with token.
@@ -71,20 +78,100 @@ func New(ctx context.Context) (*App, error) {
 		}
 	}
 
-	return &App{Client: c, AccountID: accountID}, nil
+	return &App{Client: c, AccountID: accountID, token: token}, nil
 }
 
-// ValidateToken checks a token via GET /user/tokens/verify.
-func ValidateToken(ctx context.Context, token string) (*user.TokenVerifyResponse, error) {
-	c := NewClient(token)
-	resp, err := c.User.Tokens.Verify(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("invalid token: %w", APIError(err))
+// TokenInfo describes a verified API token. It never holds the token itself.
+type TokenInfo struct {
+	ID        string    `json:"id"`
+	Status    string    `json:"status"`
+	ExpiresOn time.Time `json:"expires_on,omitempty"`
+	// Type is config.TokenTypeUser or config.TokenTypeAccount.
+	Type string `json:"type"`
+	// AccountID is the owning account, for account-owned tokens.
+	AccountID string `json:"account_id,omitempty"`
+}
+
+// AccountTokenPrefix marks account-owned API tokens.
+const AccountTokenPrefix = "cfat_"
+
+// ValidateToken verifies a token and works out whether it is a user token or
+// an account-owned token. See VerifyToken.
+func ValidateToken(ctx context.Context, token string, candidates []string, hint string) (*TokenInfo, error) {
+	return VerifyToken(ctx, NewClient(token), token, candidates, hint)
+}
+
+// VerifyToken verifies a token against the right endpoint:
+//
+//   - user tokens:    GET /user/tokens/verify
+//   - account tokens: GET /accounts/{id}/tokens/verify
+//
+// The user endpoint is tried first, unless the token starts with cfat_ or hint
+// says "account". If it rejects the token (401), each candidate account ID is
+// tried; with no candidates, the accounts the token can list are used.
+func VerifyToken(ctx context.Context, c *cloudflare.Client, token string, candidates []string, hint string) (*TokenInfo, error) {
+	var userErr error
+	if hint != config.TokenTypeAccount && !strings.HasPrefix(token, AccountTokenPrefix) {
+		resp, err := c.User.Tokens.Verify(ctx)
+		if err == nil {
+			if resp.Status != user.TokenVerifyResponseStatusActive {
+				return nil, fmt.Errorf("token is %s, not active", resp.Status)
+			}
+			return &TokenInfo{ID: resp.ID, Status: string(resp.Status), ExpiresOn: resp.ExpiresOn, Type: config.TokenTypeUser}, nil
+		}
+		if StatusCode(err) != http.StatusUnauthorized && StatusCode(err) != http.StatusForbidden {
+			return nil, fmt.Errorf("invalid token: %w", APIError(err))
+		}
+		userErr = err
 	}
-	if resp.Status != user.TokenVerifyResponseStatusActive {
-		return nil, fmt.Errorf("token is %s, not active", resp.Status)
+
+	ids := dedupe(candidates)
+	if len(ids) == 0 {
+		if accts, err := ListAccounts(ctx, c); err == nil {
+			for _, a := range accts {
+				ids = append(ids, a.ID)
+			}
+		}
 	}
-	return resp, nil
+
+	var acctErr error
+	for _, id := range ids {
+		resp, err := c.Accounts.Tokens.Verify(ctx, accounts.TokenVerifyParams{AccountID: cloudflare.F(id)})
+		if err != nil {
+			acctErr = err
+			continue
+		}
+		if resp.Status != accounts.TokenVerifyResponseStatusActive {
+			return nil, fmt.Errorf("account token is %s, not active", resp.Status)
+		}
+		return &TokenInfo{ID: resp.ID, Status: string(resp.Status), ExpiresOn: resp.ExpiresOn, Type: config.TokenTypeAccount, AccountID: id}, nil
+	}
+
+	var tried []string
+	if userErr != nil {
+		tried = append(tried, "/user/tokens/verify ("+APIError(userErr).Error()+")")
+	}
+	switch {
+	case acctErr != nil:
+		tried = append(tried, "/accounts/{id}/tokens/verify ("+APIError(acctErr).Error()+")")
+	case len(ids) == 0:
+		tried = append(tried, "/accounts/{id}/tokens/verify (no account ID known)")
+	}
+	return nil, fmt.Errorf("invalid token: rejected by %s; for an account-owned token (%s...), pass --account <account-id>",
+		strings.Join(tried, " and "), AccountTokenPrefix)
+}
+
+func dedupe(in []string) []string {
+	var out []string
+	seen := map[string]bool{}
+	for _, s := range in {
+		s = strings.TrimSpace(s)
+		if s != "" && !seen[s] {
+			seen[s] = true
+			out = append(out, s)
+		}
+	}
+	return out
 }
 
 // ListAccounts returns every account the token can see (GET /accounts).

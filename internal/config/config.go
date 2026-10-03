@@ -16,9 +16,11 @@ const (
 	configFileName = "config.yaml"
 
 	// Viper keys.
-	KeyAccountID  = "account_id"
-	KeyToken      = "token"
-	KeyAPIBaseURL = "api_base_url"
+	KeyAccountID   = "account_id"
+	KeyAccountName = "account_name"
+	KeyTokenType   = "token_type"
+	KeyToken       = "token"
+	KeyAPIBaseURL  = "api_base_url"
 )
 
 // Token environment variables, in priority order. Both override the token file.
@@ -29,8 +31,18 @@ var v = newViper()
 // Config holds the persisted configuration for cfctl.
 // The token is never part of it: it lives in its own 0600 file.
 type Config struct {
-	AccountID string `mapstructure:"account_id"`
+	AccountID   string `mapstructure:"account_id"`
+	AccountName string `mapstructure:"account_name"`
+	// TokenType is "user" (My Profile → API Tokens) or "account"
+	// (Manage Account → Account API Tokens, prefix cfat_).
+	TokenType string `mapstructure:"token_type"`
 }
+
+// Token types.
+const (
+	TokenTypeUser    = "user"
+	TokenTypeAccount = "account"
+)
 
 // newViper builds a Viper instance with cfctl's env bindings.
 //
@@ -211,6 +223,11 @@ func AccountID() string {
 	return strings.TrimSpace(v.GetString(KeyAccountID))
 }
 
+// TokenType returns the token type recorded at login ("user", "account", or "").
+func TokenType() string {
+	return strings.TrimSpace(v.GetString(KeyTokenType))
+}
+
 // APIBaseURL returns an API base URL override, or "" for the default.
 // Used by tests to point cfctl at a fake server.
 func APIBaseURL() string {
@@ -254,6 +271,12 @@ func Save(cfg *Config) error {
 	fv := viper.New()
 	fv.SetConfigType("yaml")
 	fv.Set(KeyAccountID, cfg.AccountID)
+	if cfg.AccountName != "" {
+		fv.Set(KeyAccountName, cfg.AccountName)
+	}
+	if cfg.TokenType != "" {
+		fv.Set(KeyTokenType, cfg.TokenType)
+	}
 	if err := fv.WriteConfigAs(path); err != nil {
 		return err
 	}

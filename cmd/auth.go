@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/accounts"
 	"github.com/dorkitude/cfctl/internal/client"
 	"github.com/dorkitude/cfctl/internal/config"
@@ -22,6 +23,7 @@ type LoginResult struct {
 	Authenticated bool   `json:"authenticated"`
 	TokenID       string `json:"token_id"`
 	TokenStatus   string `json:"token_status"`
+	TokenType     string `json:"token_type"`
 	AccountID     string `json:"account_id"`
 	AccountName   string `json:"account_name"`
 	TokenPath     string `json:"token_path"`
@@ -35,6 +37,24 @@ type AuthStatus struct {
 	TokenPath     string `json:"token_path"`
 	ConfigPath    string `json:"config_path"`
 	AccountID     string `json:"account_id,omitempty"`
+	AccountName   string `json:"account_name,omitempty"`
+	// TokenType is "user" or "account" ("" if unknown without --verify).
+	TokenType string `json:"token_type,omitempty"`
+	// Verified/TokenStatus are only set with --verify.
+	Verified    *bool  `json:"verified,omitempty"`
+	TokenStatus string `json:"token_status,omitempty"`
+}
+
+// tokenTypeLabel renders "user" or "account (owned by Name, ID)".
+func tokenTypeLabel(kind, accountID, accountName string) string {
+	if kind != config.TokenTypeAccount {
+		return kind
+	}
+	owner := accountID
+	if accountName != "" {
+		owner = accountName + ", " + accountID
+	}
+	return "account (owned by " + owner + ")"
 }
 
 var authCmd = &cobra.Command{
@@ -171,16 +191,6 @@ Examples:
 			fmt.Println(ui.SubtleStyle.Render("Validating token..."))
 		}
 
-		verify, err := client.ValidateToken(ctx, token)
-		if err != nil {
-			return err
-		}
-
-		accts, err := client.ListAccounts(ctx, client.NewClient(token))
-		if err != nil {
-			return fmt.Errorf("failed to list accounts: %w", err)
-		}
-
 		explicit := strings.TrimSpace(accountFlag)
 		if explicit == "" {
 			explicit = strings.TrimSpace(os.Getenv("CFCTL_ACCOUNT_ID"))
@@ -189,16 +199,44 @@ Examples:
 		if cfg, _ := config.Load(); cfg != nil {
 			cached = cfg.AccountID
 		}
-		acct, err := pickAccount(accts, explicit, cached, promptTTY)
+
+		// Account-token verification tries --account only if given, else the
+		// cached account, else every account the token can list.
+		candidates := []string{explicit}
+		if explicit == "" {
+			candidates = []string{cached}
+		}
+		verify, err := client.ValidateToken(ctx, token, candidates, "")
+		if err != nil && explicit == "" && cached != "" {
+			verify, err = client.ValidateToken(ctx, token, nil, "")
+		}
 		if err != nil {
 			return err
+		}
+
+		c := client.NewClient(token)
+		var acct accounts.Account
+		if verify.Type == config.TokenTypeAccount {
+			// The owning account is the account; look up its name if allowed.
+			acct.ID = verify.AccountID
+			if a, err := c.Accounts.Get(ctx, accounts.AccountGetParams{AccountID: cloudflare.F(acct.ID)}); err == nil {
+				acct.Name = a.Name
+			}
+		} else {
+			accts, err := client.ListAccounts(ctx, c)
+			if err != nil {
+				return fmt.Errorf("failed to list accounts: %w", err)
+			}
+			if acct, err = pickAccount(accts, explicit, cached, promptTTY); err != nil {
+				return err
+			}
 		}
 
 		// Everything checks out: save token, then account.
 		if err := config.SaveToken(token); err != nil {
 			return fmt.Errorf("failed to save token: %w", err)
 		}
-		if err := config.Save(&config.Config{AccountID: acct.ID}); err != nil {
+		if err := config.Save(&config.Config{AccountID: acct.ID, AccountName: acct.Name, TokenType: verify.Type}); err != nil {
 			return fmt.Errorf("failed to save config: %w", err)
 		}
 
@@ -208,7 +246,8 @@ Examples:
 		if printJSON(LoginResult{
 			Authenticated: true,
 			TokenID:       verify.ID,
-			TokenStatus:   string(verify.Status),
+			TokenStatus:   verify.Status,
+			TokenType:     verify.Type,
 			AccountID:     acct.ID,
 			AccountName:   acct.Name,
 			TokenPath:     tokenPath,
@@ -220,6 +259,7 @@ Examples:
 		fmt.Println()
 		fmt.Println(ui.Success("Authenticated with Cloudflare! 🎉"))
 		fmt.Println(ui.SubtleStyle.Render(fmt.Sprintf("Account: %s (ID: %s)", acct.Name, acct.ID)))
+		fmt.Println(ui.SubtleStyle.Render("Token type: " + tokenTypeLabel(verify.Type, acct.ID, acct.Name)))
 		fmt.Println(ui.SubtleStyle.Render("Token saved to: " + tokenPath))
 		if env := config.TokenEnvVar(); env != "" {
 			fmt.Println(ui.Warn(env + " is set and overrides the saved token"))
@@ -255,8 +295,36 @@ var authStatusCmd = &cobra.Command{
 		s := AuthStatus{TokenPath: tokenPath, ConfigPath: configPath, AccountID: config.AccountID()}
 		if env := config.TokenEnvVar(); env != "" {
 			s.Authenticated, s.TokenSource = true, env
+			if tok, _ := config.LoadToken(); strings.HasPrefix(tok, client.AccountTokenPrefix) {
+				s.TokenType = config.TokenTypeAccount
+			}
 		} else if config.HasToken() {
 			s.Authenticated, s.TokenSource = true, "file"
+			s.TokenType = config.TokenType()
+			if cfg, _ := config.Load(); cfg != nil && cfg.AccountID == s.AccountID {
+				s.AccountName = cfg.AccountName
+			}
+		}
+
+		verifyFlag, _ := cmd.Flags().GetBool("verify")
+		if verifyFlag && s.Authenticated {
+			ctx := context.Background()
+			ok := false
+			app, err := getApp(ctx)
+			if err == nil {
+				var info *client.TokenInfo
+				if info, err = app.VerifyToken(ctx); err == nil {
+					ok = true
+					s.TokenType, s.TokenStatus = info.Type, info.Status
+					if info.AccountID != "" {
+						s.AccountID = info.AccountID
+					}
+				}
+			}
+			s.Verified = &ok
+			if err != nil && !jsonOutput {
+				defer fmt.Println(ui.Err(err.Error()))
+			}
 		}
 
 		if printJSON(s) {
@@ -264,11 +332,21 @@ var authStatusCmd = &cobra.Command{
 		}
 
 		if s.Authenticated {
-			fmt.Println(ui.Success("Authenticated"))
+			if s.Verified != nil && !*s.Verified {
+				fmt.Println(ui.Warn("Token present but failed verification"))
+			} else {
+				fmt.Println(ui.Success("Authenticated"))
+			}
 			if s.TokenSource == "file" {
 				fmt.Println(ui.SubtleStyle.Render("Token location: " + tokenPath))
 			} else {
 				fmt.Println(ui.SubtleStyle.Render("Token from: $" + s.TokenSource))
+			}
+			if s.TokenType != "" {
+				fmt.Println(ui.SubtleStyle.Render("Token type: " + tokenTypeLabel(s.TokenType, s.AccountID, s.AccountName)))
+			}
+			if s.TokenStatus != "" {
+				fmt.Println(ui.SubtleStyle.Render("Token status: " + s.TokenStatus))
 			}
 			if s.AccountID != "" {
 				fmt.Println(ui.SubtleStyle.Render("Account ID: " + s.AccountID))
@@ -292,8 +370,10 @@ var authSetupCmd = &cobra.Command{
 		fmt.Println()
 		fmt.Println(ui.SuccessStyle.Render("1.") + " Log in at https://dash.cloudflare.com")
 		fmt.Println()
-		fmt.Println(ui.SuccessStyle.Render("2.") + " Go to My Profile → API Tokens")
-		fmt.Println("   → https://dash.cloudflare.com/profile/api-tokens")
+		fmt.Println(ui.SuccessStyle.Render("2.") + " Create the token on either page (both kinds work):")
+		fmt.Println("   → User token:    My Profile → API Tokens")
+		fmt.Println("     https://dash.cloudflare.com/profile/api-tokens")
+		fmt.Println("   → Account token: Manage Account → Account API Tokens (starts with cfat_)")
 		fmt.Println()
 		fmt.Println(ui.SuccessStyle.Render("3.") + " Click " + ui.AccentStyle.Render("\"Create Token\"") + " → " + ui.AccentStyle.Render("\"Create Custom Token\""))
 		fmt.Println("   → Name it (e.g., 'cfctl')")
@@ -302,13 +382,14 @@ var authSetupCmd = &cobra.Command{
 		fmt.Println("       Account │ Domain Registration  │ Edit   (a.k.a. Registrar: Domains)")
 		fmt.Println("       Zone    │ Zone                 │ Edit")
 		fmt.Println("       Zone    │ DNS                  │ Edit")
-		fmt.Println("   → Account Resources: Include → your account")
+		fmt.Println("   → Account Resources: Include → your account (user tokens only)")
 		fmt.Println("   → Zone Resources:    Include → All zones")
 		fmt.Println("   → Continue to summary → Create Token → copy it")
 		fmt.Println()
 		fmt.Println(ui.SuccessStyle.Render("4.") + " Run: " + ui.AccentStyle.Render(BinName()+" auth login"))
 		fmt.Println("   → Paste your token when prompted (input is hidden)")
 		fmt.Println("   → Or pipe it: " + ui.AccentStyle.Render("printf '%s' \"$TOKEN\" | "+BinName()+" auth login"))
+		fmt.Println("   → For an account token, add --account <account-id> if login can't find the account")
 		fmt.Println()
 		fmt.Println(ui.SubtleStyle.Render("CFCTL_TOKEN or CLOUDFLARE_API_TOKEN, if set, override the saved token."))
 	},
@@ -320,5 +401,6 @@ func init() {
 	authLoginCmd.Flags().Bool("force", false, "Replace an existing saved token")
 	authCmd.AddCommand(authLogoutCmd)
 	authCmd.AddCommand(authStatusCmd)
+	authStatusCmd.Flags().Bool("verify", false, "Also verify the token against the API")
 	authCmd.AddCommand(authSetupCmd)
 }
