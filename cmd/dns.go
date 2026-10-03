@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/dorkitude/cfctl/internal/api"
@@ -134,7 +135,9 @@ skipped by Cloudflare.`,
 		if _, err := os.Stat(args[1]); err != nil {
 			return err
 		}
-		fields := []api.FormField{{Name: "file", File: args[1]}}
+		// Like curl -F file=@zone.txt: a file part with a filename, or the API
+		// sees a plain form value instead of an uploaded file.
+		fields := []api.FormField{{Name: "file", File: args[1], FileName: filepath.Base(args[1]), ContentType: "text/plain"}}
 		if p, _ := cmd.Flags().GetBool("proxied"); p {
 			fields = append(fields, api.FormField{Name: "proxied", Value: "true"})
 		}

@@ -28,7 +28,8 @@ func accessRuleTarget(v string) (string, string) {
 			return "ip_range", v
 		}
 	case asnRE.MatchString(v):
-		return "asn", strings.ToUpper(strings.TrimPrefix(strings.ToUpper(v), "AS"))
+		// The API's ASN value is "AS<number>" (spec example: "AS12345").
+		return "asn", "AS" + strings.TrimPrefix(strings.ToUpper(v), "AS")
 	case countryRE.MatchString(v):
 		return "country", strings.ToUpper(v)
 	}
