@@ -94,7 +94,8 @@ Examples:
 				extra += ui.SubtleStyle.Render(" (paused)")
 			}
 
-			fmt.Printf("  %s %-30s%s\n", activeMarker, ui.AccentStyle.Render(z.Name), extra)
+			plan := z.Plan.Name
+			fmt.Printf("  %s %-30s %-22s %s%s\n", activeMarker, ui.AccentStyle.Render(z.Name), plan, ui.SubtleStyle.Render(z.ID), extra)
 		}
 
 		return nil

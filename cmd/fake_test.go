@@ -12,8 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dorkitude/cfctl/internal/client"
-
+	"github.com/dorkitude/cfctl/internal/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -40,6 +39,11 @@ type fakeRequest struct {
 	Query  string
 	Body   map[string]interface{}
 	Auth   string
+	// RawBody and ContentType are the request body as sent.
+	RawBody     []byte
+	ContentType string
+	Header      http.Header
+	EscapedPath string
 }
 
 // fakeCF is a tiny in-memory Cloudflare API v4.
@@ -56,6 +60,9 @@ type fakeCF struct {
 	accountsForever bool
 	// slow delays every response.
 	slow time.Duration
+	// custom, when set, gets first go at every authenticated request; it
+	// returns false to fall through to the built-in routes.
+	custom func(w http.ResponseWriter, r *http.Request, req fakeRequest) bool
 }
 
 func newFakeCF(t *testing.T) *fakeCF {
@@ -121,8 +128,9 @@ func fail(code int, msg string) map[string]interface{} {
 
 func (f *fakeCF) serve(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/client/v4")
-	req := fakeRequest{Method: r.Method, Path: path, Query: r.URL.RawQuery, Auth: r.Header.Get("Authorization")}
+	req := fakeRequest{Method: r.Method, Path: path, Query: r.URL.RawQuery, Auth: r.Header.Get("Authorization"), ContentType: r.Header.Get("Content-Type"), Header: r.Header.Clone(), EscapedPath: r.URL.EscapedPath()}
 	if b, _ := io.ReadAll(r.Body); len(b) > 0 {
+		req.RawBody = b
 		_ = json.Unmarshal(b, &req.Body)
 	}
 	f.mu.Lock()
@@ -140,6 +148,9 @@ func (f *fakeCF) serve(w http.ResponseWriter, r *http.Request) {
 	accountToken := token == acctToken || token == acctTokenNoPrefix || token == disabledAcctToken
 	if token != goodToken && !accountToken {
 		writeJSON(w, http.StatusUnauthorized, fail(1000, "Invalid API Token"))
+		return
+	}
+	if f.custom != nil && f.custom(w, r, req) {
 		return
 	}
 	// V4 page pagination keeps asking until it gets an empty page.
@@ -301,6 +312,11 @@ func testEnv(t *testing.T, f *fakeCF) string {
 // resetFlags puts every flag back to its default between in-process runs.
 func resetFlags(c *cobra.Command) {
 	reset := func(fl *pflag.Flag) {
+		if sv, ok := fl.Value.(pflag.SliceValue); ok {
+			_ = sv.Replace(nil)
+			fl.Changed = false
+			return
+		}
 		_ = fl.Value.Set(fl.DefValue)
 		fl.Changed = false
 	}
@@ -325,8 +341,8 @@ func runCLI(t *testing.T, stdin string, args ...string) (stdout, stderr string, 
 	errR, errW, _ := os.Pipe()
 	oldIn, oldOut, oldErr := os.Stdin, os.Stdout, os.Stderr
 	os.Stdin, os.Stdout, os.Stderr = in, outW, errW
-	oldDebug := client.DebugOut
-	client.DebugOut = errW
+	oldDebug := api.DebugOut
+	api.DebugOut = errW
 
 	var wg sync.WaitGroup
 	var outB, errB strings.Builder
@@ -334,6 +350,7 @@ func runCLI(t *testing.T, stdin string, args ...string) (stdout, stderr string, 
 	go func() { defer wg.Done(); _, _ = io.Copy(&outB, outR) }()
 	go func() { defer wg.Done(); _, _ = io.Copy(&errB, errR) }()
 
+	prepareCommands(args)
 	rootCmd.SetArgs(args)
 	err = rootCmd.Execute()
 
@@ -341,7 +358,7 @@ func runCLI(t *testing.T, stdin string, args ...string) (stdout, stderr string, 
 	errW.Close()
 	wg.Wait()
 	os.Stdin, os.Stdout, os.Stderr = oldIn, oldOut, oldErr
-	client.DebugOut = oldDebug
+	api.DebugOut = oldDebug
 	return outB.String(), errB.String(), err
 }
 

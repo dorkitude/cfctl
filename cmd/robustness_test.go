@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dorkitude/cfctl/internal/api"
 	"github.com/dorkitude/cfctl/internal/client"
 	"github.com/dorkitude/cfctl/internal/config"
 )
@@ -59,9 +60,9 @@ func TestLoginTimeout(t *testing.T) {
 	testEnv(t, f)
 	f.slow = 3 * time.Second
 
-	oldLogin, oldReq := loginTimeout, client.RequestTimeout
-	loginTimeout, client.RequestTimeout = 400*time.Millisecond, 150*time.Millisecond
-	t.Cleanup(func() { loginTimeout, client.RequestTimeout = oldLogin, oldReq })
+	oldLogin, oldReq := loginTimeout, api.Timeout
+	loginTimeout, api.Timeout = 400*time.Millisecond, 150*time.Millisecond
+	t.Cleanup(func() { loginTimeout, api.Timeout = oldLogin, oldReq })
 
 	start := time.Now()
 	stdout, stderr, err := runCLI(t, acctToken, "auth", "login", "--account", acctID)

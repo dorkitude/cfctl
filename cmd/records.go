@@ -371,7 +371,11 @@ var recordsDeleteCmd = &cobra.Command{
 	Long: `PERMANENTLY delete a DNS record from a zone.
 
 Examples:
-  cfctl records delete example.com 023e105f4ecef8ad9ca31a8372d0c353`,
+  cfctl records delete example.com 023e105f4ecef8ad9ca31a8372d0c353
+  cfctl records delete example.com 023e105f4ecef8ad9ca31a8372d0c353 --yes
+
+Asks for confirmation on a terminal; pass --yes (-y) to skip it. Without a
+terminal, --yes is required.`,
 	Args: cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
@@ -386,6 +390,9 @@ Examples:
 		}
 
 		recordID := args[1]
+		if err := confirm(cmd, fmt.Sprintf("delete DNS record %s from zone '%s'", recordID, z.Name)); err != nil {
+			return err
+		}
 		_, err = app.Client.DNS.Records.Delete(ctx, recordID, dns.RecordDeleteParams{ZoneID: cloudflare.F(z.ID)})
 		if err != nil {
 			return apiErr("failed to delete record", err)
@@ -429,4 +436,5 @@ func init() {
 	recordsUpdateCmd.Flags().String("comment", "", "New comment")
 
 	recordsCmd.AddCommand(recordsDeleteCmd)
+	recordsDeleteCmd.Flags().BoolP("yes", "y", false, "Skip the confirmation prompt")
 }

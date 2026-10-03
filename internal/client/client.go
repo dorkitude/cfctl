@@ -4,10 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"net"
 	"net/http"
-	"os"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,6 +16,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/cloudflare-go/v7/user"
 	"github.com/cloudflare/cloudflare-go/v7/zones"
+	"github.com/dorkitude/cfctl/internal/api"
 	"github.com/dorkitude/cfctl/internal/config"
 )
 
@@ -33,45 +32,12 @@ func (a *App) VerifyToken(ctx context.Context) (*TokenInfo, error) {
 	return VerifyToken(ctx, a.Client, a.token, []string{a.AccountID}, config.TokenType())
 }
 
-// RequestTimeout bounds each HTTP request attempt.
-var RequestTimeout = 20 * time.Second
-
-// Debug, when true, logs METHOD path status duration for every API request
-// to stderr. Headers, query strings, and bodies are never logged.
-var Debug bool
-
-// DebugOut is where debug lines go (stderr; swapped in tests).
-var DebugOut io.Writer = os.Stderr
-
-func debugMiddleware(req *http.Request, next option.MiddlewareNext) (*http.Response, error) {
-	if !Debug {
-		return next(req)
-	}
-	start := time.Now()
-	resp, err := next(req)
-	status := "error"
-	if err != nil {
-		status = "error: " + err.Error()
-		if IsTimeout(err) {
-			status = "timeout"
-		}
-	} else {
-		status = strconv.Itoa(resp.StatusCode)
-	}
-	fmt.Fprintf(DebugOut, "debug: %s %s -> %s (%s)\n", req.Method, req.URL.Path, status, time.Since(start).Round(time.Millisecond))
-	return resp, err
-}
-
 // IsTimeout reports whether err is a context deadline or network timeout.
-func IsTimeout(err error) bool {
-	if errors.Is(err, context.DeadlineExceeded) {
-		return true
-	}
-	var ne net.Error
-	return errors.As(err, &ne) && ne.Timeout()
-}
+func IsTimeout(err error) bool { return api.IsTimeout(err) }
 
 // NewClient builds a Cloudflare SDK client that authenticates with token.
+// It sends every request through api.NewHTTPClient, so the read-only guard
+// applies to the SDK too.
 //
 // The SDK also reads CLOUDFLARE_API_KEY / CLOUDFLARE_EMAIL from the
 // environment; those headers are stripped so only the bearer token is used.
@@ -81,8 +47,11 @@ func NewClient(token string) *cloudflare.Client {
 		option.WithHeaderDel("X-Auth-Email"),
 		option.WithHeaderDel("X-Auth-User-Service-Key"),
 		option.WithAPIToken(token),
-		option.WithRequestTimeout(RequestTimeout),
-		option.WithMiddleware(debugMiddleware),
+		// The shared transport does the read-only guard, retries (429/5xx),
+		// per-attempt timeouts, and --debug logging; the SDK must not retry
+		// on top of it (it would also retry requests the guard refused).
+		option.WithHTTPClient(api.NewHTTPClient()),
+		option.WithMaxRetries(0),
 	}
 	if base := config.APIBaseURL(); base != "" {
 		opts = append(opts, option.WithBaseURL(base))
@@ -320,6 +289,11 @@ func Messages(err error) string {
 func APIError(err error) error {
 	if err == nil {
 		return nil
+	}
+	var ue *url.Error
+	if errors.As(err, &ue) {
+		// Drop "Get \"https://...?...\":" — URLs can carry query values.
+		err = ue.Err
 	}
 	if IsTimeout(err) {
 		return fmt.Errorf("timed out talking to the Cloudflare API (%w)", context.DeadlineExceeded)
