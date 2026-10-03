@@ -202,24 +202,35 @@ func basinStreamFlags(cmd *cobra.Command, create bool) {
 	stDataFlag(cmd)
 }
 
-func basinStreamBody(cmd *cobra.Command) (map[string]any, error) {
+// basinStreamBody builds a stream create/update body. The API needs
+// http.enabled and http.authentication together whenever http is sent;
+// cur (the stream's current settings, nil on create) supplies the ones the
+// user didn't give, falling back to enabled=true, authentication=false.
+func basinStreamBody(cmd *cobra.Command, cur func() (map[string]any, error)) (map[string]any, error) {
 	body, err := stBody(cmd)
 	if err != nil {
 		return nil, err
 	}
 	stFlagBool(cmd, body, "http", "http.enabled")
-	if cmd.Flags().Changed("http-auth") || cmd.Flags().Changed("cors-origins") {
-		if stGet(body, "http.enabled") == nil {
-			stSet(body, "http.enabled", true)
-		}
-		if stGet(body, "http.authentication") == nil {
-			stSet(body, "http.authentication", false)
-		}
-	}
 	stFlagBool(cmd, body, "http-auth", "http.authentication")
 	stFlagList(cmd, body, "cors-origins", "http.cors.origins")
-	if m, ok := body["http"].(map[string]any); ok && m["authentication"] == nil {
-		m["authentication"] = false
+	if m, ok := body["http"].(map[string]any); ok && (m["enabled"] == nil || m["authentication"] == nil) {
+		var current map[string]any
+		if cur != nil {
+			if current, err = cur(); err != nil {
+				return nil, err
+			}
+		}
+		for k, def := range map[string]bool{"enabled": true, "authentication": false} {
+			if m[k] != nil {
+				continue
+			}
+			if v, ok := stGet(current, "http."+k).(bool); ok {
+				m[k] = v
+			} else {
+				m[k] = def
+			}
+		}
 	}
 	stFlagBool(cmd, body, "worker-binding", "worker_binding.enabled")
 	if cmd.Flags().Lookup("format") != nil {
@@ -250,7 +261,7 @@ Examples:
   cfctl basin pipelines streams create clicks --schema-file schema.json`,
 	Args: cobra.ExactArgs(1),
 	RunE: sbRun(func(cmd *cobra.Command, c *stClient, args []string) error {
-		body, err := basinStreamBody(cmd)
+		body, err := basinStreamBody(cmd, nil)
 		if err != nil {
 			return err
 		}
@@ -264,16 +275,24 @@ var basinStreamsUpdateCmd = &cobra.Command{
 	Short: "Update a stream's HTTP endpoint or Worker binding",
 	Args:  cobra.ExactArgs(1),
 	RunE: sbRun(func(cmd *cobra.Command, c *stClient, args []string) error {
-		body, err := basinStreamBody(cmd)
+		p, _, err := basinPath("stream", "streams")(c, args)
+		if err != nil {
+			return err
+		}
+		body, err := basinStreamBody(cmd, func() (map[string]any, error) {
+			raw, err := c.get(p, nil)
+			if err != nil {
+				return nil, err
+			}
+			var cur map[string]any
+			_ = json.Unmarshal(raw, &cur)
+			return cur, nil
+		})
 		if err != nil {
 			return err
 		}
 		if len(body) == 0 {
 			return fmt.Errorf("nothing to update: pass flags or --data")
-		}
-		p, _, err := basinPath("stream", "streams")(c, args)
-		if err != nil {
-			return err
 		}
 		return sbSendShow(c, "PATCH", p, nil, body, "Updated stream "+args[0])
 	}),

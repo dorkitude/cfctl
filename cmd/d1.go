@@ -445,7 +445,9 @@ func d1Poll(c *stClient, id, kind string, body map[string]any) (*d1Polling, erro
 				msg = strings.Join(p.Errors, "; ")
 			}
 			return nil, fmt.Errorf("%s failed: %s", kind, msg)
-		case p.Status == "complete" || (p.Status == "" && p.Success && kind == "import" && p.UploadURL != ""):
+		case p.Status == "complete" || (kind == "import" && body["action"] == "init" && p.UploadURL != ""):
+			// An init answer with upload_url means "upload first" whatever
+			// its status says (wrangler checks only for upload_url).
 			return &p, nil
 		}
 		if i > 3600 {

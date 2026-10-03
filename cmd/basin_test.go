@@ -9,7 +9,7 @@ import (
 
 func basinFake(t *testing.T) *fakeCF {
 	pl := map[string]any{"id": "p1", "name": "pipe", "sql": "INSERT INTO s SELECT * FROM st", "status": "running"}
-	st := map[string]any{"id": "st1", "name": "clicks", "http": map[string]any{"enabled": true}, "endpoint": "https://x"}
+	st := map[string]any{"id": "st1", "name": "clicks", "http": map[string]any{"enabled": true, "authentication": true}, "endpoint": "https://x"}
 	sk := map[string]any{"id": "sk1", "name": "clicks-r2", "type": "r2", "config": map[string]any{"bucket": "logs"}}
 	cat := "/basin-catalog/lake"
 	return stFake(t, map[string]stHandler{
@@ -21,6 +21,7 @@ func basinFake(t *testing.T) *fakeCF {
 		"PUT /pipelines/old":                           stJSON(map[string]any{"name": "old"}),
 		"GET /pipelines/v1/streams":                    stListH([]map[string]any{st}),
 		"POST /pipelines/v1/streams":                   stJSON(st),
+		"GET /pipelines/v1/streams/st1":                stJSON(st),
 		"PATCH /pipelines/v1/streams/st1":              stJSON(st),
 		"DELETE /pipelines/v1/streams/st1":             stJSON(nil),
 		"GET /pipelines/v1/sinks":                      stListH([]map[string]any{sk}),
