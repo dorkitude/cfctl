@@ -26,7 +26,7 @@ func aisFlags(extra func(c *cobra.Command)) func(c *cobra.Command) {
 }
 
 func aisInstanceFlags(c *cobra.Command) {
-	c.Flags().String("type", "", "Source type: r2 or web-crawler (omit for builtin, items uploaded via the API)")
+	c.Flags().String("type", "", "Source type: r2, web-crawler, or builtin (items uploaded via the API; the default)")
 	c.Flags().String("source", "", "R2 bucket name or website URL")
 	c.Flags().String("embedding-model", "", "Embedding model")
 	c.Flags().String("generation-model", "", "LLM used for chat completions")
@@ -45,7 +45,11 @@ func aisInstanceBody(c *cobra.Command, args []string) (any, error) {
 	if c.Name() == "create" {
 		b["id"] = args[0]
 	}
-	platSetStr(c, b, "type", "type")
+	// "builtin" (items uploaded via the API) is expressed by omitting type;
+	// the API only accepts r2 and web-crawler.
+	if t, _ := c.Flags().GetString("type"); c.Flags().Changed("type") && t != "builtin" {
+		b["type"] = t
+	}
 	platSetStr(c, b, "source", "source")
 	platSetStr(c, b, "embedding-model", "embedding_model")
 	platSetStr(c, b, "generation-model", "ai_search_model")
@@ -102,7 +106,14 @@ func init() {
 			platSpec{Use: "list <instance>", Short: "List indexing jobs", Aliases: []string{"ls"}, Path: aisInst + "/{id}/jobs", PathFlags: aisNSFlag, Flags: aisFlags(nil), List: true,
 				Cols: aisJobCols, Title: "🔍 %d jobs", Product: "AI Search"},
 			platSpec{Use: "get <instance> <job-id>", Short: "Show an indexing job", Path: aisInst + "/{id}/jobs/{job_id}", PathFlags: aisNSFlag, Flags: aisFlags(nil), Title: "🔍 Job", Product: "AI Search"},
-			platSpec{Use: "create <instance>", Short: "Trigger a new indexing job (sync)", Aliases: []string{"sync"}, Method: "POST", Path: aisInst + "/{id}/jobs", PathFlags: aisNSFlag, Flags: aisFlags(nil),
+			platSpec{Use: "create <instance>", Short: "Trigger a new indexing job (sync)", Aliases: []string{"sync"}, Method: "POST", Path: aisInst + "/{id}/jobs", PathFlags: aisNSFlag,
+				Flags: aisFlags(func(c *cobra.Command) { c.Flags().String("description", "", "Description for the job") }),
+				// Always a JSON object body (like wrangler), even when empty.
+				Body: func(c *cobra.Command, _ []string) (any, error) {
+					b := map[string]any{}
+					platSetStr(c, b, "description", "description")
+					return b, nil
+				},
 				Title: "🔍 Indexing job started", Product: "AI Search"},
 			platSpec{Use: "cancel <instance> <job-id>", Short: "Cancel an in-progress job", Method: "PATCH", Path: aisInst + "/{id}/jobs/{job_id}", PathFlags: aisNSFlag, Flags: aisFlags(nil),
 				Body:    func(*cobra.Command, []string) (any, error) { return map[string]any{"action": "cancel"}, nil },

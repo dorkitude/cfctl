@@ -31,6 +31,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/dorkitude/cfctl/internal/api"
 	"github.com/dorkitude/cfctl/internal/config"
@@ -86,8 +87,40 @@ func pagesContentType(name string) string {
 	return ct
 }
 
-// pagesWalk collects and hashes the files to upload.
-func pagesWalk(dir string) ([]pagesFile, error) {
+// pagesMaxFilesFromJWT reads the plan's file-count limit from the upload
+// token's max_file_count_allowed claim (wrangler does the same), falling back
+// to the default.
+func pagesMaxFilesFromJWT(jwt string) int {
+	parts := strings.Split(jwt, ".")
+	if len(parts) < 2 {
+		return pagesMaxFiles
+	}
+	payload, err := base64.RawURLEncoding.DecodeString(strings.TrimRight(parts[1], "="))
+	if err != nil {
+		return pagesMaxFiles
+	}
+	var claims struct {
+		Max *float64 `json:"max_file_count_allowed"`
+	}
+	if json.Unmarshal(payload, &claims) != nil || claims.Max == nil || *claims.Max <= 0 {
+		return pagesMaxFiles
+	}
+	return int(*claims.Max)
+}
+
+// pagesTruncateUTF8 cuts s to at most n bytes without splitting a rune.
+func pagesTruncateUTF8(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	for n > 0 && !utf8.RuneStart(s[n]) {
+		n--
+	}
+	return s[:n]
+}
+
+// pagesWalk collects and hashes the files to upload (at most limit files).
+func pagesWalk(dir string, limit int) ([]pagesFile, error) {
 	var files []pagesFile
 	err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -119,8 +152,8 @@ func pagesWalk(dir string) ([]pagesFile, error) {
 			return err
 		}
 		files = append(files, pagesFile{Name: rel, Path: p, Size: info.Size(), ContentType: pagesContentType(rel), Hash: pagesHash(data, rel)})
-		if len(files) > pagesMaxFiles {
-			return fmt.Errorf("more than %d files; check that %s is your build output directory", pagesMaxFiles, dir)
+		if len(files) > limit {
+			return fmt.Errorf("more than %d files (your plan's limit); check that %s is your build output directory", limit, dir)
 		}
 		return nil
 	})
@@ -178,8 +211,10 @@ Pages doesn't already have are uploaded, then a deployment is created.
 
 Included: every file in the directory (except node_modules, .git, .DS_Store,
 .wrangler), plus _headers, _redirects, and _routes.json. A pre-built
-_worker.js (a single ES module; cfctl doesn't bundle) is uploaded as the
-Worker. A functions/ directory needs bundling: build it first with
+_worker.js is uploaded as the Worker as-is (cfctl doesn't bundle): either a
+single ES module file, or a directory whose index.js is the entry point and
+whose other .js/.mjs files are uploaded as modules (like wrangler --no-bundle).
+A functions/ directory needs bundling: build it first with
 'npx wrangler pages functions build --outdir <dir>/_worker.js' or deploy
 with wrangler.
 
@@ -217,11 +252,11 @@ func runPagesDeploy(cmd *cobra.Command, args []string) error {
 			fmt.Fprintln(os.Stderr, ui.Warn("./functions is not deployed: cfctl doesn't bundle Pages Functions (use 'npx wrangler pages functions build --outdir "+filepath.Join(dir, "_worker.js")+"' first, or wrangler pages deploy)"))
 		}
 	}
-	files, err := pagesWalk(dir)
-	if err != nil {
-		return err
-	}
 	if dry {
+		files, err := pagesWalk(dir, pagesMaxFiles)
+		if err != nil {
+			return err
+		}
 		if jsonOutput {
 			return printJSONValue(files)
 		}
@@ -258,6 +293,10 @@ func runPagesDeploy(cmd *cobra.Command, args []string) error {
 	}
 	if err := platDecode(raw, &tok); err != nil || tok.JWT == "" {
 		return fmt.Errorf("Pages didn't return an upload token")
+	}
+	files, err := pagesWalk(dir, pagesMaxFilesFromJWT(tok.JWT))
+	if err != nil {
+		return err
 	}
 	// The asset endpoints authenticate with the upload JWT, not the API token.
 	up := &apiSession{c: api.New(tok.JWT, config.APIBaseURL())}
@@ -431,10 +470,7 @@ func pagesDeploymentForm(cmd *cobra.Command, dir string, files []pagesFile) ([]b
 		msg = pagesGit("log", "-1", "--format=%s", hash)
 	}
 	if msg != "" {
-		if len(msg) > 384 {
-			msg = msg[:384]
-		}
-		field("commit_message", msg)
+		field("commit_message", pagesTruncateUTF8(msg, 384))
 	}
 	if cmd.Flags().Changed("commit-dirty") {
 		d, _ := cmd.Flags().GetBool("commit-dirty")
@@ -453,8 +489,17 @@ func pagesDeploymentForm(cmd *cobra.Command, dir string, files []pagesFile) ([]b
 			}
 		}
 	}
-	if worker, err := os.ReadFile(filepath.Join(dir, "_worker.js")); err == nil {
-		bundle, err := pagesWorkerBundle(worker)
+	workerPath := filepath.Join(dir, "_worker.js")
+	if fi, err := os.Stat(workerPath); err == nil {
+		var bundle []byte
+		if fi.IsDir() {
+			bundle, err = pagesWorkerDirBundle(workerPath)
+		} else {
+			var src []byte
+			if src, err = os.ReadFile(workerPath); err == nil {
+				bundle, err = pagesWorkerBundle(src)
+			}
+		}
 		if err != nil {
 			return nil, "", err
 		}
@@ -482,20 +527,66 @@ func pagesDeploymentForm(cmd *cobra.Command, dir string, files []pagesFile) ([]b
 // pagesWorkerBundle wraps a pre-built _worker.js (ES module) in the
 // multipart "worker bundle" Pages expects.
 func pagesWorkerBundle(src []byte) ([]byte, error) {
-	var buf bytes.Buffer
-	w := multipart.NewWriter(&buf)
-	if err := w.WriteField("metadata", `{"main_module":"_worker.js"}`); err != nil {
-		return nil, err
+	return pagesModulesBundle("_worker.js", []pagesModule{{Name: "_worker.js", Data: src}})
+}
+
+type pagesModule struct {
+	Name string
+	Data []byte
+}
+
+// pagesWorkerDirBundle bundles a _worker.js/ directory the way
+// 'wrangler pages deploy --no-bundle' does: index.js is the main module and
+// every other **/*.js and **/*.mjs file is an additional ES module, named by
+// its path relative to the directory.
+func pagesWorkerDirBundle(dir string) ([]byte, error) {
+	main, err := os.ReadFile(filepath.Join(dir, "index.js"))
+	if err != nil {
+		return nil, fmt.Errorf("%s is a directory but has no index.js entry point", dir)
 	}
-	h := textproto.MIMEHeader{}
-	h.Set("Content-Disposition", `form-data; name="_worker.js"; filename="_worker.js"`)
-	h.Set("Content-Type", "application/javascript+module")
-	pw, err := w.CreatePart(h)
+	mods := []pagesModule{{Name: "index.js", Data: main}}
+	err = filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		rel, _ := filepath.Rel(dir, p)
+		rel = filepath.ToSlash(rel)
+		if rel == "index.js" || (path.Ext(rel) != ".js" && path.Ext(rel) != ".mjs") {
+			return nil
+		}
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		mods = append(mods, pagesModule{Name: rel, Data: data})
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	if _, err := pw.Write(src); err != nil {
+	return pagesModulesBundle("index.js", mods)
+}
+
+// pagesModulesBundle writes the worker-upload multipart form (metadata +
+// one application/javascript+module part per module).
+func pagesModulesBundle(mainModule string, mods []pagesModule) ([]byte, error) {
+	var buf bytes.Buffer
+	w := multipart.NewWriter(&buf)
+	meta, _ := json.Marshal(map[string]string{"main_module": mainModule})
+	if err := w.WriteField("metadata", string(meta)); err != nil {
 		return nil, err
+	}
+	for _, m := range mods {
+		h := textproto.MIMEHeader{}
+		h.Set("Content-Disposition", fmt.Sprintf(`form-data; name=%q; filename=%q`, m.Name, m.Name))
+		h.Set("Content-Type", "application/javascript+module")
+		pw, err := w.CreatePart(h)
+		if err != nil {
+			return nil, err
+		}
+		if _, err := pw.Write(m.Data); err != nil {
+			return nil, err
+		}
 	}
 	if err := w.Close(); err != nil {
 		return nil, err
