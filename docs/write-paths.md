@@ -27,8 +27,7 @@ Abbreviations: `{a}` = `/accounts/{account_id}`, `{z}` = `/zones/{zone_id}`.
 3. **Docs and wrangler.** Where the spec is vague or silent, we used
    developers.cloudflare.com: the Workers static-assets direct upload, the
    Rulesets "update rule" page, and the R2 S3 compatibility pages. We also used
-   wrangler's bundled source (`wrangler-dist/cli.js`), which is the de-facto
-   reference for:
+   for refrence wrangler's bundled source (`wrangler-dist/cli.js`) for:
    - Workers upload metadata, bindings and assets
    - Pages direct upload
    - D1 import and export
@@ -37,10 +36,10 @@ Abbreviations: `{a}` = `/accounts/{account_id}`, `{z}` = `/zones/{zone_id}`.
    - Flagship
    - email
    - AI Search
-4. **Tests.** Every fix has a regression test against the in-process fake API
+5. **Tests.** Every fix has a regression test against the in-process fake API
    (`cmd/*_write_test.go`). Each test asserts the exact request that is sent,
    and fails on the old code.
-5. **Safety.** No real write was made. The only live calls were read-only
+6. **Safety.** No real write was made. The only live calls were read-only
    `GET`s with `CFCTL_READONLY=1`; one of them confirmed that the R2 REST object
    path accepts `%2F` in keys.
 
