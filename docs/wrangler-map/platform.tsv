@@ -1,0 +1,178 @@
+wrangler	cfctl	status	notes
+ai	cfctl ai	full	+ ai run, ai markdown, ai tasks, ai authors
+ai finetune	cfctl ai finetune	full	+ public, delete
+ai finetune create	cfctl ai finetune create	full	uploads adapter_config.json + adapter_model.safetensors
+ai finetune list	cfctl ai finetune list	full	
+ai models	cfctl ai models	full	+ search, get
+ai models list	cfctl ai models list	full	--task/--author/--search
+ai models schema	cfctl ai models schema	full	
+ai-search	cfctl ai-search	full	+ items, tokens
+ai-search create	cfctl ai-search create	full	
+ai-search delete	cfctl ai-search delete	full	
+ai-search get	cfctl ai-search get	full	
+ai-search jobs	cfctl ai-search jobs	full	
+ai-search jobs cancel	cfctl ai-search jobs cancel	full	
+ai-search jobs create	cfctl ai-search jobs create	full	
+ai-search jobs get	cfctl ai-search jobs get	full	
+ai-search jobs list	cfctl ai-search jobs list	full	
+ai-search jobs logs	cfctl ai-search jobs logs	full	
+ai-search list	cfctl ai-search list	full	
+ai-search namespace	cfctl ai-search namespace	full	
+ai-search namespace create	cfctl ai-search namespace create	full	
+ai-search namespace delete	cfctl ai-search namespace delete	full	
+ai-search namespace get	cfctl ai-search namespace get	full	
+ai-search namespace list	cfctl ai-search namespace list	full	
+ai-search namespace update	cfctl ai-search namespace update	full	
+ai-search search	cfctl ai-search search	full	
+ai-search stats	cfctl ai-search stats	full	
+ai-search update	cfctl ai-search update	full	
+auth	cfctl auth	partial	token-based: login/logout/status/setup; no OAuth or named profiles
+auth activate	—	not-applicable	per-directory profiles; use CFCTL_CONFIG_DIR or CFCTL_TOKEN per project
+auth create	—	not-applicable	named OAuth profiles; cfctl uses one API token (CFCTL_TOKEN / CFCTL_CONFIG_DIR to switch)
+auth deactivate	—	not-applicable	see auth activate
+auth delete	—	not-applicable	see auth create
+auth keyring	—	not-applicable	cfctl stores an API token in ~/.config/cfctl/token (0600), not an OAuth keychain entry
+auth list	—	not-applicable	see auth create
+auth token	cfctl auth status	partial	cfctl never prints the stored token; status shows its source and type
+browser	cfctl browser	full	+ get, screenshot, pdf, markdown, content, links
+browser close	cfctl browser close	full	
+browser create	cfctl browser create	full	prints the DevTools URL instead of opening a browser
+browser list	cfctl browser list	full	
+browser view	cfctl browser view	full	prints the DevTools URL; --target
+cert	cfctl cert	full	+ get, associations
+cert delete	cfctl cert delete	full	
+cert list	cfctl cert list	full	
+cert upload	cfctl cert upload	full	
+cert upload certificate-authority	cfctl cert upload certificate-authority	full	
+cert upload mtls-certificate	cfctl cert upload mtls-certificate	full	
+complete	cfctl completion	full	bash, zsh, fish, powershell
+containers	cfctl containers	full	+ versions
+containers build	cfctl containers build	partial	wraps docker build --platform linux/amd64 (+ --push); no wrangler.jsonc container config
+containers delete	cfctl containers delete	full	
+containers images	cfctl containers images	full	
+containers images delete	cfctl containers images delete	full	manifest delete + layer GC
+containers images list	cfctl containers images list	full	registry v2 catalog with short-lived pull creds (a POST, so not in --read-only)
+containers info	cfctl containers info	full	name or ID
+containers instances	cfctl containers instances	full	
+containers list	cfctl containers list	full	
+containers push	cfctl containers push	full	docker login via stdin with short-lived API credentials, tag, push
+containers registries	cfctl containers registries	full	
+containers registries configure	cfctl containers registries configure	partial	auth config via --data; no secrets-store prompting
+containers registries credentials	cfctl containers registries credentials	full	password redacted unless --reveal
+containers registries delete	cfctl containers registries delete	full	
+containers registries list	cfctl containers registries list	full	
+containers ssh	cfctl containers ssh	not-applicable	interactive SSH over WebSocket; stub points to wrangler
+dev	cfctl dev	not-applicable	local workerd/Miniflare runtime; stub points to npx wrangler dev
+docs	cfctl docs	full	renders the embedded README/docs offline instead of opening a browser; --search finds topics
+email	cfctl email	full	
+email routing	cfctl email routing	full	+ catch-all get|set
+email routing addresses	cfctl email routing addresses list|get|create|delete	full	
+email routing disable	cfctl email routing disable	full	confirms
+email routing dns	cfctl email routing dns get|unlock	full	
+email routing enable	cfctl email routing enable	full	
+email routing list	cfctl email routing list	full	
+email routing rules	cfctl email routing rules list|get|create|update|delete	full	--to with --forward/--worker/--drop
+email routing settings	cfctl email routing settings	full	
+email sending	cfctl email sending	full	
+email sending disable	cfctl email sending disable	full	
+email sending dns	cfctl email sending dns get	full	
+email sending enable	cfctl email sending enable	full	
+email sending list	cfctl email sending list	full	
+email sending send	cfctl email sending send	full	attachments, headers, cc/bcc, reply-to
+email sending send-raw	cfctl email sending send-raw	full	
+email sending settings	cfctl email sending settings	full	
+flagship	cfctl flagship	full	
+flagship apps	cfctl flagship apps	full	
+flagship apps create	cfctl flagship apps create	full	
+flagship apps delete	cfctl flagship apps delete	full	
+flagship apps get	cfctl flagship apps get	full	
+flagship apps list	cfctl flagship apps list	full	
+flagship apps ls	cfctl flagship apps ls	full	alias of list
+flagship apps rm	cfctl flagship apps rm	full	alias of delete
+flagship apps update	cfctl flagship apps update	full	
+flagship flags	cfctl flagship flags	full	
+flagship flags changelog	cfctl flagship flags changelog	full	
+flagship flags create	cfctl flagship flags create	partial	--variation/--rule-json; no "serve=...; when=..." rule DSL
+flagship flags delete	cfctl flagship flags delete	full	
+flagship flags disable	cfctl flagship flags disable	full	
+flagship flags enable	cfctl flagship flags enable	full	
+flagship flags eval	cfctl flagship flags eval	full	alias
+flagship flags evaluate	cfctl flagship flags evaluate	full	
+flagship flags get	cfctl flagship flags get	full	
+flagship flags history	cfctl flagship flags history	full	alias of changelog
+flagship flags inspect	cfctl flagship flags inspect	full	alias of get
+flagship flags list	cfctl flagship flags list	full	
+flagship flags ls	cfctl flagship flags ls	full	alias of list
+flagship flags pull	cfctl flagship flags pull	partial	writes a portable JSON file; wrangler imports into its local Miniflare flag store
+flagship flags rm	cfctl flagship flags rm	full	alias of delete
+flagship flags rollout	cfctl flagship flags rollout	full	
+flagship flags rules	cfctl flagship flags rules	partial	replace rules with --rule-json; no rule DSL or add/remove-by-priority
+flagship flags set	cfctl flagship flags set	full	
+flagship flags split	cfctl flagship flags split	full	
+flagship flags update	cfctl flagship flags update	partial	full flag via --data; use enable/disable/set/rollout/split/rules for edits
+init	cfctl init	partial	scaffolds worker/scheduled/assets templates offline; no C3 framework templates or npm install
+login	cfctl auth login	full	API token (hidden prompt or stdin) instead of OAuth
+logout	cfctl auth logout	full	
+mtls-certificate	cfctl mtls-certificate	full	+ get, associations
+mtls-certificate delete	cfctl mtls-certificate delete	full	
+mtls-certificate list	cfctl mtls-certificate list	full	
+mtls-certificate upload	cfctl mtls-certificate upload	full	
+pages	cfctl pages	full	
+pages deploy	cfctl pages deploy	partial	Direct Upload (hash, check-missing, upload, upsert, deployment) incl. _headers/_redirects/_routes.json and a pre-built _worker.js; functions/ is not bundled
+pages deployment	cfctl pages deployment	full	+ get, retry, rollback, logs
+pages deployment create	cfctl pages deploy	partial	same as pages deploy
+pages deployment delete	cfctl pages deployment delete	full	--force for aliased deployments
+pages deployment list	cfctl pages deployment list	full	--env production|preview
+pages deployment tail	cfctl pages deployment tail	full	WebSocket trace-v1; --status/--method/--header/--ip/--search/--sampling-rate, --format json
+pages dev	cfctl pages dev	not-applicable	local runtime; stub points to npx wrangler pages dev
+pages download	cfctl pages download	full	
+pages download config	cfctl pages download config	partial	writes wrangler.jsonc (vars + common bindings); output dir is a guess
+pages functions	cfctl pages functions	not-applicable	bundling only
+pages functions build	cfctl pages functions build	not-applicable	esbuild bundling of functions/; deploy a pre-built _worker.js with cfctl pages deploy
+pages project	cfctl pages project	full	+ get, edit, purge-build-cache
+pages project create	cfctl pages project create	full	Direct Upload projects; Git-connected needs dashboard OAuth (or --data source)
+pages project delete	cfctl pages project delete	full	confirms; --yes
+pages project list	cfctl pages project list	full	
+pages secret	cfctl pages secret	full	
+pages secret bulk	cfctl pages secret bulk	full	JSON object file or stdin
+pages secret delete	cfctl pages secret delete	full	
+pages secret list	cfctl pages secret list	full	names only
+pages secret put	cfctl pages secret put	full	value from hidden prompt or stdin; --env
+setup	cfctl setup	not-applicable	framework autoconfig rewrites local build config; stub points to wrangler setup
+tunnel	cfctl tunnel	full	+ token, config, connections, cleanup, route, vnet
+tunnel create	cfctl tunnel create	full	remotely managed by default; --local writes the credentials file (0600)
+tunnel delete	cfctl tunnel delete	full	
+tunnel info	cfctl tunnel info	full	
+tunnel list	cfctl tunnel list	full	
+tunnel quick-start	cfctl tunnel quick-start	full	execs cloudflared tunnel --url
+tunnel run	cfctl tunnel run	full	execs cloudflared with TUNNEL_TOKEN in the environment
+turnstile	cfctl turnstile	full	+ rotate-secret
+turnstile widget	cfctl turnstile widget	full	
+turnstile widget create	cfctl turnstile widget create	full	
+turnstile widget delete	cfctl turnstile widget delete	full	
+turnstile widget get	cfctl turnstile widget get	full	
+turnstile widget list	cfctl turnstile widget list	full	
+turnstile widget update	cfctl turnstile widget update	full	
+types	cfctl types	not-applicable	derives types from the local workerd version; stub points to wrangler types
+vpc	cfctl vpc	full	
+vpc service	cfctl vpc service	full	
+vpc service create	cfctl vpc service create	full	
+vpc service delete	cfctl vpc service delete	full	
+vpc service get	cfctl vpc service get	full	
+vpc service list	cfctl vpc service list	full	
+vpc service update	cfctl vpc service update	full	
+whoami	cfctl whoami	full	
+workflows	cfctl workflows	full	+ versions list|get|graph
+workflows delete	cfctl workflows delete	full	
+workflows describe	cfctl workflows describe	full	
+workflows instances	cfctl workflows instances	full	
+workflows instances delete	cfctl workflows instances delete	full	
+workflows instances describe	cfctl workflows instances describe	full	steps, attempts, errors; "latest"
+workflows instances list	cfctl workflows instances list	full	
+workflows instances pause	cfctl workflows instances pause	full	
+workflows instances restart	cfctl workflows instances restart	full	
+workflows instances resume	cfctl workflows instances resume	full	
+workflows instances send-event	cfctl workflows instances send-event	full	
+workflows instances terminate	cfctl workflows instances terminate	full	
+workflows list	cfctl workflows list	full	
+workflows trigger	cfctl workflows trigger	full	
