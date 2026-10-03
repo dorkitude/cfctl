@@ -20,8 +20,8 @@
 
 - Close the remaining wrangler gaps that are API-backed: `tail` reconnect and
   `--ip self`, route/domain removal on deploy
-- Read-only smoke test across every read command (`make smoke`)
-- First tagged release (`v0.2.N`)
+- ~~Read-only smoke test across every read command (`make smoke`)~~ (done)
+- ~~First public release~~ (`v0.2.710`)
 
 ## Principles
 
@@ -35,7 +35,7 @@
 - TUI (Bubble Tea): tabs, domain and zone dashboard, guarded mutations
 - `cfctl demo`: the TUI against a seeded in-memory backend
 - ~~`accounts list`~~ (done); an account switch command
-- Interactive installer / Homebrew tap (once the repo is public)
+- ~~Homebrew tap, Scoop bucket, .deb/.rpm packages~~ (done in v0.2.710); a hosted apt repository
 
 ## Phase 2: DNS power features
 

@@ -1,6 +1,6 @@
 # Smoke-test results
 
-## Results (2026-10-03, zone playretcon.com)
+## Results (2026-10-03, against a real account and one of its zones)
 
 ### Hand-written read commands (`make smoke`)
 

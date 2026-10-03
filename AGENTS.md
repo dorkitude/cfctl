@@ -42,7 +42,7 @@ make smoke              # read-only smoke test against a real account (needs a t
   transport; raw client, envelope, pagination, multipart
 - `internal/apispec/` - Embedded OpenAPI spec + generated ops table (`ops_gen.go`,
   don't edit; `go generate ./...`) + `api describe` rendering
-- `internal/version/` - `Version = "0.2.NNN"`
+- `internal/version/` - `Version = "0.MINOR.PATCH"` (e.g. `0.2.710`)
 - `internal/client/` - SDK client construction, account + zone resolution, error formatting
 - `internal/config/` - Viper config + token storage in `~/.config/cfctl/`
 - `internal/ui/` - Lipgloss palette and styled helpers
@@ -85,7 +85,7 @@ make smoke              # read-only smoke test against a real account (needs a t
   via `option.WithHTTPClient`). That is where the read-only guard lives; never
   build another `http.Client`.
 - Destructive commands confirm, with `--yes` to skip; no prompt in read-only mode.
-- Bump `internal/version` (`0.2.NNN`) and add a `CHANGELOG.md` entry at each
+- Bump `internal/version` (next patch, e.g. `0.2.711`) and add a `CHANGELOG.md` entry at each
   meaningful milestone.
 - Keep docs in step with code: a new or renamed command or flag updates its
   `docs/commands/*.md` page (and the README if it's in the Quick Start); a
@@ -95,6 +95,7 @@ make smoke              # read-only smoke test against a real account (needs a t
 
 ## Releasing
 
-Only the maintainer releases. Version `0.2.NNN` is tagged `v0.2.N`
-(`0.2.012` → `git tag v0.2.12`); pushing the tag runs the `release` workflow
-(vet + tests, then GoReleaser). Agents must not create or push tags.
+Only the maintainer releases. Version `X.Y.Z` is tagged `vX.Y.Z`; pushing the
+tag runs the `release` workflow (vet + tests, then GoReleaser), and
+`scripts/publish-packages.sh vX.Y.Z` updates the Homebrew tap and Scoop
+bucket. Agents must not create or push tags.
