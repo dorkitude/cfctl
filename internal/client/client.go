@@ -4,8 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"net"
 	"net/http"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -29,6 +33,44 @@ func (a *App) VerifyToken(ctx context.Context) (*TokenInfo, error) {
 	return VerifyToken(ctx, a.Client, a.token, []string{a.AccountID}, config.TokenType())
 }
 
+// RequestTimeout bounds each HTTP request attempt.
+var RequestTimeout = 20 * time.Second
+
+// Debug, when true, logs METHOD path status duration for every API request
+// to stderr. Headers, query strings, and bodies are never logged.
+var Debug bool
+
+// DebugOut is where debug lines go (stderr; swapped in tests).
+var DebugOut io.Writer = os.Stderr
+
+func debugMiddleware(req *http.Request, next option.MiddlewareNext) (*http.Response, error) {
+	if !Debug {
+		return next(req)
+	}
+	start := time.Now()
+	resp, err := next(req)
+	status := "error"
+	if err != nil {
+		status = "error: " + err.Error()
+		if IsTimeout(err) {
+			status = "timeout"
+		}
+	} else {
+		status = strconv.Itoa(resp.StatusCode)
+	}
+	fmt.Fprintf(DebugOut, "debug: %s %s -> %s (%s)\n", req.Method, req.URL.Path, status, time.Since(start).Round(time.Millisecond))
+	return resp, err
+}
+
+// IsTimeout reports whether err is a context deadline or network timeout.
+func IsTimeout(err error) bool {
+	if errors.Is(err, context.DeadlineExceeded) {
+		return true
+	}
+	var ne net.Error
+	return errors.As(err, &ne) && ne.Timeout()
+}
+
 // NewClient builds a Cloudflare SDK client that authenticates with token.
 //
 // The SDK also reads CLOUDFLARE_API_KEY / CLOUDFLARE_EMAIL from the
@@ -39,6 +81,8 @@ func NewClient(token string) *cloudflare.Client {
 		option.WithHeaderDel("X-Auth-Email"),
 		option.WithHeaderDel("X-Auth-User-Service-Key"),
 		option.WithAPIToken(token),
+		option.WithRequestTimeout(RequestTimeout),
+		option.WithMiddleware(debugMiddleware),
 	}
 	if base := config.APIBaseURL(); base != "" {
 		opts = append(opts, option.WithBaseURL(base))
@@ -108,7 +152,7 @@ func ValidateToken(ctx context.Context, token string, candidates []string, hint 
 //
 // The user endpoint is tried first, unless the token starts with cfat_ or hint
 // says "account". If it rejects the token (401), each candidate account ID is
-// tried; with no candidates, the accounts the token can list are used.
+// tried.
 func VerifyToken(ctx context.Context, c *cloudflare.Client, token string, candidates []string, hint string) (*TokenInfo, error) {
 	var userErr error
 	if hint != config.TokenTypeAccount && !strings.HasPrefix(token, AccountTokenPrefix) {
@@ -119,6 +163,9 @@ func VerifyToken(ctx context.Context, c *cloudflare.Client, token string, candid
 			}
 			return &TokenInfo{ID: resp.ID, Status: string(resp.Status), ExpiresOn: resp.ExpiresOn, Type: config.TokenTypeUser}, nil
 		}
+		if IsTimeout(err) {
+			return nil, fmt.Errorf("invalid token: %w", APIError(err))
+		}
 		if StatusCode(err) != http.StatusUnauthorized && StatusCode(err) != http.StatusForbidden {
 			return nil, fmt.Errorf("invalid token: %w", APIError(err))
 		}
@@ -126,18 +173,14 @@ func VerifyToken(ctx context.Context, c *cloudflare.Client, token string, candid
 	}
 
 	ids := dedupe(candidates)
-	if len(ids) == 0 {
-		if accts, err := ListAccounts(ctx, c); err == nil {
-			for _, a := range accts {
-				ids = append(ids, a.ID)
-			}
-		}
-	}
 
 	var acctErr error
 	for _, id := range ids {
 		resp, err := c.Accounts.Tokens.Verify(ctx, accounts.TokenVerifyParams{AccountID: cloudflare.F(id)})
 		if err != nil {
+			if IsTimeout(err) {
+				return nil, fmt.Errorf("token verification failed: %w", APIError(err))
+			}
 			acctErr = err
 			continue
 		}
@@ -174,15 +217,33 @@ func dedupe(in []string) []string {
 	return out
 }
 
+// maxAccountPages caps ListAccounts so a misbehaving API can't loop forever.
+const maxAccountPages = 20
+
 // ListAccounts returns every account the token can see (GET /accounts).
+//
+// It pages explicitly instead of using the SDK auto-pager: it stops on an
+// empty page, at result_info.total_pages, or after maxAccountPages.
 func ListAccounts(ctx context.Context, c *cloudflare.Client) ([]accounts.Account, error) {
 	var out []accounts.Account
-	iter := c.Accounts.ListAutoPaging(ctx, accounts.AccountListParams{})
-	for iter.Next() {
-		out = append(out, iter.Current())
-	}
-	if err := iter.Err(); err != nil {
-		return nil, APIError(err)
+	for page := 1; page <= maxAccountPages; page++ {
+		var res struct {
+			Result     []accounts.Account `json:"result"`
+			ResultInfo struct {
+				Page       int `json:"page"`
+				TotalPages int `json:"total_pages"`
+			} `json:"result_info"`
+		}
+		err := c.Get(ctx, "accounts", nil, &res,
+			option.WithQuery("page", strconv.Itoa(page)),
+			option.WithQuery("per_page", "50"))
+		if err != nil {
+			return nil, APIError(err)
+		}
+		out = append(out, res.Result...)
+		if len(res.Result) == 0 || res.ResultInfo.TotalPages == 0 || page >= res.ResultInfo.TotalPages {
+			break
+		}
 	}
 	return out, nil
 }
@@ -259,6 +320,9 @@ func Messages(err error) string {
 func APIError(err error) error {
 	if err == nil {
 		return nil
+	}
+	if IsTimeout(err) {
+		return fmt.Errorf("timed out talking to the Cloudflare API (%w)", context.DeadlineExceeded)
 	}
 	var apiErr *cloudflare.Error
 	if errors.As(err, &apiErr) {

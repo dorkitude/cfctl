@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"runtime/debug"
 
+	"github.com/dorkitude/cfctl/internal/client"
 	"github.com/dorkitude/cfctl/internal/config"
 	"github.com/dorkitude/cfctl/internal/ui"
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ var (
 	jsonOutput  bool
 	accountFlag string
 	noColorFlag bool
+	debugFlag   bool
 )
 
 // BinName returns the name this binary was invoked as.
@@ -41,6 +43,7 @@ A CLI for Cloudflare Registrar domains, zones, and DNS records.
 		if noColorFlag || os.Getenv("NO_COLOR") != "" {
 			ui.DisableColor()
 		}
+		client.Debug = debugFlag || (os.Getenv("CFCTL_DEBUG") != "" && os.Getenv("CFCTL_DEBUG") != "0")
 		return config.Init(cmd.Flags().Lookup("account"))
 	},
 }
@@ -73,5 +76,6 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&jsonOutput, "json", false, "Output as JSON")
 	rootCmd.PersistentFlags().StringVar(&accountFlag, "account", "", "Cloudflare account ID (overrides cached)")
 	rootCmd.PersistentFlags().BoolVar(&noColorFlag, "no-color", false, "Disable colored output")
+	rootCmd.PersistentFlags().BoolVar(&debugFlag, "debug", false, "Log each API request (method, path, status, duration) to stderr; also CFCTL_DEBUG=1")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }

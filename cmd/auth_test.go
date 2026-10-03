@@ -1,21 +1,20 @@
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/cloudflare/cloudflare-go/v7/accounts"
 )
 
 func TestAuthLoginPipedToken(t *testing.T) {
 	f := newFakeCF(t)
 	dir := testEnv(t, f)
 
-	stdout, stderr, err := runCLI(t, goodToken+"\n", "auth", "login")
+	stdout, stderr, err := runCLI(t, goodToken+"\n", "auth", "login", "--account", acctID)
 	if err != nil {
 		t.Fatalf("login: %v\nstderr: %s", err, stderr)
 	}
@@ -24,12 +23,12 @@ func TestAuthLoginPipedToken(t *testing.T) {
 		t.Errorf("unexpected login output:\n%s", stdout)
 	}
 
-	// Verified the token, then discovered the account.
+	// Verified the token; no account discovery.
 	if r := f.find("GET", "/user/tokens/verify"); r == nil || r.Auth != "Bearer "+goodToken {
 		t.Errorf("token was not verified with bearer auth: %+v", r)
 	}
-	if f.find("GET", "/accounts") == nil {
-		t.Error("accounts were not listed")
+	if f.find("GET", "/accounts") != nil {
+		t.Error("login must not list accounts")
 	}
 
 	// Files and permissions.
@@ -69,7 +68,7 @@ func TestAuthLoginJSON(t *testing.T) {
 	f := newFakeCF(t)
 	testEnv(t, f)
 
-	stdout, stderr, err := runCLI(t, goodToken, "auth", "login", "--json")
+	stdout, stderr, err := runCLI(t, goodToken, "auth", "login", "--json", "--account", acctID)
 	if err != nil {
 		t.Fatalf("login: %v", err)
 	}
@@ -87,7 +86,7 @@ func TestAuthLoginBadToken(t *testing.T) {
 	f := newFakeCF(t)
 	dir := testEnv(t, f)
 
-	stdout, stderr, err := runCLI(t, badToken, "auth", "login")
+	stdout, stderr, err := runCLI(t, badToken, "auth", "login", "--account", acctID)
 	if err == nil || !strings.Contains(err.Error(), "invalid token") || !strings.Contains(err.Error(), "Invalid API Token") {
 		t.Fatalf("expected invalid token error, got %v", err)
 	}
@@ -100,59 +99,62 @@ func TestAuthLoginBadToken(t *testing.T) {
 func TestAuthLoginEmptyToken(t *testing.T) {
 	f := newFakeCF(t)
 	testEnv(t, f)
-	if _, _, err := runCLI(t, "\n\n", "auth", "login"); err == nil || !strings.Contains(err.Error(), "empty") {
+	if _, _, err := runCLI(t, "\n\n", "auth", "login", "--account", acctID); err == nil || !strings.Contains(err.Error(), "empty") {
 		t.Fatalf("expected empty token error, got %v", err)
 	}
 }
 
-func TestAuthLoginMultipleAccounts(t *testing.T) {
+func TestAuthLoginAccountIDFirst(t *testing.T) {
 	f := newFakeCF(t)
 	dir := testEnv(t, f)
-	f.accounts = append(f.accounts, map[string]interface{}{"id": acctID2, "name": "Other", "type": "standard"})
 
-	// --account picks one explicitly.
+	// No --account, no cache, no terminal: fail before reading the token.
+	_, _, err := runCLI(t, goodToken, "auth", "login")
+	if err == nil || !strings.Contains(err.Error(), "--account") || !strings.Contains(err.Error(), "token not read") {
+		t.Fatalf("expected --account error, got %v", err)
+	}
+	if n := len(f.Requests()); n != 0 {
+		t.Errorf("no API calls expected, got %d", n)
+	}
+
+	// Malformed --account is rejected.
+	if _, _, err := runCLI(t, goodToken, "auth", "login", "--account", "nope"); err == nil || !strings.Contains(err.Error(), "32 hex") {
+		t.Errorf("expected invalid account ID error, got %v", err)
+	}
+
+	// Explicit account for a user token: stored as given.
 	if _, _, err := runCLI(t, goodToken, "auth", "login", "--account", acctID2); err != nil {
 		t.Fatalf("login --account: %v", err)
 	}
-	cfg, _ := os.ReadFile(filepath.Join(dir, "config.yaml"))
-	if !strings.Contains(string(cfg), acctID2) {
-		t.Errorf("expected %s in config, got:\n%s", acctID2, cfg)
+	if !strings.Contains(readConfig(t, dir), "account_id: "+acctID2) {
+		t.Error("account ID not stored")
 	}
 
-	// Unknown --account is rejected.
-	_, _, err := runCLI(t, goodToken, "auth", "login", "--force", "--account", "nope")
-	if err == nil || !strings.Contains(err.Error(), "not visible") {
-		t.Errorf("expected not-visible error, got %v", err)
+	// After logout the cached account ID is reused for a piped login.
+	if _, _, err := runCLI(t, "", "auth", "logout"); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := runCLI(t, goodToken, "auth", "login"); err != nil {
+		t.Fatalf("login with cached account: %v", err)
 	}
 }
 
-func TestPickAccount(t *testing.T) {
-	a := []accounts.Account{{ID: acctID, Name: "One"}, {ID: acctID2, Name: "Two"}}
-	noTTY := func() (io.Reader, func()) { return nil, func() {} }
-	tty := func(s string) func() (io.Reader, func()) {
-		return func() (io.Reader, func()) { return strings.NewReader(s), func() {} }
+func TestPromptAccountID(t *testing.T) {
+	var out strings.Builder
+	id, err := promptAccountID(bufio.NewReader(strings.NewReader("nope\nABC\n"+strings.ToUpper(acctID)+"\n")), &out)
+	if err != nil || id != acctID {
+		t.Fatalf("got %q %v", id, err)
 	}
-
-	if got, err := pickAccount(a[:1], "", "", noTTY); err != nil || got.ID != acctID {
-		t.Errorf("single account: %v %v", got.ID, err)
+	if strings.Count(out.String(), "Cloudflare account ID: ") != 3 || !strings.Contains(out.String(), "32 hex") {
+		t.Errorf("expected re-prompts:\n%s", out.String())
 	}
-	if got, err := pickAccount(a, "two", "", noTTY); err != nil || got.ID != acctID2 {
-		t.Errorf("by name: %v %v", got.ID, err)
+	if _, err := promptAccountID(bufio.NewReader(strings.NewReader("bad\n")), io.Discard); err == nil {
+		t.Error("expected error at EOF without a valid ID")
 	}
-	if got, err := pickAccount(a, "", acctID2, noTTY); err != nil || got.ID != acctID2 {
-		t.Errorf("cached: %v %v", got.ID, err)
-	}
-	if _, err := pickAccount(a, "", "", noTTY); err == nil || !strings.Contains(err.Error(), "--account") {
-		t.Errorf("no tty: expected --account hint, got %v", err)
-	}
-	if got, err := pickAccount(a, "", "", tty("2\n")); err != nil || got.ID != acctID2 {
-		t.Errorf("prompt: %v %v", got.ID, err)
-	}
-	if _, err := pickAccount(a, "", "", tty("9\n")); err == nil {
-		t.Error("prompt: expected error for out-of-range choice")
-	}
-	if _, err := pickAccount(nil, "", "", noTTY); err == nil {
-		t.Error("expected error for no accounts")
+	for in, want := range map[string]bool{acctID: true, strings.ToUpper(acctID): false, acctID[:31]: false, acctID + "0": false, "": false} {
+		if validAccountID(in) != want {
+			t.Errorf("validAccountID(%q) != %v", in, want)
+		}
 	}
 }
 

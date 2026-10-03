@@ -63,8 +63,12 @@ cfctl domains list
 
 ### Logging in without the token touching anything else
 
-`auth login` reads the token from a hidden prompt when stdin is a terminal, and
-from stdin when it is piped. Either way it never echoes the token.
+`auth login` asks for your **account ID first** (unless `--account` is given or
+one is cached in `config.yaml`): 32 hex characters, shown on the dashboard
+account home ("Account ID"), in the dashboard URL, or by `wrangler whoami`.
+Then it reads the token from a hidden prompt when stdin is a terminal, or from
+stdin when piped. A piped token needs `--account <id>` (there is no terminal to
+ask on). It never echoes the token.
 
 ```bash
 # On the machine itself (or over `ssh -t`, which gives you a terminal):
@@ -72,12 +76,14 @@ cfctl auth login
 ssh -t myhost cfctl auth login
 
 # Piped (e.g. from a password manager or clipboard on your laptop):
-printf '%s' "$CLOUDFLARE_API_TOKEN" | cfctl auth login
-pbpaste | ssh myhost cfctl auth login
+printf '%s' "$CLOUDFLARE_API_TOKEN" | cfctl auth login --account <account-id>
+pbpaste | ssh myhost cfctl auth login --account <account-id>
 ```
 
-If the token can see several accounts, `login` asks you to pick one (when a
-terminal is available) or tells you to pass `--account <id>`.
+Verification uses that account ID directly (no account discovery), with
+timeouts, so it can't hang. Add `--debug` (or `CFCTL_DEBUG=1`) to log each API
+request's method, path, status, and duration to stderr (never headers, bodies,
+or the token).
 
 ## CLI Guide
 
@@ -86,6 +92,7 @@ terminal is available) or tells you to pass `--account <id>`.
 - `--json` output JSON instead of styled text
 - `--account <id>` override the cached Cloudflare account ID
 - `--no-color` disable colored output (also honors `NO_COLOR`)
+- `--debug` log API requests (method, path, status, duration) to stderr
 - `--version` print the version
 
 ### Commands
@@ -93,8 +100,8 @@ terminal is available) or tells you to pass `--account <id>`.
 #### Authentication
 
 ```bash
-cfctl auth login                 # hidden prompt, or piped stdin
-cfctl auth login --account <id>  # choose an account explicitly
+cfctl auth login                 # asks for account ID, then token (hidden)
+cfctl auth login --account <id>  # skip the account ID prompt (required when piping)
 cfctl auth login --force         # replace an existing saved token
 cfctl auth logout
 cfctl auth status
@@ -196,8 +203,8 @@ Both token kinds work:
 
 - **User tokens** (My Profile → API Tokens), verified via `/user/tokens/verify`
 - **Account-owned tokens** (Manage Account → Account API Tokens; they start
-  with `cfat_`), verified via `/accounts/{id}/tokens/verify`. `login` finds the
-  owning account itself; pass `--account <id>` if it can't.
+  with `cfat_`), verified via `/accounts/{id}/tokens/verify`. `login` verifies them
+  against the account ID you give it.
 
 The token type is recorded in `config.yaml` (`token_type`) and shown by
 `whoami` and `auth status` (`auth status --verify` checks it live).

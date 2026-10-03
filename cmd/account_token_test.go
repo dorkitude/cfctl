@@ -24,7 +24,7 @@ func TestAccountTokenLogin(t *testing.T) {
 		f := newFakeCF(t)
 		dir := testEnv(t, f)
 
-		stdout, stderr, err := runCLI(t, tok+"\n", "auth", "login", "--json")
+		stdout, stderr, err := runCLI(t, tok+"\n", "auth", "login", "--json", "--account", acctID)
 		if err != nil {
 			t.Fatalf("%s: login: %v", tok[:5], err)
 		}
@@ -39,6 +39,9 @@ func TestAccountTokenLogin(t *testing.T) {
 
 		if f.find("GET", "/accounts/"+acctID+"/tokens/verify") == nil {
 			t.Error("account token verify endpoint not called")
+		}
+		if f.find("GET", "/accounts") != nil {
+			t.Error("login must not list accounts")
 		}
 		userTried := f.find("GET", "/user/tokens/verify") != nil
 		if strings.HasPrefix(tok, "cfat_") && userTried {
@@ -108,7 +111,7 @@ func TestAccountTokenInactive(t *testing.T) {
 	f := newFakeCF(t)
 	dir := testEnv(t, f)
 
-	stdout, stderr, err := runCLI(t, disabledAcctToken, "auth", "login")
+	stdout, stderr, err := runCLI(t, disabledAcctToken, "auth", "login", "--account", acctID)
 	if err == nil || !strings.Contains(err.Error(), "disabled") {
 		t.Fatalf("expected inactive token error, got %v", err)
 	}
@@ -121,7 +124,7 @@ func TestAccountTokenInactive(t *testing.T) {
 func TestInvalidTokenMentionsBothEndpoints(t *testing.T) {
 	f := newFakeCF(t)
 	testEnv(t, f)
-	_, _, err := runCLI(t, badToken, "auth", "login")
+	_, _, err := runCLI(t, badToken, "auth", "login", "--account", acctID)
 	if err == nil || !strings.Contains(err.Error(), "/user/tokens/verify") || !strings.Contains(err.Error(), "/accounts/{id}/tokens/verify") || !strings.Contains(err.Error(), "--account") {
 		t.Fatalf("expected both endpoints + --account hint, got %v", err)
 	}

@@ -10,6 +10,9 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
+
+	"github.com/dorkitude/cfctl/internal/client"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -48,6 +51,11 @@ type fakeCF struct {
 	accounts []map[string]interface{}
 	domains  map[string]map[string]interface{} // registrar registrations by name
 	records  []map[string]interface{}
+	// accountsForever makes GET /accounts return the same non-empty page
+	// for every page number, with no result_info.
+	accountsForever bool
+	// slow delays every response.
+	slow time.Duration
 }
 
 func newFakeCF(t *testing.T) *fakeCF {
@@ -120,6 +128,13 @@ func (f *fakeCF) serve(w http.ResponseWriter, r *http.Request) {
 	f.mu.Lock()
 	f.requests = append(f.requests, req)
 	f.mu.Unlock()
+	if f.slow > 0 {
+		select {
+		case <-time.After(f.slow):
+		case <-r.Context().Done():
+			return
+		}
+	}
 
 	token := strings.TrimPrefix(req.Auth, "Bearer ")
 	accountToken := token == acctToken || token == acctTokenNoPrefix || token == disabledAcctToken
@@ -153,6 +168,9 @@ func (f *fakeCF) serve(w http.ResponseWriter, r *http.Request) {
 
 	case r.Method == "GET" && path == "/user":
 		writeJSON(w, 403, fail(9109, "Unauthorized to access requested resource"))
+
+	case r.Method == "GET" && path == "/accounts" && f.accountsForever:
+		writeJSON(w, 200, ok(f.accounts))
 
 	case r.Method == "GET" && path == "/accounts":
 		if lastPage {
@@ -307,6 +325,8 @@ func runCLI(t *testing.T, stdin string, args ...string) (stdout, stderr string, 
 	errR, errW, _ := os.Pipe()
 	oldIn, oldOut, oldErr := os.Stdin, os.Stdout, os.Stderr
 	os.Stdin, os.Stdout, os.Stderr = in, outW, errW
+	oldDebug := client.DebugOut
+	client.DebugOut = errW
 
 	var wg sync.WaitGroup
 	var outB, errB strings.Builder
@@ -321,13 +341,14 @@ func runCLI(t *testing.T, stdin string, args ...string) (stdout, stderr string, 
 	errW.Close()
 	wg.Wait()
 	os.Stdin, os.Stdout, os.Stderr = oldIn, oldOut, oldErr
+	client.DebugOut = oldDebug
 	return outB.String(), errB.String(), err
 }
 
 // login stores goodToken via piped stdin.
 func login(t *testing.T) {
 	t.Helper()
-	if _, _, err := runCLI(t, goodToken+"\n", "auth", "login"); err != nil {
+	if _, _, err := runCLI(t, goodToken+"\n", "auth", "login", "--account", acctID); err != nil {
 		t.Fatalf("login failed: %v", err)
 	}
 }

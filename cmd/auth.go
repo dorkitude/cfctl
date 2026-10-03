@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
+	"regexp"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/accounts"
@@ -88,83 +89,50 @@ func readToken(in *os.File) (string, error) {
 	return "", nil
 }
 
-// promptTTY returns a reader for interactive prompts, or nil if there is no
-// terminal (e.g. the token was piped over a non-interactive ssh session).
-func promptTTY() (io.Reader, func()) {
-	if term.IsTerminal(int(os.Stdin.Fd())) {
-		return os.Stdin, func() {}
-	}
-	if f, err := os.Open("/dev/tty"); err == nil {
-		return f, func() { f.Close() }
-	}
-	return nil, func() {}
+var accountIDPattern = regexp.MustCompile(`^[0-9a-f]{32}$`)
+
+// validAccountID reports whether id looks like a Cloudflare account ID.
+func validAccountID(id string) bool {
+	return accountIDPattern.MatchString(id)
 }
 
-func accountList(accts []accounts.Account) string {
-	var b strings.Builder
-	for _, a := range accts {
-		fmt.Fprintf(&b, "\n  %s  %s", a.ID, a.Name)
-	}
-	return b.String()
-}
-
-// pickAccount chooses the account to use at login.
-//
-// explicit (--account / CFCTL_ACCOUNT_ID) must match; cached (from an earlier
-// login) is used if still visible; one account is used as-is; several are
-// offered as a numbered prompt when a terminal is available.
-func pickAccount(accts []accounts.Account, explicit, cached string, openTTY func() (io.Reader, func())) (accounts.Account, error) {
-	if len(accts) == 0 {
-		return accounts.Account{}, fmt.Errorf("this token cannot see any accounts; give it Account Settings: Read (see '%s auth setup')", BinName())
-	}
-	if explicit != "" {
-		for _, a := range accts {
-			if a.ID == explicit || strings.EqualFold(a.Name, explicit) {
-				return a, nil
-			}
+// promptAccountID asks for an account ID (visible input) until it gets a
+// 32-character lowercase hex string. Prompts go to w.
+func promptAccountID(r *bufio.Reader, w io.Writer) (string, error) {
+	fmt.Fprintln(w, ui.SubtleStyle.Render("Find it at dash.cloudflare.com → your account home → \"Account ID\" (right sidebar, API section),"))
+	fmt.Fprintln(w, ui.SubtleStyle.Render("or the 32-hex id in the dashboard URL, or `wrangler whoami`."))
+	for attempt := 0; attempt < 5; attempt++ {
+		fmt.Fprint(w, "Cloudflare account ID: ")
+		line, err := r.ReadString('\n')
+		id := strings.ToLower(strings.TrimSpace(line))
+		if validAccountID(id) {
+			return id, nil
 		}
-		return accounts.Account{}, fmt.Errorf("account '%s' is not visible to this token; available:%s", explicit, accountList(accts))
-	}
-	if len(accts) == 1 {
-		return accts[0], nil
-	}
-	if cached != "" {
-		for _, a := range accts {
-			if a.ID == cached {
-				return a, nil
-			}
+		if err != nil {
+			return "", fmt.Errorf("no account ID given; pass --account <id>")
 		}
+		fmt.Fprintln(w, ui.Warn("An account ID is 32 hex characters (0-9, a-f). Try again."))
 	}
-	tty, closeTTY := openTTY()
-	defer closeTTY()
-	if tty == nil {
-		return accounts.Account{}, fmt.Errorf("token can see %d accounts; re-run with --account <id>:%s", len(accts), accountList(accts))
-	}
-
-	fmt.Fprintln(os.Stderr, "This token can see several accounts:")
-	for i, a := range accts {
-		fmt.Fprintf(os.Stderr, "  %d) %s  %s\n", i+1, a.Name, ui.SubtleStyle.Render(a.ID))
-	}
-	fmt.Fprintf(os.Stderr, "Choose [1-%d]: ", len(accts))
-	line, _ := bufio.NewReader(tty).ReadString('\n')
-	n, err := strconv.Atoi(strings.TrimSpace(line))
-	if err != nil || n < 1 || n > len(accts) {
-		return accounts.Account{}, fmt.Errorf("invalid choice %q", strings.TrimSpace(line))
-	}
-	return accts[n-1], nil
+	return "", fmt.Errorf("no valid account ID given; pass --account <id>")
 }
+
+// loginTimeout bounds the whole verify step of `auth login`.
+var loginTimeout = 45 * time.Second
 
 var authLoginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Login with a Cloudflare API token",
-	Long: `Prompts for your API token (hidden input), or reads it from stdin when
-piped, validates it against the Cloudflare API, discovers your account, and
-stores the token locally.
+	Long: `Asks for your Cloudflare account ID first (unless --account is given or one
+is cached), then for your API token (hidden input, or piped stdin). Verifies the
+token (user or account-owned) and stores it locally.
+
+Piped tokens need a known account ID (--account), since there is no terminal
+to ask on.
 
 Examples:
   cfctl auth login
-  printf '%s' "$TOKEN" | cfctl auth login
-  cfctl auth login --account 0123456789abcdef0123456789abcdef`,
+  cfctl auth login --account 0123456789abcdef0123456789abcdef
+  printf '%s' "$TOKEN" | cfctl auth login --account 0123456789abcdef0123456789abcdef`,
 	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
@@ -175,7 +143,25 @@ Examples:
 			return nil
 		}
 
-		if !jsonOutput && term.IsTerminal(int(os.Stdin.Fd())) {
+		interactive := term.IsTerminal(int(os.Stdin.Fd()))
+
+		// Account ID first: --account (or CFCTL_ACCOUNT_ID), then the cached one.
+		accountID := strings.ToLower(config.AccountID())
+		if accountID == "" {
+			if !interactive {
+				return fmt.Errorf("no account ID known: re-run with --account <account-id> (token not read)")
+			}
+			if !jsonOutput {
+				fmt.Println(ui.TitleStyle.Render("🔐 Cloudflare Authentication"))
+			}
+			id, err := promptAccountID(bufio.NewReader(os.Stdin), os.Stderr)
+			if err != nil {
+				return err
+			}
+			accountID = id
+		} else if !validAccountID(accountID) {
+			return fmt.Errorf("invalid account ID %q: expected 32 hex characters", accountID)
+		} else if interactive && !jsonOutput {
 			fmt.Println(ui.TitleStyle.Render("🔐 Cloudflare Authentication"))
 		}
 
@@ -188,48 +174,23 @@ Examples:
 		}
 
 		if !jsonOutput {
-			fmt.Println(ui.SubtleStyle.Render("Validating token..."))
+			fmt.Println(ui.SubtleStyle.Render("Validating token for account " + accountID + "..."))
 		}
 
-		explicit := strings.TrimSpace(accountFlag)
-		if explicit == "" {
-			explicit = strings.TrimSpace(os.Getenv("CFCTL_ACCOUNT_ID"))
-		}
-		cached := ""
-		if cfg, _ := config.Load(); cfg != nil {
-			cached = cfg.AccountID
-		}
-
-		// Account-token verification tries --account only if given, else the
-		// cached account, else every account the token can list.
-		candidates := []string{explicit}
-		if explicit == "" {
-			candidates = []string{cached}
-		}
-		verify, err := client.ValidateToken(ctx, token, candidates, "")
-		if err != nil && explicit == "" && cached != "" {
-			verify, err = client.ValidateToken(ctx, token, nil, "")
-		}
+		vctx, cancel := context.WithTimeout(ctx, loginTimeout)
+		defer cancel()
+		verify, err := client.ValidateToken(vctx, token, []string{accountID}, "")
 		if err != nil {
+			if client.IsTimeout(err) || vctx.Err() != nil {
+				return fmt.Errorf("timed out verifying the token after %s; check connectivity, and that --account %s is right", loginTimeout, accountID)
+			}
 			return err
 		}
 
-		c := client.NewClient(token)
-		var acct accounts.Account
-		if verify.Type == config.TokenTypeAccount {
-			// The owning account is the account; look up its name if allowed.
-			acct.ID = verify.AccountID
-			if a, err := c.Accounts.Get(ctx, accounts.AccountGetParams{AccountID: cloudflare.F(acct.ID)}); err == nil {
-				acct.Name = a.Name
-			}
-		} else {
-			accts, err := client.ListAccounts(ctx, c)
-			if err != nil {
-				return fmt.Errorf("failed to list accounts: %w", err)
-			}
-			if acct, err = pickAccount(accts, explicit, cached, promptTTY); err != nil {
-				return err
-			}
+		// Best-effort account name (needs Account Settings: Read).
+		acct := accounts.Account{ID: accountID}
+		if a, err := client.NewClient(token).Accounts.Get(vctx, accounts.AccountGetParams{AccountID: cloudflare.F(accountID)}); err == nil {
+			acct.Name = a.Name
 		}
 
 		// Everything checks out: save token, then account.
@@ -387,9 +348,10 @@ var authSetupCmd = &cobra.Command{
 		fmt.Println("   → Continue to summary → Create Token → copy it")
 		fmt.Println()
 		fmt.Println(ui.SuccessStyle.Render("4.") + " Run: " + ui.AccentStyle.Render(BinName()+" auth login"))
-		fmt.Println("   → Paste your token when prompted (input is hidden)")
-		fmt.Println("   → Or pipe it: " + ui.AccentStyle.Render("printf '%s' \"$TOKEN\" | "+BinName()+" auth login"))
-		fmt.Println("   → For an account token, add --account <account-id> if login can't find the account")
+		fmt.Println("   → You'll be asked for your account ID first (32 hex chars: dashboard")
+		fmt.Println("     account home → \"Account ID\", the id in the dashboard URL, or `wrangler whoami`)")
+		fmt.Println("   → Then paste your token when prompted (input is hidden)")
+		fmt.Println("   → Or pipe it (account ID required): " + ui.AccentStyle.Render("printf '%s' \"$TOKEN\" | "+BinName()+" auth login --account <id>"))
 		fmt.Println()
 		fmt.Println(ui.SubtleStyle.Render("CFCTL_TOKEN or CLOUDFLARE_API_TOKEN, if set, override the saved token."))
 	},
