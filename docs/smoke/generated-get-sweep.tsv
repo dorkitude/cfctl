@@ -1,0 +1,918 @@
+operationId	tag	path	status	outcome	all_check	detail
+accounts-list-accounts	Accounts	/accounts	200	ok	ok	
+accounts-account-details	Accounts	/accounts/{account_id}	200	ok	-	
+ListAbuseReports	tseng-abuse-complaint-processor_other	/accounts/{account_id}/abuse-reports	200	ok	ok	
+ListSubmittedAbuseReports	tseng-abuse-complaint-processor_other	/accounts/{account_id}/abuse-reports/submitted	200	ok	ok	
+mcp-portals-api-account-tool-call-timeseries	MCP Portal Analytics	/accounts/{account_id}/access/ai-controls/mcp/analytics/tool-calls/timeseries	200	ok	-	
+mcp-portals-api-list-portals	MCP Portal	/accounts/{account_id}/access/ai-controls/mcp/portals	200	ok	ok	
+mcp-portals-api-list-servers	MCP Portal Servers	/accounts/{account_id}/access/ai-controls/mcp/servers	200	ok	ok	
+access-applications-list-access-applications	Access applications	/accounts/{account_id}/access/apps	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-short-lived-certificate-c-as-list-short-lived-certificate-c-as	Access short-lived certificate CAs	/accounts/{account_id}/access/apps/ca	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-authenticator-device-aaguids-list	Access Authenticator Device AAGUIDs	/accounts/{account_id}/access/authenticator_device_aaguids	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-bookmark-applications-(-deprecated)-list-bookmark-applications	Access Bookmark applications (Deprecated)	/accounts/{account_id}/access/bookmarks	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-mtls-authentication-list-mtls-certificates	Access mTLS authentication	/accounts/{account_id}/access/certificates	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-mtls-authentication-list-mtls-certificates-hostname-settings	Access mTLS authentication	/accounts/{account_id}/access/certificates/settings	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-custom-pages-list-custom-pages	Access custom pages	/accounts/{account_id}/access/custom_pages	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-gateway-ca-list-SSH-ca	Gateway CA	/accounts/{account_id}/access/gateway_ca	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-groups-list-access-groups	Access groups	/accounts/{account_id}/access/groups	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-identity-providers-list-access-identity-providers	Access identity providers	/accounts/{account_id}/access/identity_providers	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-idp-federation-grants-list	Access IdP federation grants	/accounts/{account_id}/access/idp_federation_grants	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-key-configuration-get-the-access-key-configuration	Access key configuration	/accounts/{account_id}/access/keys	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-authentication-logs-get-access-authentication-logs	Access authentication logs	/accounts/{account_id}/access/logs/access_requests	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-jit-request-logs-list	Access JIT request logs	/accounts/{account_id}/access/logs/jit_requests	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-scim-update-logs-list-access-scim-update-logs	Access SCIM update logs	/accounts/{account_id}/access/logs/scim/updates	-	skipped	-	required query param idp_id has no enum/default
+zero-trust-organization-get-your-zero-trust-organization	Zero Trust organization	/accounts/{account_id}/access/organizations	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zero-trust-organization-get-your-zero-trust-organization-doh-settings	Zero Trust organization	/accounts/{account_id}/access/organizations/doh	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-policies-list-access-reusable-policies	Access reusable policies	/accounts/{account_id}/access/policies	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-saml-certificates-list-certificate-sets	Access SAML encryption certificates	/accounts/{account_id}/access/saml_certificates	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-service-tokens-list-service-tokens	Access service tokens	/accounts/{account_id}/access/service_tokens	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-tags-list-tags	Access tags	/accounts/{account_id}/access/tags	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+access-user-populations-list-user-populations	Access user populations	/accounts/{account_id}/access/user_populations	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zero-trust-users-get-users	Zero Trust users	/accounts/{account_id}/access/users	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+ip-address-management-address-maps-list-address-maps	IP Address Management Address Maps	/accounts/{account_id}/addressing/address_maps	200	ok	-	
+ip-address-management-list-leases	IP Address Management Leases	/accounts/{account_id}/addressing/leases	200	ok	-	
+ip-address-management-prefixes-list-prefixes	IP Address Management Prefixes	/accounts/{account_id}/addressing/prefixes	200	ok	-	
+dls-account-regional-hostnames-list-regions	DLS Regional Services	/accounts/{account_id}/addressing/regional_hostnames/regions	200	ok	-	
+ip-address-management-service-bindings-list-services	IP Address Management Service Bindings	/accounts/{account_id}/addressing/services	200	ok	-	
+agent-memory-namespace-list	Namespaces	/accounts/{account_id}/agent-memory/namespaces	401	expected-4xx	-	HTTP 401: Not allowed (code 10018)
+aig-billing-get-credit-balance	AI Gateway	/accounts/{account_id}/ai-gateway/billing/credit-balance	200	ok	-	
+aig-billing-get-invoice-history	AI Gateway	/accounts/{account_id}/ai-gateway/billing/invoice-history	200	ok	-	
+aig-billing-get-invoice-preview	AI Gateway	/accounts/{account_id}/ai-gateway/billing/invoice-preview	400	expected-4xx	-	HTTP 400: Customer not onboarded (code 1000)
+aig-billing-get-spending-limit	AI Gateway	/accounts/{account_id}/ai-gateway/billing/spending-limit	200	ok	-	
+aig-billing-get-topup-config	AI Gateway	/accounts/{account_id}/ai-gateway/billing/topup/config	200	ok	-	
+aig-billing-get-topup-limits	AI Gateway	/accounts/{account_id}/ai-gateway/billing/topup/limits	200	ok	-	
+aig-billing-get-usage-history	AI Gateway	/accounts/{account_id}/ai-gateway/billing/usage-history	400	expected-4xx	-	HTTP 400: end_time: Invalid input: expected number, received NaN; start_time: Invalid input: expected number, received NaN (code 1000)
+aig-config-list-account-provider	AI Gateway Custom Providers	/accounts/{account_id}/ai-gateway/custom-providers	200	ok	ok	
+aig-config-list-account-provider-cost	AI Gateway Custom Provider Costs	/accounts/{account_id}/ai-gateway/custom-providers/costs	200	ok	ok	
+aig-config-list-evaluators	AI Gateway Evaluations	/accounts/{account_id}/ai-gateway/evaluation-types	200	ok	ok	
+aig-config-list-gateway	AI Gateway Gateways	/accounts/{account_id}/ai-gateway/gateways	200	ok	ok	
+aig-config-get-logging-state	Account	/accounts/{account_id}/ai-gateway/logging-state	503	5xx	-	HTTP 503: AI Gateway logging state is temporarily unavailable. Please retry. (code 7015)
+ai-search-list-instances	AI Search Instances	/accounts/{account_id}/ai-search/instances	200	ok	ok	
+ai-search-list-namespaces	AI Search Namespaces	/accounts/{account_id}/ai-search/namespaces	200	ok	ok	
+ai-search-list-tokens	AI Search Tokens	/accounts/{account_id}/ai-search/tokens	200	ok	ok	
+workers-ai-search-author	Workers AI	/accounts/{account_id}/ai/authors/search	200	ok	-	
+workers-ai-list-finetunes	Workers AI Finetune	/accounts/{account_id}/ai/finetunes	200	ok	-	
+workers-ai-list-public-finetunes	Workers AI Finetune	/accounts/{account_id}/ai/finetunes/public	200	ok	-	
+workers-ai-get-model-schema	Workers AI	/accounts/{account_id}/ai/models/schema	404	expected-4xx	-	HTTP 404: Model schema not found (code 6002)
+workers-ai-search-model	Workers AI	/accounts/{account_id}/ai/models/search	200	ok	ok	
+workers-ai-search-task	Workers AI	/accounts/{account_id}/ai/tasks/search	200	ok	-	
+workers-ai-get-to-markdown-supported	Workers AI	/accounts/{account_id}/ai/tomarkdown/supported	200	ok	-	
+notification-alert-types-get-alert-types	Notification Alert Types	/accounts/{account_id}/alerting/v3/available_alerts	200	ok	-	
+notification-mechanism-eligibility-get-delivery-mechanism-eligibility	Notification Mechanism Eligibility	/accounts/{account_id}/alerting/v3/destinations/eligible	200	ok	-	
+notification-destinations-with-pager-duty-list-pager-duty-services	Notification destinations with PagerDuty	/accounts/{account_id}/alerting/v3/destinations/pagerduty	200	ok	-	
+notification-webhooks-list-webhooks	Notification webhooks	/accounts/{account_id}/alerting/v3/destinations/webhooks	200	ok	-	
+notification-history-list-history	Notification History	/accounts/{account_id}/alerting/v3/history	200	ok	ok	
+notification-policies-list-notification-policies	Notification policies	/accounts/{account_id}/alerting/v3/policies	200	ok	-	
+notification-silences-list-silences	Notification Silences	/accounts/{account_id}/alerting/v3/silences	200	ok	-	
+analytics-engine-sql-query-get	Analytics Engine	/accounts/{account_id}/analytics_engine/sql	-	skipped	-	required query param query has no enum/default
+artifacts_namespaces_list	Artifacts	/accounts/{account_id}/artifacts/namespaces	403	expected-4xx	-	HTTP 403: Access denied (code 10004)
+audit-logs-get-account-audit-logs	Audit Logs	/accounts/{account_id}/audit_logs	200	ok	ok	
+basin-list-catalogs	Basin Catalog Management	/accounts/{account_id}/basin-catalog	200	ok	-	
+billable-usage-get-v1-account-usage	Billable Usage	/accounts/{account_id}/billable-usage	200	ok	-	
+billable-usage-get-v1-account-usage-info	Billable Usage	/accounts/{account_id}/billable-usage/info	200	ok	-	
+billable-usage-v2-get-account-usage	Billable Usage V2	/accounts/{account_id}/billable/usage	403	expected-4xx	-	HTTP 403: billable-usage.api.resource.insufficient_permissions (code 1171)
+billable-usage-v2-get-account-billable-metrics	Billable Usage V2	/accounts/{account_id}/billable/usage/billable-metrics	403	expected-4xx	-	HTTP 403: billable-usage.api.resource.insufficient_permissions (code 1171)
+account-billing-get-bad-debt	Account Billing	/accounts/{account_id}/billing/bad-debt	400	expected-4xx	-	HTTP 400: Could not route to /accounts/{account_id}/billing/bad-debt, perhaps your object identifier is invalid? (code 7003); No route fo...
+account-billing-get-credits	Account Billing	/accounts/{account_id}/billing/credits	200	ok	-	
+account-billing-history-get-billing-history	Account Billing History	/accounts/{account_id}/billing/history	200	ok	ok	
+account-billing-profile-get-billing-profile	Account Billing Profile	/accounts/{account_id}/billing/profile	200	ok	-	
+account-billing-get-unpaid-invoices	Account Billing	/accounts/{account_id}/billing/unpaid-invoice	400	expected-4xx	-	HTTP 400: Could not route to /accounts/{account_id}/billing/unpaid-invoice, perhaps your object identifier is invalid? (code 7003); No ro...
+usage-analytics-get-account-billing-usage	Usage Analytics	/accounts/{account_id}/billing/usage	400	expected-4xx	-	HTTP 400: Bad Request (code 10010)
+botnet-threat-feed-list-asn	Botnet Threat Feed	/accounts/{account_id}/botnet_feed/configs/asn	200	ok	-	
+getAccountsAccountIdBrandProtectionAlerts	brand_protection	/accounts/{account_id}/brand-protection/alerts	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionBrands	brand_protection	/accounts/{account_id}/brand-protection/brands	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionBrandsPatterns	brand_protection	/accounts/{account_id}/brand-protection/brands/patterns	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionDomainInfo	brand_protection	/accounts/{account_id}/brand-protection/domain-info	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionLogoMatches	logo_match	/accounts/{account_id}/brand-protection/logo-matches	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionLogoMatchesDownload	logo_match	/accounts/{account_id}/brand-protection/logo-matches/download	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionLogos	logo_match	/accounts/{account_id}/brand-protection/logos	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionMatches	domain_search	/accounts/{account_id}/brand-protection/matches	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionMatchesDownload	domain_search	/accounts/{account_id}/brand-protection/matches/download	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionQueries	domain_search	/accounts/{account_id}/brand-protection/queries	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionRecentSubmissions	brand_protection	/accounts/{account_id}/brand-protection/recent-submissions	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionSubmissionInfo	brand_protection	/accounts/{account_id}/brand-protection/submission-info	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionTotalQueries	domain_search	/accounts/{account_id}/brand-protection/total-queries	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionTrackedDomains	brand_protection	/accounts/{account_id}/brand-protection/tracked-domains	403	expected-4xx	-	HTTP 403: Account does not have sufficient permissions
+getAccountsAccountIdBrandProtectionUrlInfo	brand_protection	/accounts/{account_id}/brand-protection/url-info	200	ok	-	
+accounts-browser-extension-config-get	Browser Extension Config	/accounts/{account_id}/browser-extension/config	403	expected-4xx	-	HTTP 403: Browser Extension service is not enabled for this account (code 30003)
+accounts-browser-extension-inventories-list	Browser Extension Inventories	/accounts/{account_id}/browser-extension/config/inventories	403	expected-4xx	-	HTTP 403: Browser Extension service is not enabled for this account (code 30003)
+brapi-get_DevtoolsSessionList	brapi	/accounts/{account_id}/browser-rendering/devtools/session	200	ok	-	
+getAccountLimits	Account	/accounts/{account_id}/builds/account/limits	401	expected-4xx	-	HTTP 401: Invalid token (code 12006)
+getBuildsByVersionIds	Builds	/accounts/{account_id}/builds/builds	-	skipped	-	required query param version_ids has no enum/default
+getLatestBuildsByScripts	Builds	/accounts/{account_id}/builds/builds/latest	-	skipped	-	required query param external_script_ids has no enum/default
+listBuildTokens	Build Tokens	/accounts/{account_id}/builds/tokens	401	expected-4xx	-	HTTP 401: Invalid token (code 12006)
+calls-apps-list	Realtime SFU Apps	/accounts/{account_id}/calls/apps	200	ok	-	
+calls-turn-key-list	Realtime TURN Keys	/accounts/{account_id}/calls/turn_keys	200	ok	-	
+cloudflare-tunnel-list-cloudflare-tunnels	Cloudflare Tunnel	/accounts/{account_id}/cfd_tunnel	200	ok	ok	
+accounts-turnstile-widgets-list	Turnstile	/accounts/{account_id}/challenges/widgets	200	ok	ok	
+get_EventListGet	Event	/accounts/{account_id}/cloudforce-one/events	200	ok	ok	
+get_EventAggregate	Event	/accounts/{account_id}/cloudforce-one/events/aggregate	-	skipped	-	required query param aggregateBy has no enum/default
+get_AttackerList	Attacker	/accounts/{account_id}/cloudforce-one/events/attackers	200	ok	-	
+get_CategoryList	Category	/accounts/{account_id}/cloudforce-one/events/categories	200	ok	-	
+get_CategoryListComplete	Category	/accounts/{account_id}/cloudforce-one/events/categories/catalog	403	expected-4xx	-	HTTP 403: Access denied (code 403)
+get_CountryRead	Country	/accounts/{account_id}/cloudforce-one/events/countries	200	ok	-	
+get_DatasetList	Dataset	/accounts/{account_id}/cloudforce-one/events/dataset	200	ok	-	
+get_GroupList	Groups	/accounts/{account_id}/cloudforce-one/events/dataset/-/groups	403	expected-4xx	-	HTTP 403: Access denied (code 403)
+get_EventGraph	Events	/accounts/{account_id}/cloudforce-one/events/graph	403	expected-4xx	-	HTTP 403: Access denied (code 403)
+get_IndicatorTypesList	Indicator Types	/accounts/{account_id}/cloudforce-one/events/indicator-types	200	ok	-	
+get_LegacyIndicatorTypesList	Indicator Types	/accounts/{account_id}/cloudforce-one/events/indicatorTypes	200	ok	-	
+get_IndicatorList	Indicator	/accounts/{account_id}/cloudforce-one/events/indicators	200	ok	ok	
+get_IndicatorAggregate	Indicator	/accounts/{account_id}/cloudforce-one/events/indicators/aggregate	-	skipped	-	required query param aggregateBy has no enum/default
+get_EventQueryList	Event	/accounts/{account_id}/cloudforce-one/events/queries	200	ok	-	
+get_TagList	Tag	/accounts/{account_id}/cloudforce-one/events/tags	200	ok	ok	
+get_TagCategoryList	TagCategory	/accounts/{account_id}/cloudforce-one/events/tags/categories	200	ok	-	
+get_TaggedActorList	Tag	/accounts/{account_id}/cloudforce-one/events/tags/categories/actors	200	ok	ok	
+get_TargetIndustryList	Target Industry	/accounts/{account_id}/cloudforce-one/events/targetIndustries	200	ok	-	
+get_TargetIndustryListComplete	Target Industry	/accounts/{account_id}/cloudforce-one/events/targetIndustries/catalog	403	expected-4xx	-	HTTP 403: Access denied (code 403)
+cloudforce-one-request-constants	Request for Information (RFI)	/accounts/{account_id}/cloudforce-one/requests/constants	403	expected-4xx	-	HTTP 403: forbidden (code 10403)
+cloudforce-one-priority-quota	Priority Intelligence Requirements (PIR)	/accounts/{account_id}/cloudforce-one/requests/priority/quota	403	expected-4xx	-	HTTP 403: forbidden (code 10403)
+cloudforce-one-request-quota	Request for Information (RFI)	/accounts/{account_id}/cloudforce-one/requests/quota	403	expected-4xx	-	HTTP 403: forbidden (code 10403)
+cloudforce-one-request-types	Request for Information (RFI)	/accounts/{account_id}/cloudforce-one/requests/types	403	expected-4xx	-	HTTP 403: forbidden (code 10403)
+cloudforce-one-list-rules	Rules	/accounts/{account_id}/cloudforce-one/rules	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+cloudforce-one-list-rule-approvals	Approvals	/accounts/{account_id}/cloudforce-one/rules/approvals	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+cloudforce-one-get-exemptions	Rules	/accounts/{account_id}/cloudforce-one/rules/exemptions	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+cloudforce-one-get-managed-rules	Rules	/accounts/{account_id}/cloudforce-one/rules/managed	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+cloudforce-one-search-rules	Rules	/accounts/{account_id}/cloudforce-one/rules/search	-	skipped	-	required query param query has no enum/default
+cloudforce-one-get-rule-stats	Rules	/accounts/{account_id}/cloudforce-one/rules/stats	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+cloudforce-one-list-email-rules	Rules	/accounts/{account_id}/cloudforce-one/rules/structured	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+cloudforce-one-get-email-rule-schema	Rules	/accounts/{account_id}/cloudforce-one/rules/structured/schema	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+cloudforce-one-get-rule-tree	Rules	/accounts/{account_id}/cloudforce-one/rules/tree	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_ConfigFetch	Scans	/accounts/{account_id}/cloudforce-one/scans/config	401	expected-4xx	-	HTTP 401: TokenValidationError; token type token != user
+get_DomainMatchList	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/matches	-	skipped	-	required query param query_id has no enum/default
+get_GetDomainQueries	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/queries	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_LetterTemplateList	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/letter/templates	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_LetterTemplateExamples	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/letter/templates/examples	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_LogoMatchList	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/logo/matches	-	skipped	-	required query param query_id has no enum/default
+get_GetLogoQueries	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/logo/queries	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_TakedownNoticeList	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/takedown-notices	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_TotalQueries	Brand Protection	/accounts/{account_id}/cloudforce-one/v2/brand-protection/total-queries	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_CollectionList	Collections	/accounts/{account_id}/cloudforce-one/v2/collections	200	ok	ok	
+get_DomainList	Public - Credential Monitor	/accounts/{account_id}/cloudforce-one/v2/credential-monitor/domains	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_MatchList	Public - Credential Monitor	/accounts/{account_id}/cloudforce-one/v2/credential-monitor/matches	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_PirList	Priority Intelligence Requirements	/accounts/{account_id}/cloudforce-one/v2/priority-intelligence	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_PirConstants	Priority Intelligence Requirements	/accounts/{account_id}/cloudforce-one/v2/priority-intelligence/constants	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_PirInterestList	Priority Intelligence Requirements	/accounts/{account_id}/cloudforce-one/v2/priority-intelligence/interests	401	expected-4xx	-	HTTP 401: requires entitlement: cfone.threat.events, cfone.threat.egress_intelligence, cfone.threat.insights, cfone.priority_intelligence_requirement_limit, ...
+get_LegalResponseAccessCheck	Requests - Dashboard	/accounts/{account_id}/cloudforce-one/v2/requests/legal-response/access-check	401	expected-4xx	-	HTTP 401: Authentication failed. Please check your credentials. (code 401)
+rssArticleList	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/articles	200	ok	ok	
+rssFeedCategoryList	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/categories	200	ok	-	
+rssCuratedFeedList	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/curated-feeds	200	ok	-	
+rssFeedList	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds	200	ok	ok	
+rssHealth	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/health	200	ok	-	
+rssArticleIndicatorList	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/indicators	200	ok	ok	
+searchThreatSignals	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/search	-	skipped	-	required query param query has no enum/default
+rssSkillList	Threat Signals	/accounts/{account_id}/cloudforce-one/v2/threat-signals/skills	200	ok	ok	
+list_cnis	CNIs	/accounts/{account_id}/cni/cnis	200	ok	ok	
+list_interconnects	Interconnects	/accounts/{account_id}/cni/interconnects	200	ok	ok	
+get_settings	Settings	/accounts/{account_id}/cni/settings	200	ok	-	
+list_slots	Slots	/accounts/{account_id}/cni/slots	200	ok	ok	
+connectivity-services-list	Connectivity Services	/accounts/{account_id}/connectivity/directory/services	200	ok	ok	
+listApplications	Applications	/accounts/{account_id}/containers/applications	401	expected-4xx	-	HTTP 401: Unauthorized: You do not have access to Cloudflare Containers. Deploying containers requires the Workers Paid plan. Upgrade your plan at https://da...
+listImageRegistries	Image Registries	/accounts/{account_id}/containers/registries	401	expected-4xx	-	HTTP 401: Unauthorized: You do not have access to Cloudflare Containers. Deploying containers requires the Workers Paid plan. Upgrade your plan at https://da...
+custom-csrs-for-an-account-list-custom-csrs	Custom CSRs for an Account	/accounts/{account_id}/custom_csrs	403	expected-4xx	-	HTTP 403: Access to CSRs has not been granted for this zone. Advanced Certificate Manager or Custom CSR with SSL for SaaS entitlement is required. (code 1404)
+account-level-custom-nameservers-list-account-custom-nameservers	Account-Level Custom Nameservers	/accounts/{account_id}/custom_ns	403	expected-4xx	-	HTTP 403: This feature is not enabled for your account. (code 1002)
+custom-pages-for-an-account-list-custom-pages	Custom pages for an account	/accounts/{account_id}/custom_pages	200	ok	-	
+custom-assets-for-an-account-list-custom-assets	Custom assets for an account	/accounts/{account_id}/custom_pages/assets	200	ok	ok	
+d1-list-databases	D1	/accounts/{account_id}/d1/database	200	ok	ok	
+ListContentAssets	content	/accounts/{account_id}/data-security/posture/content	200	ok	ok	
+ListExportJobs	exports	/accounts/{account_id}/data-security/posture/exports	200	ok	ok	
+ListFindingTypes	finding_types	/accounts/{account_id}/data-security/posture/finding_types	200	ok	ok	
+ListFindings	findings	/accounts/{account_id}/data-security/posture/findings	200	ok	ok	
+ListPolicies	policies	/accounts/{account_id}/data-security/posture/policies	200	ok	ok	
+ListPolicyLogs	policies	/accounts/{account_id}/data-security/posture/policies/logs	200	ok	ok	
+ListRemediationJobs	remediations	/accounts/{account_id}/data-security/posture/remediations/jobs	200	ok	ok	
+ListWebhooks	webhooks	/accounts/{account_id}/data-security/posture/webhooks	200	ok	-	
+devices-list-devices	Devices	/accounts/{account_id}/devices	200	ok	-	
+list-client-versions	Client Versions	/accounts/{account_id}/devices/client-versions	-	skipped	-	required query param target_environment has no enum/default
+list-client-target-environments	Client Versions	/accounts/{account_id}/devices/client-versions/target-environments	200	ok	-	
+list-deployment-groups	Deployment Groups	/accounts/{account_id}/devices/deployment-groups	200	ok	ok	
+list-ip-profiles	IP Profiles	/accounts/{account_id}/devices/ip-profiles	200	ok	ok	
+device-managed-networks-list-device-managed-networks	Device Managed Networks	/accounts/{account_id}/devices/networks	200	ok	-	
+list-devices	Physical Devices	/accounts/{account_id}/devices/physical-devices	200	ok	ok	
+devices-list-device-settings-policies	Devices	/accounts/{account_id}/devices/policies	200	ok	-	
+devices-get-default-device-settings-policy	Devices	/accounts/{account_id}/devices/policy	200	ok	-	
+devices-get-split-tunnel-exclude-list	Devices	/accounts/{account_id}/devices/policy/exclude	200	ok	-	
+devices-get-local-domain-fallback-list	Devices	/accounts/{account_id}/devices/policy/fallback_domains	200	ok	-	
+devices-get-split-tunnel-include-list	Devices	/accounts/{account_id}/devices/policy/include	200	ok	-	
+device-posture-rules-list-device-posture-rules	Device posture rules	/accounts/{account_id}/devices/posture	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+device-posture-integrations-list-device-posture-integrations	Device Posture Integrations	/accounts/{account_id}/devices/posture/integration	200	ok	-	
+list-registrations	Registrations	/accounts/{account_id}/devices/registrations	200	ok	ok	
+devices-resilience-retrieve-global-warp-override	Devices Resilience	/accounts/{account_id}/devices/resilience/disconnect	200	ok	-	
+zero-trust-accounts-get-device-settings-for-zero-trust-account	Zero Trust accounts	/accounts/{account_id}/devices/settings	200	ok	-	
+dex-endpoints-list-colos	DEX Synthetic Application Monitoring	/accounts/{account_id}/dex/colos	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+get-commands	DEX Remote Commands	/accounts/{account_id}/dex/commands	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+get-commands-eligible-devices	DEX Remote Commands	/accounts/{account_id}/dex/commands/devices	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+get-commands-quota	DEX Remote Commands	/accounts/{account_id}/dex/commands/quota	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+device-dex-test-details	DEX Synthetic Application Monitoring	/accounts/{account_id}/dex/devices/dex_tests	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+dex-fleet-status-devices	DEX Synthetic Application Monitoring	/accounts/{account_id}/dex/fleet-status/devices	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+dex-fleet-status-live	DEX Synthetic Application Monitoring	/accounts/{account_id}/dex/fleet-status/live	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+dex-fleet-status-over-time	DEX Synthetic Application Monitoring	/accounts/{account_id}/dex/fleet-status/over-time	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+list-dex-rules	DEX Rules	/accounts/{account_id}/dex/rules	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+dex-endpoints-list-tests-overview	DEX Synthetic Application Monitoring	/accounts/{account_id}/dex/tests/overview	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+dex-endpoints-tests-unique-devices	DEX Synthetic Application Monitoring	/accounts/{account_id}/dex/tests/unique-devices	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+list-warp-change-events	WARP Change Events	/accounts/{account_id}/dex/warp-change-events	403	expected-4xx	-	HTTP 403: dex.api.entitlements.missing (code 11007)
+diagnostics-endpoint-healthcheck-list	Endpoint Health Checks	/accounts/{account_id}/diagnostics/endpoint-healthchecks	200	ok	-	
+dlp-custom-prompt-topics-list	DLP Custom Prompt Topics	/accounts/{account_id}/dlp/custom_prompt_topics	200	ok	-	
+dlp-data-classes-list	DLP Data Classes	/accounts/{account_id}/dlp/data_classes	200	ok	-	
+dlp-data-tag-categories-list	DLP Data Tag Categories	/accounts/{account_id}/dlp/data_tag_categories	200	ok	-	
+dlp-data-tag-category-templates-list	DLP Data Tag Category Templates	/accounts/{account_id}/dlp/data_tag_category_templates	404	expected-4xx	-	HTTP 404: no route for this URL (code 3317)
+dlp-datasets-read-all	DLP Datasets	/accounts/{account_id}/dlp/datasets	200	ok	-	
+dlp-document-fingerprints-read-all	DLP Document Fingerprints	/accounts/{account_id}/dlp/document_fingerprints	200	ok	-	
+dlp-email-scanner-get-account-mapping	DLP Email	/accounts/{account_id}/dlp/email/account_mapping	404	expected-4xx	-	HTTP 404: not found (code 3307)
+dlp-email-scanner-list-all-rules	DLP Email	/accounts/{account_id}/dlp/email/rules	200	ok	-	
+dlp-entries-list-all-entries	DLP Entries	/accounts/{account_id}/dlp/entries	200	ok	-	
+dlp-limits-get	DLP Settings	/accounts/{account_id}/dlp/limits	403	expected-4xx	-	HTTP 403: Forbidden (code 3314)
+dlp-payload-log-get	DLP Settings	/accounts/{account_id}/dlp/payload_log	404	expected-4xx	-	HTTP 404: not found (code 3307)
+dlp-profiles-list-all-profiles	DLP Profiles	/accounts/{account_id}/dlp/profiles	200	ok	-	
+dlp-profiles-list-all-custom-profiles	DLP Profiles	/accounts/{account_id}/dlp/profiles/custom	200	ok	-	
+dlp-sensitivity-groups-list	DLP Sensitivity Groups	/accounts/{account_id}/dlp/sensitivity_groups	200	ok	-	
+dlp-sensitivity-group-templates-list	DLP Sensitivity Group Templates	/accounts/{account_id}/dlp/sensitivity_groups/templates	200	ok	-	
+dlp-settings-get	DLP Settings	/accounts/{account_id}/dlp/settings	200	ok	-	
+publicListPrefixBindings	Prefix Bindings	/accounts/{account_id}/dls/regional_services/prefix_bindings	403	expected-4xx	-	HTTP 403: forbidden: account not entitled for regional services for BYOIP (code 1101)
+publicListRegions	Regions	/accounts/{account_id}/dls/regions	403	expected-4xx	-	HTTP 403: forbidden: account not entitled for regional services (code 1101)
+dns-firewall-list-dns-firewall-clusters	DNS Firewall	/accounts/{account_id}/dns_firewall	200	ok	ok	
+dns-records-for-an-account-get-usage	DNS Records for an Account	/accounts/{account_id}/dns_records/usage	200	ok	-	
+dns-settings-for-an-account-list-dns-settings	DNS Settings for an Account	/accounts/{account_id}/dns_settings	200	ok	-	
+dns-settings-for-an-account-list-custom-nameserver-sets	Custom Nameserver Sets for an Account	/accounts/{account_id}/dns_settings/nameserver_sets	404	expected-4xx	-	HTTP 404: not_found (code 1000)
+dns-views-for-an-account-list-internal-dns-views	DNS Internal Views for an Account	/accounts/{account_id}/dns_settings/views	200	ok	ok	
+email_security_get_monthly_report	Email Security Analytics	/accounts/{account_id}/email-security/analytics/monthly_report	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_investigate	Email Security	/accounts/{account_id}/email-security/investigate	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_get_bulk_jobs	Email Security	/accounts/{account_id}/email-security/investigate/bulk	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_get_phishguard_reports	Email Security	/accounts/{account_id}/email-security/phishguard/reports	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_allow_policies	Email Security Settings	/accounts/{account_id}/email-security/settings/allow_policies	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_blocked_senders	Email Security Settings	/accounts/{account_id}/email-security/settings/block_senders	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_content_policies	Email Security Settings	/accounts/{account_id}/email-security/settings/content_policies	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_domains	Email Security Settings	/accounts/{account_id}/email-security/settings/domains	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_impersonation_registry	Email Security Settings	/accounts/{account_id}/email-security/settings/impersonation_registry	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_sending_domain_restrictions	Email Security Settings	/accounts/{account_id}/email-security/settings/sending_domain_restrictions	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_trusted_domains	Email Security Settings	/accounts/{account_id}/email-security/settings/trusted_domains	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_list_url_ignore_patterns	Email Security Settings	/accounts/{account_id}/email-security/settings/url_ignore_patterns	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email_security_submissions	Email Security	/accounts/{account_id}/email-security/submissions	403	expected-4xx	-	HTTP 403: Email Security API access is not available in the current subscription (code 4119)
+email-routing-destination-addresses-list-destination-addresses	Email Routing destination addresses	/accounts/{account_id}/email/routing/addresses	200	ok	ok	
+email-routing-routing-rules-list-account-routing-rules	Email Routing routing rules	/accounts/{account_id}/email/routing/rules	200	ok	ok	
+get_publicListSuppressionRouting	Email Routing suppressions	/accounts/{account_id}/email/routing/suppression	200	ok	ok	
+email-sending-get-sending-limits	Email Sending	/accounts/{account_id}/email/sending/limits	401	expected-4xx	-	HTTP 401: Unauthorized (code 2036)
+email-sending-get-reputation	Email Sending	/accounts/{account_id}/email/sending/reputation	404	expected-4xx	-	HTTP 404: Unable to authenticate request (code 10001)
+get_publicListSuppressionSending	Email Sending suppressions	/accounts/{account_id}/email/sending/suppression	200	ok	ok	
+get_publicListSendingSuppressions	Email Sending suppressions	/accounts/{account_id}/email/sending/suppressions	200	ok	ok	
+entitlements-get-account-entitlements	Account Entitlements	/accounts/{account_id}/entitlements	200	ok	-	
+subscriptions-list	Queue	/accounts/{account_id}/event_subscriptions/subscriptions	200	ok	ok	
+ip-access-rules-for-an-account-list-ip-access-rules	IP Access rules for an account	/accounts/{account_id}/firewall/access_rules/rules	200	ok	ok	
+flagship_list_apps	Apps	/accounts/{account_id}/flagship/apps	200	ok	-	
+zero-trust-accounts-get-zero-trust-account-information	Zero Trust accounts	/accounts/{account_id}/gateway	401	expected-4xx	-	HTTP 401: Account ID is invalid or has not been initialized. (code 1001)
+zero-trust-gateway-application-and-application-type-mappings-list-application-and-application-type-mappings	Zero Trust Gateway application and application type mappings	/accounts/{account_id}/gateway/app_types	200	ok	-	
+zero-trust-applications-review-status-list	Zero Trust applications review status	/accounts/{account_id}/gateway/apps/review_status	200	ok	-	
+zero-trust-get-audit-ssh-settings	Zero Trust SSH Settings	/accounts/{account_id}/gateway/audit_ssh_settings	200	ok	-	
+zero-trust-gateway-categories-list-categories	Zero Trust Gateway categories	/accounts/{account_id}/gateway/categories	200	ok	-	
+zero-trust-certificates-list-zero-trust-certificates	Zero Trust certificates	/accounts/{account_id}/gateway/certificates	200	ok	-	
+zero-trust-accounts-get-zero-trust-account-configuration	Zero Trust accounts	/accounts/{account_id}/gateway/configuration	200	ok	-	
+zero-trust-accounts-get-zero-trust-certificate-configuration	Zero Trust accounts	/accounts/{account_id}/gateway/configuration/custom_certificate	200	ok	-	
+zero-trust-dns-destination-ips-list-dns-destination-ips	Zero Trust Gateway DNS destination IPv4 address pairs	/accounts/{account_id}/gateway/dns_destination_ips	401	expected-4xx	-	HTTP 401: Account ID is invalid or has not been initialized. (code 1001)
+zero-trust-accounts-get-egress-cidr-pairs	Zero Trust accounts	/accounts/{account_id}/gateway/egress_cidr_pairs	200	ok	-	
+zero-trust-lists-list-zero-trust-lists	Zero Trust lists	/accounts/{account_id}/gateway/lists	200	ok	-	
+zero-trust-gateway-locations-list-zero-trust-gateway-locations	Zero Trust Gateway locations	/accounts/{account_id}/gateway/locations	401	expected-4xx	-	HTTP 401: Account ID is invalid or has not been initialized. (code 1001)
+zero-trust-accounts-get-logging-settings-for-the-zero-trust-account	Zero Trust accounts	/accounts/{account_id}/gateway/logging	401	expected-4xx	-	HTTP 401: Account ID is invalid or has not been initialized. (code 1001)
+zero-trust-gateway-operations-list-zero-trust-gateway-operations	Zero Trust Gateway operations	/accounts/{account_id}/gateway/operations	200	ok	-	
+zero-trust-gateway-pacfiles-list	Zero Trust Gateway PAC files	/accounts/{account_id}/gateway/pacfiles	200	ok	ok	
+zero-trust-gateway-proxy-endpoints-list-proxy-endpoints	Zero Trust Gateway proxy endpoints	/accounts/{account_id}/gateway/proxy_endpoints	200	ok	-	
+zero-trust-gateway-rules-list-zero-trust-gateway-rules	Zero Trust Gateway rules	/accounts/{account_id}/gateway/rules	200	ok	-	
+zero-trust-gateway-rules-list-zero-trust-gateway-rules-tenant	Zero Trust Gateway rules	/accounts/{account_id}/gateway/rules/tenant	401	expected-4xx	-	HTTP 401: Account ID is invalid or has not been initialized. (code 1001)
+list-hyperdrive	Hyperdrive	/accounts/{account_id}/hyperdrive/configs	200	ok	ok	
+account-permission-group-list	Account Permission Groups	/accounts/{account_id}/iam/permission_groups	200	ok	ok	
+account-resource-group-list	Account Resource Groups	/accounts/{account_id}/iam/resource_groups	200	ok	-	
+account-user-group-list	Account User Groups	/accounts/{account_id}/iam/user_groups	200	ok	ok	
+cloudflare-images-list-images	Cloudflare Images	/accounts/{account_id}/images/v1	200	ok	ok	
+cloudflare-images-keys-list-signing-keys	Cloudflare Images Keys	/accounts/{account_id}/images/v1/keys	403	expected-4xx	-	HTTP 403: The given account is not valid or is not authorized to access this service (code 5403)
+cloudflare-images-images-usage-statistics	Cloudflare Images	/accounts/{account_id}/images/v1/stats	403	expected-4xx	-	HTTP 403: The given account is not valid or is not authorized to access this service (code 5403)
+cloudflare-images-variants-list-variants	Cloudflare Images Variants	/accounts/{account_id}/images/v1/variants	200	ok	-	
+cloudflare-images-list-images-v2	Cloudflare Images	/accounts/{account_id}/images/v2	200	ok	ok	
+cloudflare-images-list-metadata-keys	Cloudflare Images	/accounts/{account_id}/images/v2/metadata/keys	200	ok	-	
+cloudflare-images-sourcingkit-list-migrations	Cloudflare Images Sourcing Kit	/accounts/{account_id}/images/v2/sourcingkit/migrations	200	ok	-	
+cloudflare-images-sourcingkit-list-sources	Cloudflare Images Sourcing Kit	/accounts/{account_id}/images/v2/sourcingkit/sources	200	ok	-	
+infra-targets-list	Infrastructure Access Targets	/accounts/{account_id}/infrastructure/targets	200	ok	ok	
+get-security-center-issue-types	Security Center Insights	/accounts/{account_id}/intel/attack-surface-report/issue-types	200	ok	-	
+get-security-center-issues	Security Center Insights	/accounts/{account_id}/intel/attack-surface-report/issues	200	ok	ok	
+get-security-center-issue-counts-by-class	Security Center Insights	/accounts/{account_id}/intel/attack-surface-report/issues/class	200	ok	-	
+get-security-center-issue-counts-by-severity	Security Center Insights	/accounts/{account_id}/intel/attack-surface-report/issues/severity	200	ok	-	
+get-security-center-issue-counts-by-type	Security Center Insights	/accounts/{account_id}/intel/attack-surface-report/issues/type	200	ok	-	
+passive-dns-by-ip-get-passive-dns-by-ip	Passive DNS by IP	/accounts/{account_id}/intel/dns	400	expected-4xx	-	HTTP 400: Missing required query parameter: ipv4 (code 10400)
+domain-intelligence-get-domain-details	Domain Intelligence	/accounts/{account_id}/intel/domain	200	ok	-	
+domain-history-get-domain-history	Domain History	/accounts/{account_id}/intel/domain-history	200	ok	-	
+domain-intelligence-get-multiple-domain-details	Domain Intelligence	/accounts/{account_id}/intel/domain/bulk	400	expected-4xx	-	HTTP 400: Missing required query parameter: domain (code 10400)
+custom-indicator-feeds-get-indicator-feeds	Custom Indicator Feeds	/accounts/{account_id}/intel/indicator-feeds	200	ok	-	
+custom-indicator-feeds-view-permissions	Custom Indicator Feeds	/accounts/{account_id}/intel/indicator-feeds/permissions/view	200	ok	-	
+ip-intelligence-get-ip-overview	IP Intelligence	/accounts/{account_id}/intel/ip	400	expected-4xx	-	HTTP 400: Missing required query parameter: ipv4 or ipv6 (code 10400)
+ip-list-get-ip-lists	IP List	/accounts/{account_id}/intel/ip-lists	200	ok	-	
+sinkhole-config-list-sinkholes	Sinkhole Config	/accounts/{account_id}/intel/sinkholes	200	ok	-	
+url-intelligence-get-url-intelligence	URL Intelligence	/accounts/{account_id}/intel/url	200	ok	-	
+whois-record-get-whois-record	WHOIS Record	/accounts/{account_id}/intel/whois	401	expected-4xx	-	HTTP 401: TokenValidationError; token type token != user
+getV4AccountsByAccount_idK2Streams	workers_k2_other	/accounts/{account_id}/k2/streams	403	expected-4xx	-	HTTP 403: This feature requires a Workers Paid plan. Upgrade to Workers Paid in the Cloudflare dashboard. (code 1021)
+account-load-balancers-list-account-load-balancers	Account Load Balancers	/accounts/{account_id}/load_balancers	200	ok	-	
+account-load-balancer-monitor-groups-list-monitor-groups	Account Load Balancer Monitor Groups	/accounts/{account_id}/load_balancers/monitor_groups	200	ok	-	
+account-load-balancer-monitors-list-monitors	Account Load Balancer Monitors	/accounts/{account_id}/load_balancers/monitors	200	ok	-	
+account-load-balancer-pools-list-pools	Account Load Balancer Pools	/accounts/{account_id}/load_balancers/pools	200	ok	-	
+load-balancer-regions-list-regions	Load Balancer Regions	/accounts/{account_id}/load_balancers/regions	200	ok	-	
+account-load-balancer-search-search-resources	Account Load Balancer Search	/accounts/{account_id}/load_balancers/search	200	ok	ok	
+account-load-balancers-list-load-balancer-usage	Account Load Balancers	/accounts/{account_id}/load_balancers/usage	200	ok	-	
+get-accounts-account_id-logpush-jobs	Logpush jobs for an account	/accounts/{account_id}/logpush/jobs	200	ok	-	
+get-accounts-account_id-logpush-transformers	Logpush transformers	/accounts/{account_id}/logpush/transformers	200	ok	-	
+audit-logs-v2-get-account-audit-logs	Audit Logs	/accounts/{account_id}/logs/audit	200	ok	ok	
+audit-logs-v2-list-account-product-categories	Audit Logs	/accounts/{account_id}/logs/audit/product_categories	200	ok	-	
+get-accounts-account_id-logs-control-cmb-config	Logcontrol CMB config for an account	/accounts/{account_id}/logs/control/cmb/config	401	expected-4xx	-	HTTP 401: Unauthorized (code 10000)
+accounts-logs-explorer-datasets-list	Log Explorer Datasets	/accounts/{account_id}/logs/explorer/datasets	200	ok	-	
+accounts-logs-explorer-datasets-available-list	Log Explorer Datasets	/accounts/{account_id}/logs/explorer/datasets/available	200	ok	-	
+accounts-logs-explorer-query-get	Log Explorer Queries	/accounts/{account_id}/logs/explorer/query/sql	-	skipped	-	required query param query has no enum/default
+logpull-list-log-files	Logpull	/accounts/{account_id}/logs/list	-	skipped	-	required query param bucket has no enum/default
+logpull-retrieve-logs	Logpull	/accounts/{account_id}/logs/retrieve	-	skipped	-	required query param bucket has no enum/default
+listDnsProtectionRulesForAccount	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_dns_protection/configs/dns_protection/rules	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+listAllowlistPrefixesForAccount	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_tcp_protection/configs/allowlist	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+listPrefixesForAccount	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_tcp_protection/configs/prefixes	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+listSynProtectionFiltersForAccount	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/filters	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+listSynProtectionRulesForAccount	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/rules	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+listTcpFlowProtectionFiltersForAccount	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/filters	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+listTcpFlowProtectionRulesForAccount	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/rules	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+getProtectionStatus	dos-flowtrackd-api_other	/accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_protection_status	401	expected-4xx	-	HTTP 401: unauthorized (code 8888)
+magic-account-apps-list-apps	Magic Account Apps	/accounts/{account_id}/magic/apps	403	expected-4xx	-	HTTP 403: forbidden: feature not enabled (code 1101)
+magic-bgp-list-filter-profiles	Magic BGP Filter Profiles	/accounts/{account_id}/magic/bgp/filter_profiles	200	ok	-	
+magic-bgp-get-settings	Magic BGP Settings	/accounts/{account_id}/magic/bgp/settings	200	ok	-	
+magic-cf1-sites-list-cf1-sites	Magic CF1 Sites	/accounts/{account_id}/magic/cf1_sites	200	ok	-	
+magic-interconnects-list-interconnects	Magic Interconnects	/accounts/{account_id}/magic/cf_interconnects	200	ok	-	
+catalog-syncs-list	Catalog Sync	/accounts/{account_id}/magic/cloud/catalog-syncs	403	expected-4xx	-	HTTP 403: feature not enabled (code 1012)
+catalog-syncs-prebuilt-policies-list	Catalog Sync	/accounts/{account_id}/magic/cloud/catalog-syncs/prebuilt-policies	403	expected-4xx	-	HTTP 403: feature not enabled (code 1012)
+onramps-list	On-ramps	/accounts/{account_id}/magic/cloud/onramps	403	expected-4xx	-	HTTP 403: feature not enabled (code 1012)
+onramps-mwan-addr-space-read	On-ramps	/accounts/{account_id}/magic/cloud/onramps/magic_wan_address_space	403	expected-4xx	-	HTTP 403: feature not enabled (code 1012)
+providers-list	Cloud Integrations	/accounts/{account_id}/magic/cloud/providers	403	expected-4xx	-	HTTP 403: feature not enabled (code 1012)
+resources-catalog-list	Resources	/accounts/{account_id}/magic/cloud/resources	403	expected-4xx	-	HTTP 403: feature not enabled (code 1012)
+resources-catalog-export	Resources	/accounts/{account_id}/magic/cloud/resources/export	403	expected-4xx	-	HTTP 403: feature not enabled (code 1012)
+mconn-connectors-list	Magic Connectors	/accounts/{account_id}/magic/connectors	403	expected-4xx	-	HTTP 403: forbidden: feature not enabled (code 1101)
+magic-gre-tunnels-list-gre-tunnels	Magic GRE tunnels	/accounts/{account_id}/magic/gre_tunnels	200	ok	-	
+magic-ipsec-tunnels-list-ipsec-tunnels	Magic IPsec tunnels	/accounts/{account_id}/magic/ipsec_tunnels	200	ok	-	
+magic-redundancy-groups-list-redundancy-groups	Magic Redundancy Groups	/accounts/{account_id}/magic/redundancy_groups	400	expected-4xx	-	HTTP 400: Could not route to /accounts/{account_id}/magic/redundancy_groups, perhaps your object identifier is invalid? (code 7003); No r...
+magic-static-routes-list-routes	Magic Static Routes	/accounts/{account_id}/magic/routes	200	ok	-	
+magic-sites-list-sites	Magic Sites	/accounts/{account_id}/magic/sites	403	expected-4xx	-	HTTP 403: forbidden: feature not enabled (code 1101)
+listAccountVulnerabilityDiscoveryRepositories	Vulnerability Discovery	/accounts/{account_id}/managed-defense/vulnerability-discovery/repos	401	expected-4xx	-	HTTP 401: Authentication or authorization failed. (code 10001)
+listAccountVulnerabilityDiscoveryScans	Vulnerability Discovery	/accounts/{account_id}/managed-defense/vulnerability-discovery/scans	401	expected-4xx	-	HTTP 401: Authentication or authorization failed. (code 10001)
+usage-analytics-get-account-media-usage	Usage Analytics	/accounts/{account_id}/media/usage	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+account-members-list-members	Account Members	/accounts/{account_id}/members	200	ok	ok	
+magic-network-monitoring-configuration-list-account-configuration	Magic Network Monitoring Configuration	/accounts/{account_id}/mnm/config	200	ok	-	
+magic-network-monitoring-configuration-list-rules-and-account-configuration	Magic Network Monitoring Configuration	/accounts/{account_id}/mnm/config/full	404	expected-4xx	-	HTTP 404: Account not found (code 1004)
+magic-network-monitoring-rules-list-rules	Magic Network Monitoring Rules	/accounts/{account_id}/mnm/rules	200	ok	-	
+monetization-get-account-eligibility	Monetization	/accounts/{account_id}/monetization	404	expected-4xx	-	HTTP 404: eligibility result not found (code 10007)
+moq-relays-list	MoQ Relays	/accounts/{account_id}/moq/relays	200	ok	ok	
+m-tls-certificate-management-list-m-tls-certificates	mTLS Certificate Management	/accounts/{account_id}/mtls_certificates	200	ok	-	
+oauth-clients-list	OAuth Clients	/accounts/{account_id}/oauth_clients	200	ok	-	
+list_applications_v2	Applications	/accounts/{account_id}/one/applications	200	ok	ok	
+list_integrations_v2	Integrations	/accounts/{account_id}/one/integrations	200	ok	ok	
+Accounts_listAccountOrganizations	Accounts	/accounts/{account_id}/organizations	400	expected-4xx	-	HTTP 400: Authentication failure (code 1004)
+pages-project-get-projects	Pages Project	/accounts/{account_id}/pages/projects	200	ok	ok	
+pay-per-crawl.crawlerGetStripeConfig	ppc_stripe	/accounts/{account_id}/pay-per-crawl/crawler/stripe	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.listCrawlers	ppc_crawlers	/accounts/{account_id}/pay-per-crawl/crawlers	200	ok	-	
+pay-per-crawl.publisherGetStripeConfig	ppc_stripe	/accounts/{account_id}/pay-per-crawl/publisher/stripe	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getTermsSignatureLink	ppc_terms	/accounts/{account_id}/pay-per-crawl/signature_link	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getTerms	ppc_terms	/accounts/{account_id}/pay-per-crawl/terms	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getTermsSignature	ppc_terms	/accounts/{account_id}/pay-per-crawl/terms/signature	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-use.listEnabledDomains	ppu_enabled_domains	/accounts/{account_id}/pay-per-use/enabled-domains	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getPPUOperatorConfiguration	ppu_configuration	/accounts/{account_id}/pay-per-use/operator/configuration	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.listPPUProposals	ppu_pricing	/accounts/{account_id}/pay-per-use/proposals	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getPPUUsageStats	ppu_usage_stats	/accounts/{account_id}/pay-per-use/usage-stats	403	expected-4xx	-	HTTP 403: Forbidden
+account-billing-list-payment-methods	Account Payment Methods	/accounts/{account_id}/payment-methods	200	ok	ok	
+magic-pcap-collection-list-packet-capture-requests	Magic PCAP collection	/accounts/{account_id}/pcaps	401	expected-4xx	-	HTTP 401: Pcaps entitlements not allowed (code 10002)
+magic-pcap-collection-list-pca-ps-bucket-ownership	Magic PCAP collection	/accounts/{account_id}/pcaps/ownership	401	expected-4xx	-	HTTP 401: Pcaps entitlements not allowed (code 10002)
+getV4AccountsByAccount_idPipelines_deprecated	workers_pipelines_other	/accounts/{account_id}/pipelines	403	expected-4xx	-	HTTP 403: Forbidden (code 100)
+getV4AccountsByAccount_idPipelinesV1Pipelines	workers_pipelines_other	/accounts/{account_id}/pipelines/v1/pipelines	403	expected-4xx	-	HTTP 403: This feature requires a Workers Paid plan. Upgrade to Workers Paid in the Cloudflare dashboard. (code 1021)
+getV4AccountsByAccount_idPipelinesV1Sinks	workers_pipelines_other	/accounts/{account_id}/pipelines/v1/sinks	403	expected-4xx	-	HTTP 403: This feature requires a Workers Paid plan. Upgrade to Workers Paid in the Cloudflare dashboard. (code 1021)
+getV4AccountsByAccount_idPipelinesV1Streams	workers_pipelines_other	/accounts/{account_id}/pipelines/v1/streams	403	expected-4xx	-	HTTP 403: This feature requires a Workers Paid plan. Upgrade to Workers Paid in the Cloudflare dashboard. (code 1021)
+Accounts_getAccountProfile	Accounts	/accounts/{account_id}/profile	400	expected-4xx	-	HTTP 400: Authentication failure (code 1004)
+queues-list	Queue	/accounts/{account_id}/queues	200	ok	-	
+list-catalogs	R2 Catalog Management	/accounts/{account_id}/r2-catalog	200	ok	-	
+r2-list-buckets	R2 Bucket	/accounts/{account_id}/r2/buckets	200	ok	ok	
+r2-get-account-level-metrics	R2 Account	/accounts/{account_id}/r2/metrics	200	ok	-	
+get_apps	Apps	/accounts/{account_id}/realtime/kit/apps	200	ok	ok	
+sandbox-registrar-domain-discovery-search	Domain Discovery	/accounts/{account_id}/registrar-sandbox/domain-search	200	ok	-	
+sandbox-registrar-extension-list	Extension	/accounts/{account_id}/registrar-sandbox/extensions	200	ok	ok	
+sandbox-registrar-domain-registration-list	Registrar Registration	/accounts/{account_id}/registrar-sandbox/registrations	200	ok	ok	
+registrar-domain-discovery-search	Domain Discovery	/accounts/{account_id}/registrar/domain-search	200	ok	-	
+registrar-domains-list-domains	Registrar Domains	/accounts/{account_id}/registrar/domains	200	ok	-	
+registrar-extension-list	Extension	/accounts/{account_id}/registrar/extensions	200	ok	ok	
+registrar-domain-registration-list	Registrar Registration	/accounts/{account_id}/registrar/registrations	200	ok	ok	
+reporting-industry-get	reports_other	/accounts/{account_id}/reporting/industry	200	ok	-	
+reporting-policies-list	reports_other	/accounts/{account_id}/reporting/policies	200	ok	-	
+reporting-reports-list	reports_other	/accounts/{account_id}/reporting/reports	200	ok	-	
+getResourceLibraryApplications	Applications	/accounts/{account_id}/resource-library/applications	200	ok	-	
+getResourceLibraryCategories	Category	/accounts/{account_id}/resource-library/categories	200	ok	-	
+account-roles-list-roles	Account Roles	/accounts/{account_id}/roles	200	ok	ok	
+lists-get-lists	Lists	/accounts/{account_id}/rules/lists	200	ok	-	
+listAccountRulesets	Account Rulesets	/accounts/{account_id}/rulesets	200	ok	ok	
+web-analytics-list-sites	Web Analytics	/accounts/{account_id}/rum/site_info/list	200	ok	ok	
+web-analytics-list-site-tags	Web Analytics	/accounts/{account_id}/rum/site_info/site_tag/list	200	ok	-	
+web-analytics-list-zone-tags	Web Analytics	/accounts/{account_id}/rum/site_info/zone_tag/list	200	ok	-	
+scim-groups-list	SCIM Groups	/accounts/{account_id}/scim/v2/Groups	200	ok	-	
+scim-resource-types-list	SCIM Discovery	/accounts/{account_id}/scim/v2/ResourceTypes	200	ok	-	
+scim-schemas-list	SCIM Discovery	/accounts/{account_id}/scim/v2/Schemas	200	ok	-	
+scim-service-provider-config-get	SCIM Discovery	/accounts/{account_id}/scim/v2/ServiceProviderConfig	200	ok	-	
+scim-users-list	SCIM Users	/accounts/{account_id}/scim/v2/Users	200	ok	-	
+secondary-dns-(-acl)-list-ac-ls	Secondary DNS (ACL)	/accounts/{account_id}/secondary_dns/acls	200	ok	-	
+secondary-dns-(-peer)-list-peers	Secondary DNS (Peer)	/accounts/{account_id}/secondary_dns/peers	200	ok	-	
+secondary-dns-(-tsig)-list-tsi-gs	Secondary DNS (TSIG)	/accounts/{account_id}/secondary_dns/tsigs	200	ok	-	
+secrets-store-quota	Secrets Store	/accounts/{account_id}/secrets_store/quota	200	ok	-	
+secrets-store-list	Secrets Store	/accounts/{account_id}/secrets_store/stores	200	ok	ok	
+get-security-center-insights	Security Center Insights	/accounts/{account_id}/security-center/insights	200	ok	ok	
+get-security-center-account-audit-log	Security Center Audit Log	/accounts/{account_id}/security-center/insights/audit-log	200	ok	ok	
+get-security-center-insight-counts-by-class	Security Center Insights	/accounts/{account_id}/security-center/insights/class	200	ok	-	
+get-security-center-partner-insight-count	Security Center Insights	/accounts/{account_id}/security-center/insights/partner-count	200	ok	-	
+get-security-center-account-scans	Security Center Scans	/accounts/{account_id}/security-center/insights/scans	200	ok	-	
+get-security-center-insight-counts-by-severity	Security Center Insights	/accounts/{account_id}/security-center/insights/severity	200	ok	-	
+get-security-center-insight-counts-by-type	Security Center Insights	/accounts/{account_id}/security-center/insights/type	200	ok	-	
+get-security-center-account-state	Security Center Insights	/accounts/{account_id}/security-center/state	200	ok	-	
+account-settings-list-transformations	Account Settings	/accounts/{account_id}/settings/transformations	200	ok	-	
+account-settings-get-ut-billing-setting	Account Settings	/accounts/{account_id}/settings/ut-billing	200	ok	-	
+shares-list	Resource Sharing	/accounts/{account_id}/shares	200	ok	ok	
+slurper-list-jobs	R2 Super Slurper	/accounts/{account_id}/slurper/jobs	200	ok	-	
+get-all-sso-connectors	SSO	/accounts/{account_id}/sso_connectors	200	ok	-	
+workers-kv-namespace-list-namespaces	Workers KV Namespace	/accounts/{account_id}/storage/kv/namespaces	200	ok	ok	
+stream-videos-list-videos	Stream Videos	/accounts/{account_id}/stream	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+stream-signing-keys-list-signing-keys	Stream Signing Keys	/accounts/{account_id}/stream/keys	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+stream-live-inputs-list-live-inputs	Stream Live Inputs	/accounts/{account_id}/stream/live_inputs	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+stream-videos-storage-usage	Stream Videos	/accounts/{account_id}/stream/storage-usage	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+usage-analytics-get-account-stream-usage	Usage Analytics	/accounts/{account_id}/stream/usage	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+stream-watermark-profile-list-watermark-profiles	Stream Watermark Profile	/accounts/{account_id}/stream/watermarks	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+stream-webhook-view-webhooks	Stream Webhook	/accounts/{account_id}/stream/webhook	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+account-subscriptions-list-subscriptions	Account Subscriptions	/accounts/{account_id}/subscriptions	200	ok	-	
+tags-get	Resource Tagging	/accounts/{account_id}/tags	-	skipped	-	required query param resource_id has no enum/default
+tags-list-keys	Resource Tagging	/accounts/{account_id}/tags/keys	200	ok	ok	
+tags-list	Resource Tagging	/accounts/{account_id}/tags/resources	200	ok	ok	
+tags-list-key-summary	Resource Tagging	/accounts/{account_id}/tags/summary	200	ok	ok	
+tunnel-route-list-tunnel-routes	Tunnel Routing	/accounts/{account_id}/teamnet/routes	200	ok	ok	
+tunnel-virtual-network-list-virtual-networks	Tunnel Virtual Network	/accounts/{account_id}/teamnet/virtual_networks	200	ok	-	
+account-api-tokens-list-tokens	Account Owned API Tokens	/accounts/{account_id}/tokens	200	ok	ok	
+account-api-tokens-list-permission-groups	Account Owned API Tokens	/accounts/{account_id}/tokens/permission_groups	200	ok	-	
+account-api-tokens-verify-token	Account Owned API Tokens	/accounts/{account_id}/tokens/verify	200	ok	-	
+cloudflare-tunnel-list-all-tunnels	Cloudflare Tunnel	/accounts/{account_id}/tunnels	200	ok	ok	
+urlscanner-search-scans	URL Scanner (Deprecated)	/accounts/{account_id}/urlscanner/scan	200	ok	-	
+urlscanner-search-scans-v2	URL Scanner	/accounts/{account_id}/urlscanner/v2/search	200	ok	-	
+vectorize-(-deprecated)-list-vectorize-indexes	Vectorize Beta (Deprecated)	/accounts/{account_id}/vectorize/indexes	200	ok	-	
+vectorize-list-vectorize-indexes	Vectorize	/accounts/{account_id}/vectorize/v2/indexes	200	ok	-	
+list-credential-sets	Credential Sets	/accounts/{account_id}/vuln_scanner/credential_sets	200	ok	ok	
+list-scans	Scans	/accounts/{account_id}/vuln_scanner/scans	200	ok	ok	
+list-target-environments	Target Environments	/accounts/{account_id}/vuln_scanner/target_environments	200	ok	ok	
+waiting-room-list-waiting-rooms-account	Waiting Room	/accounts/{account_id}/waiting_rooms	200	ok	ok	
+cloudflare-tunnel-list-warp-connector-tunnels	Cloudflare Tunnel	/accounts/{account_id}/warp_connector	200	ok	ok	
+worker-account-settings-fetch-worker-account-settings	Workers Account Settings	/accounts/{account_id}/workers/account-settings	200	ok	-	
+namespace-worker-list	Workers for Platforms	/accounts/{account_id}/workers/dispatch/namespaces	403	expected-4xx	-	HTTP 403: You do not have access to dispatch namespaces. You can purchase it within the Cloudflare dashboard here: https://dash.cloudflare.com?to=/:account/w...
+workers.domains.list	Domains	/accounts/{account_id}/workers/domains	200	ok	-	
+durable-objects-namespace-list-namespaces	Durable Objects Namespace	/accounts/{account_id}/workers/durable_objects/namespaces	200	ok	ok	
+destination.list	Destinations	/accounts/{account_id}/workers/observability/destinations	200	ok	ok	
+issues.list	Issues	/accounts/{account_id}/workers/observability/issues	200	ok	ok	
+issues.automations.list	Issues	/accounts/{account_id}/workers/observability/issues/automations	200	ok	-	
+issues.summary	Issues	/accounts/{account_id}/workers/observability/issues/summary	200	ok	-	
+metricsExport.list	Metrics Export	/accounts/{account_id}/workers/observability/metricsexport	200	ok	-	
+queries.list	Saved Queries	/accounts/{account_id}/workers/observability/queries	200	ok	ok	
+usage.get	Usage	/accounts/{account_id}/workers/observability/usage	400	expected-4xx	-	HTTP 400: Bad Request
+worker-placement-list-regions	Workers Smart Placement	/accounts/{account_id}/workers/placement/regions	200	ok	-	
+worker-script-list-workers	Worker Script	/accounts/{account_id}/workers/scripts	200	ok	-	
+worker-script-search-workers	Worker Script	/accounts/{account_id}/workers/scripts-search	200	ok	ok	
+worker-subdomain-get-subdomain	Worker Subdomain	/accounts/{account_id}/workers/subdomain	200	ok	-	
+listWorkers	Workers	/accounts/{account_id}/workers/workers	200	ok	ok	
+wor-list-workflows	Workflows	/accounts/{account_id}/workflows	200	ok	ok	
+wor-get-workflow-settings	Workflows	/accounts/{account_id}/workflows/settings	400	expected-4xx	-	HTTP 400: workflows.api.error.body (code 10002)
+zero-trust-accounts-get-connectivity-settings	Zero Trust Connectivity Settings	/accounts/{account_id}/zerotrust/connectivity_settings	200	ok	-	
+zero-trust-networks-route-hostname-list	Zero Trust Hostname Route	/accounts/{account_id}/zerotrust/routes/hostname	200	ok	ok	
+zero-trust-networks-subnets-list	Zero Trust Subnets	/accounts/{account_id}/zerotrust/subnets	200	ok	ok	
+dlp-risk-score-behaviors-get	Zero Trust Risk Scoring	/accounts/{account_id}/zt_risk_scoring/behaviors	403	expected-4xx	-	HTTP 403: Forbidden (code 3314)
+dlp-zt-risk-score-integration-list	Zero Trust Risk Scoring Integrations	/accounts/{account_id}/zt_risk_scoring/integrations	403	expected-4xx	-	HTTP 403: Forbidden (code 3314)
+dlp-risk-score-summary-get	Zero Trust Risk Scoring	/accounts/{account_id}/zt_risk_scoring/summary	403	expected-4xx	-	HTTP 403: Forbidden (code 3314)
+sql-api-query-get-account-scoped	Analytics SQL	/accounts/{account_tag}/analytics/sql	-	skipped	-	required query param query has no enum/default
+sql-api-introspection-account-scoped	Analytics SQL	/accounts/{account_tag}/analytics/sql/introspection	400	expected-4xx	-	HTTP 400: Provide the account_tag query parameter, or use /client/v4/accounts/{account_tag}/analytics/sql/introspection.
+sql-api-query-get	Analytics SQL	/analytics/sql	-	skipped	-	required query param query has no enum/default
+sql-api-introspection	Analytics SQL	/analytics/sql/introspection	200	ok	-	
+monolithHealthCheck	Health	/api/v4/health	400	expected-4xx	-	HTTP 400: No route for that URI (code 7000)
+origin-ca-list-certificates	Origin CA	/certificates	200	ok	ok	
+cloudflare-ips-cloudflare-ip-details	Cloudflare IPs	/ips	200	ok	-	
+getLive	brand_protection	/live	400	expected-4xx	-	HTTP 400: No route for that URI (code 7000)
+user'-s-account-memberships-list-memberships	User's Account Memberships	/memberships	400	expected-4xx	-	HTTP 400: Authentication failed (status: 400) (code 9106)
+oauth-scopes-list	OAuth Clients	/oauth/scopes	200	ok	-	
+Organization_listOrganizations	Organizations	/organizations	400	expected-4xx	-	HTTP 400: Authentication failed (status: 400) (code 9106)
+radar-get-ai-bots-summary-by-user-agent	Radar AI Bots	/radar/ai/bots/summary/user_agent	200	ok	-	
+radar-get-ai-bots-timeseries	Radar AI Bots	/radar/ai/bots/timeseries	200	ok	-	
+radar-get-ai-bots-timeseries-group-by-user-agent	Radar AI Bots	/radar/ai/bots/timeseries_groups/user_agent	200	ok	-	
+radar-get-ai-inference-summary-by-model	Radar AI Inference	/radar/ai/inference/summary/model	200	ok	-	
+radar-get-ai-inference-summary-by-task	Radar AI Inference	/radar/ai/inference/summary/task	200	ok	-	
+radar-get-ai-inference-timeseries-group-by-model	Radar AI Inference	/radar/ai/inference/timeseries_groups/model	200	ok	-	
+radar-get-ai-inference-timeseries-group-by-task	Radar AI Inference	/radar/ai/inference/timeseries_groups/task	200	ok	-	
+radar-get-ai-markdown-for-agents-summary	Radar Markdown for Agents	/radar/ai/markdown_for_agents/summary	200	ok	-	
+radar-get-ai-markdown-for-agents-timeseries	Radar Markdown for Agents	/radar/ai/markdown_for_agents/timeseries	200	ok	-	
+radar-get-annotations	Radar Annotations	/radar/annotations	200	ok	-	
+radar-get-annotations-outages	Radar Annotations	/radar/annotations/outages	200	ok	-	
+radar-get-annotations-outages-top	Radar Annotations	/radar/annotations/outages/locations	200	ok	-	
+radar-get-dns-as112-timeseries-by-dnssec	Radar AS112	/radar/as112/summary/dnssec	200	ok	-	
+radar-get-dns-as112-timeseries-by-edns	Radar AS112	/radar/as112/summary/edns	200	ok	-	
+radar-get-dns-as112-timeseries-by-ip-version	Radar AS112	/radar/as112/summary/ip_version	200	ok	-	
+radar-get-dns-as112-timeseries-by-protocol	Radar AS112	/radar/as112/summary/protocol	200	ok	-	
+radar-get-dns-as112-timeseries-by-query-type	Radar AS112	/radar/as112/summary/query_type	200	ok	-	
+radar-get-dns-as112-timeseries-by-response-codes	Radar AS112	/radar/as112/summary/response_codes	200	ok	-	
+radar-get-dns-as112-timeseries	Radar AS112	/radar/as112/timeseries	200	ok	-	
+radar-get-dns-as112-timeseries-group-by-dnssec	Radar AS112	/radar/as112/timeseries_groups/dnssec	200	ok	-	
+radar-get-dns-as112-timeseries-group-by-edns	Radar AS112	/radar/as112/timeseries_groups/edns	200	ok	-	
+radar-get-dns-as112-timeseries-group-by-ip-version	Radar AS112	/radar/as112/timeseries_groups/ip_version	200	ok	-	
+radar-get-dns-as112-timeseries-group-by-protocol	Radar AS112	/radar/as112/timeseries_groups/protocol	200	ok	-	
+radar-get-dns-as112-timeseries-group-by-query-type	Radar AS112	/radar/as112/timeseries_groups/query_type	200	ok	-	
+radar-get-dns-as112-timeseries-group-by-response-codes	Radar AS112	/radar/as112/timeseries_groups/response_codes	200	ok	-	
+radar-get-dns-as112-top-locations	Radar AS112	/radar/as112/top/locations	200	ok	-	
+radar-get-attacks-layer3-summary-by-bitrate	Radar Layer 3 Attacks	/radar/attacks/layer3/summary/bitrate	200	ok	-	
+radar-get-attacks-layer3-summary-by-duration	Radar Layer 3 Attacks	/radar/attacks/layer3/summary/duration	200	ok	-	
+radar-get-attacks-layer3-summary-by-industry	Radar Layer 3 Attacks	/radar/attacks/layer3/summary/industry	200	ok	-	
+radar-get-attacks-layer3-summary-by-ip-version	Radar Layer 3 Attacks	/radar/attacks/layer3/summary/ip_version	200	ok	-	
+radar-get-attacks-layer3-summary-by-protocol	Radar Layer 3 Attacks	/radar/attacks/layer3/summary/protocol	200	ok	-	
+radar-get-attacks-layer3-summary-by-vector	Radar Layer 3 Attacks	/radar/attacks/layer3/summary/vector	200	ok	-	
+radar-get-attacks-layer3-summary-by-vertical	Radar Layer 3 Attacks	/radar/attacks/layer3/summary/vertical	200	ok	-	
+radar-get-attacks-layer3-timeseries-by-bytes	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries	200	ok	-	
+radar-get-attacks-layer3-timeseries-group-by-bitrate	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries_groups/bitrate	200	ok	-	
+radar-get-attacks-layer3-timeseries-group-by-duration	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries_groups/duration	200	ok	-	
+radar-get-attacks-layer3-timeseries-group-by-industry	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries_groups/industry	200	ok	-	
+radar-get-attacks-layer3-timeseries-group-by-ip-version	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries_groups/ip_version	200	ok	-	
+radar-get-attacks-layer3-timeseries-group-by-protocol	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries_groups/protocol	200	ok	-	
+radar-get-attacks-layer3-timeseries-group-by-vector	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries_groups/vector	200	ok	-	
+radar-get-attacks-layer3-timeseries-group-by-vertical	Radar Layer 3 Attacks	/radar/attacks/layer3/timeseries_groups/vertical	200	ok	-	
+radar-get-attacks-layer3-top-attacks	Radar Layer 3 Attacks	/radar/attacks/layer3/top/attacks	200	ok	-	
+radar-get-attacks-layer3-top-industries	Radar Layer 3 Attacks	/radar/attacks/layer3/top/industry	200	ok	-	
+radar-get-attacks-layer3-top-origin-locations	Radar Layer 3 Attacks	/radar/attacks/layer3/top/locations/origin	200	ok	-	
+radar-get-attacks-layer3-top-target-locations	Radar Layer 3 Attacks	/radar/attacks/layer3/top/locations/target	200	ok	-	
+radar-get-attacks-layer3-top-verticals	Radar Layer 3 Attacks	/radar/attacks/layer3/top/vertical	200	ok	-	
+radar-get-attacks-layer7-summary-by-http-method	Radar Layer 7 Attacks	/radar/attacks/layer7/summary/http_method	200	ok	-	
+radar-get-attacks-layer7-summary-by-http-version	Radar Layer 7 Attacks	/radar/attacks/layer7/summary/http_version	200	ok	-	
+radar-get-attacks-layer7-summary-by-industry	Radar Layer 7 Attacks	/radar/attacks/layer7/summary/industry	200	ok	-	
+radar-get-attacks-layer7-summary-by-ip-version	Radar Layer 7 Attacks	/radar/attacks/layer7/summary/ip_version	200	ok	-	
+radar-get-attacks-layer7-summary-by-managed-rules	Radar Layer 7 Attacks	/radar/attacks/layer7/summary/managed_rules	200	ok	-	
+radar-get-attacks-layer7-summary-by-mitigation-product	Radar Layer 7 Attacks	/radar/attacks/layer7/summary/mitigation_product	200	ok	-	
+radar-get-attacks-layer7-summary-by-vertical	Radar Layer 7 Attacks	/radar/attacks/layer7/summary/vertical	200	ok	-	
+radar-get-attacks-layer7-timeseries	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries	200	ok	-	
+radar-get-attacks-layer7-timeseries-group-by-http-method	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries_groups/http_method	200	ok	-	
+radar-get-attacks-layer7-timeseries-group-by-http-version	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries_groups/http_version	200	ok	-	
+radar-get-attacks-layer7-timeseries-group-by-industry	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries_groups/industry	200	ok	-	
+radar-get-attacks-layer7-timeseries-group-by-ip-version	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries_groups/ip_version	200	ok	-	
+radar-get-attacks-layer7-timeseries-group-by-managed-rules	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries_groups/managed_rules	200	ok	-	
+radar-get-attacks-layer7-timeseries-group-by-mitigation-product	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries_groups/mitigation_product	200	ok	-	
+radar-get-attacks-layer7-timeseries-group-by-vertical	Radar Layer 7 Attacks	/radar/attacks/layer7/timeseries_groups/vertical	200	ok	-	
+radar-get-attacks-layer7-top-origin-as	Radar Layer 7 Attacks	/radar/attacks/layer7/top/ases/origin	200	ok	-	
+radar-get-attacks-layer7-top-attacks	Radar Layer 7 Attacks	/radar/attacks/layer7/top/attacks	200	ok	-	
+radar-get-attacks-layer7-top-industries	Radar Layer 7 Attacks	/radar/attacks/layer7/top/industry	200	ok	-	
+radar-get-attacks-layer7-top-origin-location	Radar Layer 7 Attacks	/radar/attacks/layer7/top/locations/origin	200	ok	-	
+radar-get-attacks-layer7-top-target-location	Radar Layer 7 Attacks	/radar/attacks/layer7/top/locations/target	200	ok	-	
+radar-get-attacks-layer7-top-verticals	Radar Layer 7 Attacks	/radar/attacks/layer7/top/vertical	200	ok	-	
+radar-get-bgp-hijacks-events	Radar BGP	/radar/bgp/hijacks/events	200	ok	ok	
+radar-get-bgp-ips-timeseries	Radar BGP	/radar/bgp/ips/timeseries	200	ok	-	
+radar-get-bgp-ips-top-ases	Radar BGP	/radar/bgp/ips/top/ases	200	ok	-	
+radar-get-bgp-route-leak-events	Radar BGP	/radar/bgp/leaks/events	200	ok	ok	
+radar-get-bgp-routes-asns	Radar BGP	/radar/bgp/routes/ases	200	ok	-	
+radar-get-bgp-pfx2as-moas	Radar BGP	/radar/bgp/routes/moas	200	ok	-	
+radar-get-bgp-pfx2as	Radar BGP	/radar/bgp/routes/pfx2as	400	expected-4xx	-	HTTP 400: prefix or origin must be set (only one) (code 2001)
+radar-get-bgp-routes-realtime	Radar BGP	/radar/bgp/routes/realtime	400	expected-4xx	-	HTTP 400: prefix must be set (only one) (code 2001)
+radar-get-bgp-routes-stats	Radar BGP	/radar/bgp/routes/stats	200	ok	-	
+radar-get-bgp-rpki-aspa-changes	Radar BGP	/radar/bgp/rpki/aspa/changes	200	ok	-	
+radar-get-bgp-rpki-aspa-snapshot	Radar BGP	/radar/bgp/rpki/aspa/snapshot	200	ok	-	
+radar-get-bgp-rpki-aspa-timeseries	Radar BGP	/radar/bgp/rpki/aspa/timeseries	200	ok	-	
+radar-get-bgp-rpki-roas-timeseries	Radar BGP	/radar/bgp/rpki/roas/timeseries	200	ok	-	
+radar-get-bgp-timeseries	Radar BGP	/radar/bgp/timeseries	200	ok	-	
+radar-get-bgp-top-ases	Radar BGP	/radar/bgp/top/ases	200	ok	-	
+radar-get-bgp-top-asns-by-prefixes	Radar BGP	/radar/bgp/top/ases/prefixes	200	ok	-	
+radar-get-bgp-top-prefixes	Radar BGP	/radar/bgp/top/prefixes	200	ok	-	
+radar-get-bots	Radar Bots	/radar/bots	200	ok	-	
+radar-get-bots-timeseries	Radar Bots	/radar/bots/timeseries	200	ok	-	
+radar-get-certificate-authorities	Radar Certificate Transparency	/radar/ct/authorities	200	ok	-	
+radar-get-certificate-logs	Radar Certificate Transparency	/radar/ct/logs	200	ok	-	
+radar-get-ct-timeseries	Radar Certificate Transparency	/radar/ct/timeseries	200	ok	-	
+radar-get-reports-datasets	Radar Datasets	/radar/datasets	200	ok	-	
+radar-get-dns-summary-by-cache-hit-status	Radar DNS	/radar/dns/summary/cache_hit	200	ok	-	
+radar-get-dns-summary-by-dnssec	Radar DNS	/radar/dns/summary/dnssec	200	ok	-	
+radar-get-dns-summary-by-dnssec-awareness	Radar DNS	/radar/dns/summary/dnssec_aware	200	ok	-	
+radar-get-dns-summary-by-dnssec-e2e-version	Radar DNS	/radar/dns/summary/dnssec_e2e	200	ok	-	
+radar-get-dns-summary-by-ip-version	Radar DNS	/radar/dns/summary/ip_version	200	ok	-	
+radar-get-dns-summary-by-matching-answer-status	Radar DNS	/radar/dns/summary/matching_answer	200	ok	-	
+radar-get-dns-summary-by-protocol	Radar DNS	/radar/dns/summary/protocol	200	ok	-	
+radar-get-dns-summary-by-query-type	Radar DNS	/radar/dns/summary/query_type	200	ok	-	
+radar-get-dns-summary-by-response-code	Radar DNS	/radar/dns/summary/response_code	200	ok	-	
+radar-get-dns-summary-by-response-ttl	Radar DNS	/radar/dns/summary/response_ttl	200	ok	-	
+radar-get-dns-timeseries	Radar DNS	/radar/dns/timeseries	200	ok	-	
+radar-get-dns-timeseries-group-by-cache-hit-status	Radar DNS	/radar/dns/timeseries_groups/cache_hit	200	ok	-	
+radar-get-dns-timeseries-group-by-dnssec	Radar DNS	/radar/dns/timeseries_groups/dnssec	200	ok	-	
+radar-get-dns-timeseries-group-by-dnssec-awareness	Radar DNS	/radar/dns/timeseries_groups/dnssec_aware	200	ok	-	
+radar-get-dns-timeseries-group-by-dnssec-e2e-version	Radar DNS	/radar/dns/timeseries_groups/dnssec_e2e	200	ok	-	
+radar-get-dns-timeseries-group-by-ip-version	Radar DNS	/radar/dns/timeseries_groups/ip_version	200	ok	-	
+radar-get-dns-timeseries-group-by-matching-answer-status	Radar DNS	/radar/dns/timeseries_groups/matching_answer	200	ok	-	
+radar-get-dns-timeseries-group-by-protocol	Radar DNS	/radar/dns/timeseries_groups/protocol	200	ok	-	
+radar-get-dns-timeseries-group-by-query-type	Radar DNS	/radar/dns/timeseries_groups/query_type	200	ok	-	
+radar-get-dns-timeseries-group-by-response-code	Radar DNS	/radar/dns/timeseries_groups/response_code	200	ok	-	
+radar-get-dns-timeseries-group-by-response-ttl	Radar DNS	/radar/dns/timeseries_groups/response_ttl	200	ok	-	
+radar-get-dns-top-ases	Radar DNS	/radar/dns/top/ases	200	ok	-	
+radar-get-dns-top-locations	Radar DNS	/radar/dns/top/locations	200	ok	-	
+radar-get-email-routing-summary-by-arc	Radar Email Routing	/radar/email/routing/summary/arc	200	ok	-	
+radar-get-email-routing-summary-by-dkim	Radar Email Routing	/radar/email/routing/summary/dkim	200	ok	-	
+radar-get-email-routing-summary-by-dmarc	Radar Email Routing	/radar/email/routing/summary/dmarc	200	ok	-	
+radar-get-email-routing-summary-by-encrypted	Radar Email Routing	/radar/email/routing/summary/encrypted	200	ok	-	
+radar-get-email-routing-summary-by-ip-version	Radar Email Routing	/radar/email/routing/summary/ip_version	200	ok	-	
+radar-get-email-routing-summary-by-spf	Radar Email Routing	/radar/email/routing/summary/spf	200	ok	-	
+radar-get-email-routing-timeseries-group-by-arc	Radar Email Routing	/radar/email/routing/timeseries_groups/arc	200	ok	-	
+radar-get-email-routing-timeseries-group-by-dkim	Radar Email Routing	/radar/email/routing/timeseries_groups/dkim	200	ok	-	
+radar-get-email-routing-timeseries-group-by-dmarc	Radar Email Routing	/radar/email/routing/timeseries_groups/dmarc	200	ok	-	
+radar-get-email-routing-timeseries-group-by-encrypted	Radar Email Routing	/radar/email/routing/timeseries_groups/encrypted	200	ok	-	
+radar-get-email-routing-timeseries-group-by-ip-version	Radar Email Routing	/radar/email/routing/timeseries_groups/ip_version	200	ok	-	
+radar-get-email-routing-timeseries-group-by-spf	Radar Email Routing	/radar/email/routing/timeseries_groups/spf	200	ok	-	
+radar-get-email-security-summary-by-arc	Radar Email Security	/radar/email/security/summary/arc	200	ok	-	
+radar-get-email-security-summary-by-dkim	Radar Email Security	/radar/email/security/summary/dkim	200	ok	-	
+radar-get-email-security-summary-by-dmarc	Radar Email Security	/radar/email/security/summary/dmarc	200	ok	-	
+radar-get-email-security-summary-by-malicious	Radar Email Security	/radar/email/security/summary/malicious	200	ok	-	
+radar-get-email-security-summary-by-spam	Radar Email Security	/radar/email/security/summary/spam	200	ok	-	
+radar-get-email-security-summary-by-spf	Radar Email Security	/radar/email/security/summary/spf	200	ok	-	
+radar-get-email-security-summary-by-spoof	Radar Email Security	/radar/email/security/summary/spoof	200	ok	-	
+radar-get-email-security-summary-by-threat-category	Radar Email Security	/radar/email/security/summary/threat_category	200	ok	-	
+radar-get-email-security-summary-by-tls-version	Radar Email Security	/radar/email/security/summary/tls_version	200	ok	-	
+radar-get-email-security-timeseries-group-by-arc	Radar Email Security	/radar/email/security/timeseries_groups/arc	200	ok	-	
+radar-get-email-security-timeseries-group-by-dkim	Radar Email Security	/radar/email/security/timeseries_groups/dkim	200	ok	-	
+radar-get-email-security-timeseries-group-by-dmarc	Radar Email Security	/radar/email/security/timeseries_groups/dmarc	200	ok	-	
+radar-get-email-security-timeseries-group-by-malicious	Radar Email Security	/radar/email/security/timeseries_groups/malicious	200	ok	-	
+radar-get-email-security-timeseries-group-by-spam	Radar Email Security	/radar/email/security/timeseries_groups/spam	200	ok	-	
+radar-get-email-security-timeseries-group-by-spf	Radar Email Security	/radar/email/security/timeseries_groups/spf	200	ok	-	
+radar-get-email-security-timeseries-group-by-spoof	Radar Email Security	/radar/email/security/timeseries_groups/spoof	200	ok	-	
+radar-get-email-security-timeseries-group-by-threat-category	Radar Email Security	/radar/email/security/timeseries_groups/threat_category	200	ok	-	
+radar-get-email-security-timeseries-group-by-tls-version	Radar Email Security	/radar/email/security/timeseries_groups/tls_version	200	ok	-	
+radar-get-email-security-top-tlds-by-messages	Radar Email Security	/radar/email/security/top/tlds	200	ok	-	
+radar-get-entities-asn-list	Radar Autonomous Systems	/radar/entities/asns	200	ok	-	
+radar-get-as-botnet-threat-feed	Radar Autonomous Systems	/radar/entities/asns/botnet_threat_feed	200	ok	-	
+radar-get-entities-asn-by-ip	Radar Autonomous Systems	/radar/entities/asns/ip	200	ok	-	
+radar-get-entities-ip	Radar IP	/radar/entities/ip	200	ok	-	
+radar-get-entities-locations	Radar Locations	/radar/entities/locations	200	ok	-	
+radar-get-geolocations	Radar Geolocations	/radar/geolocations	200	ok	-	
+radar-get-http-summary-by-bot-class	Radar HTTP	/radar/http/summary/bot_class	200	ok	-	
+radar-get-http-summary-by-device-type	Radar HTTP	/radar/http/summary/device_type	200	ok	-	
+radar-get-http-summary-by-http-protocol	Radar HTTP	/radar/http/summary/http_protocol	200	ok	-	
+radar-get-http-summary-by-http-version	Radar HTTP	/radar/http/summary/http_version	200	ok	-	
+radar-get-http-summary-by-ip-version	Radar HTTP	/radar/http/summary/ip_version	200	ok	-	
+radar-get-http-summary-by-operating-system	Radar HTTP	/radar/http/summary/os	200	ok	-	
+radar-get-http-summary-by-post-quantum	Radar HTTP	/radar/http/summary/post_quantum	200	ok	-	
+radar-get-http-summary-by-tls-version	Radar HTTP	/radar/http/summary/tls_version	200	ok	-	
+radar-get-http-timeseries	Radar HTTP	/radar/http/timeseries	200	ok	-	
+radar-get-http-timeseries-group-by-bot-class	Radar HTTP	/radar/http/timeseries_groups/bot_class	200	ok	-	
+radar-get-http-timeseries-group-by-browsers	Radar HTTP	/radar/http/timeseries_groups/browser	200	ok	-	
+radar-get-http-timeseries-group-by-browser-families	Radar HTTP	/radar/http/timeseries_groups/browser_family	200	ok	-	
+radar-get-http-timeseries-group-by-device-type	Radar HTTP	/radar/http/timeseries_groups/device_type	200	ok	-	
+radar-get-http-timeseries-group-by-http-protocol	Radar HTTP	/radar/http/timeseries_groups/http_protocol	200	ok	-	
+radar-get-http-timeseries-group-by-http-version	Radar HTTP	/radar/http/timeseries_groups/http_version	200	ok	-	
+radar-get-http-timeseries-group-by-ip-version	Radar HTTP	/radar/http/timeseries_groups/ip_version	200	ok	-	
+radar-get-http-timeseries-group-by-operating-system	Radar HTTP	/radar/http/timeseries_groups/os	200	ok	-	
+radar-get-http-timeseries-group-by-post-quantum	Radar HTTP	/radar/http/timeseries_groups/post_quantum	200	ok	-	
+radar-get-http-timeseries-group-by-tls-version	Radar HTTP	/radar/http/timeseries_groups/tls_version	200	ok	-	
+radar-get-http-top-ases-by-http-requests	Radar HTTP	/radar/http/top/ases	200	ok	-	
+radar-get-http-top-browsers	Radar HTTP	/radar/http/top/browser	200	ok	-	
+radar-get-http-top-browser-families	Radar HTTP	/radar/http/top/browser_family	200	ok	-	
+radar-get-http-top-locations-by-http-requests	Radar HTTP	/radar/http/top/locations	200	ok	-	
+radar-get-leaked-credential-checks-summary-by-bot-class	Radar Leaked Credential Checks	/radar/leaked_credential_checks/summary/bot_class	200	ok	-	
+radar-get-leaked-credential-checks-summary-by-compromised	Radar Leaked Credential Checks	/radar/leaked_credential_checks/summary/compromised	200	ok	-	
+radar-get-leaked-credential-checks-timeseries-group-by-bot-class	Radar Leaked Credential Checks	/radar/leaked_credential_checks/timeseries_groups/bot_class	200	ok	-	
+radar-get-leaked-credential-checks-timeseries-group-by-compromised	Radar Leaked Credential Checks	/radar/leaked_credential_checks/timeseries_groups/compromised	200	ok	-	
+radar-get-netflows-summary-deprecated	Radar NetFlows	/radar/netflows/summary	200	ok	-	
+radar-get-netflows-timeseries	Radar NetFlows	/radar/netflows/timeseries	200	ok	-	
+radar-get-netflows-top-ases	Radar NetFlows	/radar/netflows/top/ases	200	ok	-	
+radar-get-netflows-top-locations	Radar NetFlows	/radar/netflows/top/locations	200	ok	-	
+radar-get-origins	Radar Origins	/radar/origins	200	ok	-	
+radar-get-origins-timeseries	Radar Origins	/radar/origins/timeseries	200	ok	-	
+radar-get-post-quantum-tls-support	Radar Post-Quantum	/radar/post_quantum/tls/support	200	ok	-	
+radar-get-quality-index-summary	Radar Quality	/radar/quality/iqi/summary	200	ok	-	
+radar-get-quality-index-timeseries-group	Radar Quality	/radar/quality/iqi/timeseries_groups	200	ok	-	
+radar-get-quality-speed-histogram	Radar Quality	/radar/quality/speed/histogram	400	expected-4xx	-	HTTP 400: Value 'bandwidth' does not exist in 'QualitySpeedGroupingDimensions' enum. Did you mean the enum value 'BANDWIDTH'? (code 2001)
+radar-get-quality-speed-summary	Radar Quality	/radar/quality/speed/summary	200	ok	-	
+radar-get-quality-speed-top-ases	Radar Quality	/radar/quality/speed/top/ases	200	ok	-	
+radar-get-quality-speed-top-locations	Radar Quality	/radar/quality/speed/top/locations	200	ok	-	
+radar-get-ranking-internet-services-categories	Radar Internet Services Ranking	/radar/ranking/internet_services/categories	200	ok	-	
+radar-get-ranking-internet-services-timeseries	Radar Internet Services Ranking	/radar/ranking/internet_services/timeseries_groups	200	ok	-	
+radar-get-ranking-top-internet-services	Radar Internet Services Ranking	/radar/ranking/internet_services/top	200	ok	-	
+radar-get-ranking-domain-timeseries	Radar Domains Ranking	/radar/ranking/timeseries_groups	200	ok	-	
+radar-get-ranking-top-domains	Radar Domains Ranking	/radar/ranking/top	200	ok	-	
+radar-get-robots-txt-top-domain-categories-by-files-parsed	Radar Robots.txt	/radar/robots_txt/top/domain_categories	200	ok	-	
+radar-get-robots-txt-top-user-agents-by-directive	Radar Robots.txt	/radar/robots_txt/top/user_agents/directive	200	ok	-	
+radar-get-search-global	Radar Search	/radar/search/global	-	skipped	-	required query param query has no enum/default
+radar-get-tcp-resets-timeouts-summary	Radar TCP Resets and Timeouts	/radar/tcp_resets_timeouts/summary	200	ok	-	
+radar-get-tcp-resets-timeouts-timeseries-group	Radar TCP Resets and Timeouts	/radar/tcp_resets_timeouts/timeseries_groups	200	ok	-	
+radar-get-tlds	Radar Top-Level Domains	/radar/tlds	200	ok	-	
+radar-get-traffic-anomalies	Radar Traffic Anomalies	/radar/traffic_anomalies	200	ok	-	
+radar-get-traffic-anomalies-top	Radar Traffic Anomalies	/radar/traffic_anomalies/locations	200	ok	-	
+radar-get-verified-bots-top-by-http-requests	Radar Verified Bots	/radar/verified_bots/top/bots	200	ok	-	
+radar-get-verified-bots-top-categories-by-http-requests	Radar Verified Bots	/radar/verified_bots/top/categories	200	ok	-	
+getReady	brand_protection	/ready	400	expected-4xx	-	HTTP 400: No route for that URI (code 7000)
+getSignedUrl	logo_match	/signed-url	400	expected-4xx	-	HTTP 400: No route for that URI (code 7000)
+user-user-details	User	/user	403	expected-4xx	-	HTTP 403: Valid user-level authentication not found (code 9109)
+user-analytics-get-dashboard	User Analytics (Deprecated)	/user/analytics/dashboard	400	expected-4xx	-	HTTP 400: Authentication failed (status: 400) (code 9106)
+audit-logs-get-user-audit-logs	Audit Logs	/user/audit_logs	200	ok	ok	
+user-billing-history-(-deprecated)-billing-history-details	User Billing History	/user/billing/history	200	ok	ok	
+user-billing-profile-(-deprecated)-billing-profile-details	User Billing Profile	/user/billing/profile	200	ok	-	
+user-communication-preferences-get	Communication Preferences	/user/communication_preferences	400	expected-4xx	-	HTTP 400: Authentication failed (status: 400) (code 9106)
+ip-access-rules-for-a-user-list-ip-access-rules	IP Access rules for a user	/user/firewall/access_rules/rules	200	ok	ok	
+user'-s-invites-list-invitations	User's Invites	/user/invites	403	expected-4xx	-	HTTP 403: Valid user-level authentication not found (code 9109)
+load-balancer-monitors-list-monitors	Load Balancer Monitors	/user/load_balancers/monitors	200	ok	-	
+load-balancer-pools-list-pools	Load Balancer Pools	/user/load_balancers/pools	200	ok	-	
+user-load-balancer-regions-list-regions	Load Balancer Regions	/user/load_balancers/regions	200	ok	-	
+load-balancer-healthcheck-events-list-healthcheck-events	Load Balancer Healthcheck Events	/user/load_balancing_analytics/events	200	ok	-	
+user'-s-organizations-list-organizations	User's Organizations	/user/organizations	403	expected-4xx	-	HTTP 403: Valid user-level authentication not found (code 9109)
+spectrum-analytics-get-zones-report	Spectrum Analytics	/user/spectrum_analytics/zones/report	400	expected-4xx	-	HTTP 400: Authentication failed (status: 400) (code 9106)
+user-subscription-get-user-subscriptions	User Subscription	/user/subscriptions	200	ok	-	
+User_listUserTenants	User	/user/tenants	400	expected-4xx	-	HTTP 400: Authentication failed (status: 400) (code 9106)
+user-api-tokens-list-tokens	User API Tokens	/user/tokens	403	expected-4xx	-	HTTP 403: Valid user-level authentication not found (code 9109)
+permission-groups-list-permission-groups	User API Tokens	/user/tokens/permission_groups	403	expected-4xx	-	HTTP 403: Valid user-level authentication not found (code 9109)
+user-api-tokens-verify-token	User API Tokens	/user/tokens/verify	401	expected-4xx	-	HTTP 401: Invalid API Token (code 1000)
+zones-get	Zone	/zones	200	ok	ok	
+zone-analytics-(-deprecated)-get-analytics-by-co-locations	Zone Analytics (Deprecated)	/zones/{zone_identifier}/analytics/colos	400	expected-4xx	-	HTTP 400: Zone Analytics API only supports authentication using user-owned credentials. If you need to use an Account-Owned Token, please migrate to the repl...
+zone-analytics-(-deprecated)-get-dashboard	Zone Analytics (Deprecated)	/zones/{zone_identifier}/analytics/dashboard	400	expected-4xx	-	HTTP 400: Zone Analytics API only supports authentication using user-owned credentials. If you need to use an Account-Owned Token, please migrate to the repl...
+zones-0-get	Zone	/zones/{zone_id}	200	ok	-	
+zone-level-access-applications-list-access-applications	Zone-Level Access applications	/zones/{zone_id}/access/apps	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zone-level-access-short-lived-certificate-c-as-list-short-lived-certificate-c-as	Zone-Level Access short-lived certificate CAs	/zones/{zone_id}/access/apps/ca	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zone-level-access-mtls-authentication-list-mtls-certificates	Zone-Level Access mTLS authentication	/zones/{zone_id}/access/certificates	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zone-level-access-mtls-authentication-list-mtls-certificates-hostname-settings	Zone-Level Access mTLS authentication	/zones/{zone_id}/access/certificates/settings	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zone-level-access-groups-list-access-groups	Zone-Level Access groups	/zones/{zone_id}/access/groups	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zone-level-access-identity-providers-list-access-identity-providers	Zone-Level Access identity providers	/zones/{zone_id}/access/identity_providers	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zone-level-zero-trust-organization-get-your-zero-trust-organization	Zone-Level Zero Trust organization	/zones/{zone_id}/access/organizations	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+zone-level-access-service-tokens-list-service-tokens	Zone-Level Access service tokens	/zones/{zone_id}/access/service_tokens	403	expected-4xx	-	HTTP 403: access.api.error.not_enabled: Access is not enabled. Visit the Access dashboard at https://dash.cloudflare.com/ and click the 'Enable Access' butto...
+custom-origin-trust-store-list-details	Custom Origin Trust Store	/zones/{zone_id}/acm/custom_trust_store	401	expected-4xx	-	HTTP 401: Access to configure this resource has not been granted for this zone. This feature is available with the Advanced Certificate Manager. (code 1450)
+total-tls-total-tls-settings-details	Total TLS	/zones/{zone_id}/acm/total_tls	200	ok	-	
+dls-zone-regional-hostnames-list	DLS Regional Services	/zones/{zone_id}/addressing/regional_hostnames	403	expected-4xx	-	HTTP 403: forbidden (code 1002)
+ai-audit-get-robots	AI Audit	/zones/{zone_id}/ai-audit/robots	404	expected-4xx	-	HTTP 404: aiaudit.api.error.ai-audit.robots.not_found (code 70003)
+ai-security-custom-topics-get	AI Security for Apps	/zones/{zone_id}/ai-security/custom-topics	403	expected-4xx	-	HTTP 403: not entitled to access this resource (code 13101)
+ai-security-settings-get	AI Security for Apps	/zones/{zone_id}/ai-security/settings	200	ok	-	
+argo-analytics-for-zone-argo-analytics-for-a-zone	Argo Analytics for Zone	/zones/{zone_id}/analytics/latency	200	ok	-	
+argo-analytics-for-geolocation-argo-analytics-for-a-zone-at-different-po-ps	Argo Analytics for Geolocation	/zones/{zone_id}/analytics/latency/colos	200	ok	-	
+api-shield-settings-retrieve-information-about-specific-configuration-properties	API Shield Settings	/zones/{zone_id}/api_gateway/configuration	403	expected-4xx	-	HTTP 403: You are not entitled for this service (code 10403)
+api-shield-api-discovery-retrieve-discovered-operations-on-a-zone-as-openapi	API Shield API Discovery	/zones/{zone_id}/api_gateway/discovery	200	ok	-	
+api-shield-api-discovery-retrieve-discovered-operations-on-a-zone	API Shield API Discovery	/zones/{zone_id}/api_gateway/discovery/operations	200	ok	ok	
+api-shield-labels-get-labels	API Shield Labels	/zones/{zone_id}/api_gateway/labels	200	ok	ok	
+api-shield-endpoint-management-retrieve-information-about-all-operations-on-a-zone	API Shield Endpoint Management	/zones/{zone_id}/api_gateway/operations	200	ok	ok	
+api-shield-endpoint-management-retrieve-operations-and-features-as-open-api-schemas	API Shield Endpoint Management	/zones/{zone_id}/api_gateway/schemas	200	ok	-	
+api-shield-schema-validation-retrieve-zone-level-settings	API Shield Schema Validation 2.0	/zones/{zone_id}/api_gateway/settings/schema_validation	200	ok	-	
+api-shield-schema-validation-retrieve-information-about-all-schemas	API Shield Schema Validation 2.0	/zones/{zone_id}/api_gateway/user_schemas	200	ok	ok	
+api-shield-schema-validation-retrieve-user-schema-hosts	API Shield Schema Validation 2.0	/zones/{zone_id}/api_gateway/user_schemas/hosts	200	ok	ok	
+argo-smart-routing-get-argo-smart-routing-setting	Argo Smart Routing	/zones/{zone_id}/argo/smart_routing	401	expected-4xx	-	HTTP 401: The request is not authorized to access this setting. Cause(s): smart_routing (code 1015)
+tiered-caching-get-tiered-caching-setting	Tiered Caching	/zones/{zone_id}/argo/tiered_caching	200	ok	-	
+zone-rate-plan-list-available-plans	Zone Rate Plan	/zones/{zone_id}/available_plans	200	ok	-	
+zone-rate-plan-list-available-rate-plans	Zone Rate Plan	/zones/{zone_id}/available_rate_plans	200	ok	-	
+bot-management-for-a-zone-get-config	Bot Settings	/zones/{zone_id}/bot_management	200	ok	-	
+bot-management-zone-feedback-list	Feedback	/zones/{zone_id}/bot_management/feedback	200	ok	-	
+zone-cache-settings-get-cache-reserve-setting	Zone Cache Settings	/zones/{zone_id}/cache/cache_reserve	403	expected-4xx	-	HTTP 403: Sorry, this zone setting is not available for your plan type. (code 1135)
+zone-cache-settings-get-cache-reserve-clear	Zone Cache Settings	/zones/{zone_id}/cache/cache_reserve_clear	403	expected-4xx	-	HTTP 403: Sorry, this zone setting is not available for your plan type. (code 1135)
+origin-cloud-regions-list	Origin Cloud Regions	/zones/{zone_id}/cache/origin_cloud_regions	400	expected-4xx	-	HTTP 400: Could not route to /zones/{zone_id}/cache/origin_cloud_regions, perhaps your object identifier is invalid? (code 7003); No r...
+origin-cloud-regions-supported-regions	Origin Cloud Regions	/zones/{zone_id}/cache/origin_cloud_regions/supported_regions	400	expected-4xx	-	HTTP 400: Could not route to /zones/{zone_id}/cache/origin_cloud_regions/supported_regions, perhaps your object identifier is invalid?...
+zone-cache-settings-get-origin-post-quantum-encryption-setting	Origin Post-Quantum	/zones/{zone_id}/cache/origin_post_quantum_encryption	200	ok	-	
+zone-cache-settings-get-regional-tiered-cache-setting	Zone Cache Settings	/zones/{zone_id}/cache/regional_tiered_cache	403	expected-4xx	-	HTTP 403: Sorry, this zone setting is not available for your plan type. (code 1135)
+smart-tiered-cache-get-smart-tiered-cache-setting	Smart Tiered Cache	/zones/{zone_id}/cache/tiered_cache_smart_topology_enable	200	ok	-	
+zone-cache-settings-get-variants-setting	Zone Cache Settings	/zones/{zone_id}/cache/variants	403	expected-4xx	-	HTTP 403: Sorry, this zone setting is not available for your plan type. (code 1135)
+client-certificate-for-a-zone-list-hostname-associations	API Shield Client Certificates for a Zone	/zones/{zone_id}/certificate_authorities/hostname_associations	200	ok	-	
+client-certificate-for-a-zone-list-client-certificates	API Shield Client Certificates for a Zone	/zones/{zone_id}/client_certificates	200	ok	ok	
+zone-cloud-connector-rules	Zone Cloud Connector Rules GET	/zones/{zone_id}/cloud_connector/rules	200	expected-4xx	-	API error: could not find entrypoint ruleset in the http_request_cloud_connector phase (code 10003)
+waf-content-scanning-list-custom-scan-expressions	Content Scanning	/zones/{zone_id}/content-upload-scan/payloads	400	expected-4xx	-	HTTP 400: File Upload Scan not enabled
+waf-content-scanning-get-status	Content Scanning	/zones/{zone_id}/content-upload-scan/settings	200	ok	-	
+ct-alerting-get-subscription	CT Alerting	/zones/{zone_id}/ct/alerting	200	ok	-	
+custom-ssl-for-a-zone-list-ssl-configurations	Custom SSL for a Zone	/zones/{zone_id}/custom_certificates	400	expected-4xx	-	HTTP 400: Plan level does not allow custom certificates with type  (code 1011)
+custom-csrs-for-a-zone-list-custom-csrs	Custom CSRs for a Zone	/zones/{zone_id}/custom_csrs	403	expected-4xx	-	HTTP 403: Access to CSRs has not been granted for this zone. Advanced Certificate Manager or Custom CSR with SSL for SaaS entitlement is required. (code 1404)
+custom-hostname-for-a-zone-list-custom-hostnames	Custom Hostname for a Zone	/zones/{zone_id}/custom_hostnames	403	expected-4xx	-	HTTP 403: No quota has been allocated for this zone or for this account. If you're already a paid SSL for SaaS customer, please contact your Customer Success...
+custom-hostname-fallback-origin-for-a-zone-get-fallback-origin-for-custom-hostnames	Custom Hostname Fallback Origin for a Zone	/zones/{zone_id}/custom_hostnames/fallback_origin	401	expected-4xx	-	HTTP 401: Access to configure this resource has not been granted for this zone. This feature is available with SSL for SaaS. (code 1456)
+custom-hostname-for-a-zone-get-custom-hostname-quota	Custom Hostname for a Zone	/zones/{zone_id}/custom_hostnames/quota	403	expected-4xx	-	HTTP 403: No quota has been allocated for this zone or for this account. If you're already a paid SSL for SaaS customer, please contact your Customer Success...
+account-level-custom-nameservers-usage-for-a-zone-get-account-custom-nameserver-related-zone-metadata	Account-Level Custom Nameservers Usage for a Zone	/zones/{zone_id}/custom_ns	200	ok	-	
+custom-pages-for-a-zone-list-custom-pages	Custom pages for a zone	/zones/{zone_id}/custom_pages	200	ok	-	
+custom-assets-for-a-zone-list-custom-assets	Custom assets for a zone	/zones/{zone_id}/custom_pages/assets	200	ok	ok	
+dcv-delegation-uuid-get	DCV Delegation	/zones/{zone_id}/dcv_delegation/uuid	200	ok	-	
+devices-get-policy-certificates	Devices	/zones/{zone_id}/devices/policy/certificates	401	expected-4xx	-	HTTP 401: malformed actor email claim (code 1039)
+dns-analytics-table	DNS Analytics	/zones/{zone_id}/dns_analytics/report	200	ok	-	
+dns-analytics-by-time	DNS Analytics	/zones/{zone_id}/dns_analytics/report/bytime	200	ok	-	
+dns-records-for-a-zone-list-dns-records	DNS Records for a Zone	/zones/{zone_id}/dns_records	200	ok	ok	
+dns-records-for-a-zone-export-dns-records	DNS Records for a Zone	/zones/{zone_id}/dns_records/export	200	ok	-	
+dns-records-for-a-zone-review-dns-scan	DNS Records for a Zone	/zones/{zone_id}/dns_records/scan/review	200	ok	-	
+dns-records-for-a-zone-get-usage	DNS Records for a Zone	/zones/{zone_id}/dns_records/usage	200	ok	-	
+dns-settings-for-a-zone-list-dns-settings	DNS Settings for a Zone	/zones/{zone_id}/dns_settings	200	ok	-	
+dnssec-dnssec-details	DNSSEC	/zones/{zone_id}/dnssec	200	ok	-	
+dnssec-list-dnssec-zsks	DNSSEC	/zones/{zone_id}/dnssec/zsk	200	ok	-	
+get_dmarc_reports_status	Email Auth	/zones/{zone_id}/email/auth/dmarc-reports	200	ok	-	
+inspect_spf	Email Auth	/zones/{zone_id}/email/auth/spf/inspect	-	skipped	-	required query param id has no enum/default
+email-routing-settings-get-email-routing-settings	Email Routing settings	/zones/{zone_id}/email/routing	200	ok	-	
+email-routing-settings-email-routing-dns-settings	Email Routing settings	/zones/{zone_id}/email/routing/dns	200	ok	-	
+email-routing-routing-rules-list-routing-rules	Email Routing routing rules	/zones/{zone_id}/email/routing/rules	200	ok	ok	
+email-routing-routing-rules-get-catch-all-rule	Email Routing routing rules	/zones/{zone_id}/email/routing/rules/catch_all	200	ok	-	
+get_publicListSuppressionZoneRouting	Email Routing suppressions	/zones/{zone_id}/email/routing/suppression	200	ok	ok	
+email-sending-subdomains-list-sending-subdomains	Email Sending subdomains	/zones/{zone_id}/email/sending/subdomains	401	expected-4xx	-	HTTP 401: Unauthorized (code 2036)
+get_publicListSuppressionZoneSending	Email Sending suppressions	/zones/{zone_id}/email/sending/suppression	200	ok	ok	
+entitlements-get-zone-entitlements	Zone Entitlements	/zones/{zone_id}/entitlements	200	ok	-	
+zonesEnvironmentsList	Zone Environments	/zones/{zone_id}/environments	200	ok	-	
+filters-list-filters	Filters	/zones/{zone_id}/filters	200	ok	ok	
+ip-access-rules-for-a-zone-list-ip-access-rules	IP Access rules for a zone	/zones/{zone_id}/firewall/access_rules/rules	200	ok	ok	
+zone-lockdown-list-zone-lockdown-rules	Zone Lockdown	/zones/{zone_id}/firewall/lockdowns	200	ok	ok	
+firewall-rules-list-firewall-rules	Firewall rules	/zones/{zone_id}/firewall/rules	200	ok	ok	
+user-agent-blocking-rules-list-user-agent-blocking-rules	User Agent Blocking rules	/zones/{zone_id}/firewall/ua_rules	200	ok	ok	
+waf-overrides-list-waf-overrides	WAF overrides	/zones/{zone_id}/firewall/waf/overrides	410	expected-4xx	-	HTTP 410: This API has been deprecated. Please use the Rulesets API instead.
+waf-packages-list-waf-packages	WAF packages	/zones/{zone_id}/firewall/waf/packages	200	ok	ok	
+fraud-detection-zone-get-settings	Fraud Detection	/zones/{zone_id}/fraud_detection/settings	200	ok	-	
+health-checks-list-health-checks	Health Checks	/zones/{zone_id}/healthchecks	200	ok	ok	
+zones-0-hold-get	Zone Holds	/zones/{zone_id}/hold	200	ok	-	
+get_FlowsGet	Images	/zones/{zone_id}/images/v1/flows	200	ok	-	
+keyless-ssl-for-a-zone-list-keyless-ssl-configurations	Keyless SSL for a Zone	/zones/{zone_id}/keyless_certificates	200	ok	-	
+waf-product-api-leaked-credentials-get-status	Leaked Credential Checks	/zones/{zone_id}/leaked-credential-checks	200	ok	-	
+waf-product-api-leaked-credentials-list-detections	Leaked Credential Checks	/zones/{zone_id}/leaked-credential-checks/detections	400	expected-4xx	-	HTTP 400: product has not been enabled (code 11001)
+load-balancers-list-load-balancers	Load Balancers	/zones/{zone_id}/load_balancers	200	ok	-	
+get-zones-zone_id-logpush-edge-jobs	Instant Logs jobs for a zone	/zones/{zone_id}/logpush/edge/jobs	200	ok	-	
+get-zones-zone_id-logpush-jobs	Logpush jobs for a zone	/zones/{zone_id}/logpush/jobs	200	ok	-	
+get-zones-zone_id-logs-control-retention-flag	Logs Received	/zones/{zone_id}/logs/control/retention/flag	401	expected-4xx	-	HTTP 401: Unauthorized (code 10000)
+zones-logs-explorer-datasets-list	Log Explorer Datasets	/zones/{zone_id}/logs/explorer/datasets	200	ok	-	
+zones-logs-explorer-datasets-available-list	Log Explorer Datasets	/zones/{zone_id}/logs/explorer/datasets/available	403	expected-4xx	-	HTTP 403: missing entitlement (code 400)
+zones-logs-explorer-query-get	Log Explorer Queries	/zones/{zone_id}/logs/explorer/query/sql	-	skipped	-	required query param query has no enum/default
+get-zones-zone_id-logs-received	Logs Received	/zones/{zone_id}/logs/received	403	expected-4xx	-	HTTP 403: auth.forbidden (code 1010)
+get-zones-zone_id-logs-received-fields	Logs Received	/zones/{zone_id}/logs/received/fields	200	ok	-	
+listManagedTransforms	Managed Transforms	/zones/{zone_id}/managed_headers	200	ok	-	
+usage-analytics-get-zone-media-usage	Usage Analytics	/zones/{zone_id}/media/usage	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+monetization-get-zone-eligibility	Monetization	/zones/{zone_id}/monetization	404	expected-4xx	-	HTTP 404: eligibility result not found (code 10007)
+monetization-list-rules	Monetization	/zones/{zone_id}/monetization/rules	404	expected-4xx	-	HTTP 404: payment rule not found (code 10005)
+zone.observability.tracing.rules.get	Observability	/zones/{zone_id}/observability/tracing/rules	200	ok	-	
+zone.observability.tracing.settings.get	Observability	/zones/{zone_id}/observability/tracing/settings	200	ok	-	
+origin-cloud-regions-v2-list	Origin Cloud Regions	/zones/{zone_id}/origin/cloud_regions	200	ok	ok	
+origin-cloud-regions-v2-supported-regions	Origin Cloud Regions	/zones/{zone_id}/origin/cloud_regions/supported_regions	200	ok	-	
+zone-level-authenticated-origin-pulls-list-certificates	Zone-Level Authenticated Origin Pulls	/zones/{zone_id}/origin_tls_client_auth	200	ok	-	
+per-hostname-authenticated-origin-pull-list-hostname-associations	Per-hostname Authenticated Origin Pull	/zones/{zone_id}/origin_tls_client_auth/hostnames	200	ok	ok	
+per-hostname-authenticated-origin-pull-list-certificates	Per-hostname Authenticated Origin Pull	/zones/{zone_id}/origin_tls_client_auth/hostnames/certificates	200	ok	-	
+zone-level-authenticated-origin-pulls-get-enablement-setting-for-zone	Zone-Level Authenticated Origin Pulls	/zones/{zone_id}/origin_tls_client_auth/settings	202	ok	-	
+page-shield-get-settings	Client-Side Security	/zones/{zone_id}/page_shield	200	ok	-	
+page-shield-list-connections	Client-Side Security	/zones/{zone_id}/page_shield/connections	403	expected-4xx	-	HTTP 403: Zone not entitled to use Connection Monitor
+page-shield-list-cookies	Client-Side Security	/zones/{zone_id}/page_shield/cookies	403	expected-4xx	-	HTTP 403: Zone not entitled to use Cookie Monitor
+page-shield-list-policies	Client-Side Security	/zones/{zone_id}/page_shield/policies	200	ok	-	
+page-shield-list-scripts	Client-Side Security	/zones/{zone_id}/page_shield/scripts	200	ok	ok	
+page-rules-list-page-rules	Page Rules	/zones/{zone_id}/pagerules	400	expected-4xx	-	HTTP 400: Page Rules endpoint does not support account owned tokens. (code 1011)
+available-page-rules-settings-list-available-page-rules-settings	Available Page Rules settings	/zones/{zone_id}/pagerules/settings	400	expected-4xx	-	HTTP 400: Page Rules endpoint does not support account owned tokens. (code 1011)
+pay-per-crawl.getZoneCanBeEnabled	ppc_config	/zones/{zone_id}/pay-per-crawl/can_be_enabled	200	ok	-	
+pay-per-crawl.getConfig	ppc_config	/zones/{zone_id}/pay-per-crawl/configuration	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getPPUZoneCanBeEnabled	ppu_configuration	/zones/{zone_id}/pay-per-use/can_be_enabled	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getPPUZoneConfiguration	ppu_configuration	/zones/{zone_id}/pay-per-use/configuration	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.listPPUOperators	ppu_pricing	/zones/{zone_id}/pay-per-use/operators	403	expected-4xx	-	HTTP 403: Forbidden
+pay-per-crawl.getPPUZoneUsageStats	ppu_usage_stats	/zones/{zone_id}/pay-per-use/usage-stats	403	expected-4xx	-	HTTP 403: Forbidden
+precursor-for-a-zone-get-config	Precursor	/zones/{zone_id}/precursor	200	ok	-	
+rate-limit-analytics-get-zone-analytics	Rate Limiting Analytics	/zones/{zone_id}/rate_limit_analytics	200	ok	-	
+rate-limits-for-a-zone-list-rate-limits	Rate limits for a zone	/zones/{zone_id}/rate_limits	410	expected-4xx	-	HTTP 410: This API has been deprecated. Please use the Rulesets API instead.
+listZoneRulesets	Zone Rulesets	/zones/{zone_id}/rulesets	200	ok	ok	
+schema-validation-list-schemas-paginated	Schema Validation	/zones/{zone_id}/schema_validation/schemas	200	ok	ok	
+schema-validation-list-schema-hosts	Schema Validation	/zones/{zone_id}/schema_validation/schemas/hosts	200	ok	ok	
+schema-validation-get-settings	Schema Validation Settings	/zones/{zone_id}/schema_validation/settings	200	ok	-	
+schema-validation-list-per-operation-settings	Schema Validation Settings	/zones/{zone_id}/schema_validation/settings/operations	200	ok	ok	
+secondary-dns-(-secondary-zone)-secondary-zone-configuration-details	Secondary DNS (Secondary Zone)	/zones/{zone_id}/secondary_dns/incoming	404	expected-4xx	-	HTTP 404: The zone has not been linked to a peer. Please make a call to POST zones/:identifier/secondary_dns/incoming before making request. (code 404)
+secondary-dns-(-primary-zone)-primary-zone-configuration-details	Secondary DNS (Primary Zone)	/zones/{zone_id}/secondary_dns/outgoing	404	expected-4xx	-	HTTP 404: The zone has not been linked to a peer. Please make a call to POST zones/:identifier/secondary_dns/outgoing before making request. (code 404)
+secondary-dns-(-primary-zone)-get-outgoing-zone-transfer-status	Secondary DNS (Primary Zone)	/zones/{zone_id}/secondary_dns/outgoing/status	200	ok	-	
+get-zone-security-center-insights	Security Center Insights	/zones/{zone_id}/security-center/insights	200	ok	ok	
+get-zone-security-center-audit-log	Security Center Audit Log	/zones/{zone_id}/security-center/insights/audit-log	200	ok	ok	
+get-zone-security-center-insight-counts-by-class	Security Center Insights	/zones/{zone_id}/security-center/insights/class	200	ok	-	
+get-zone-security-center-partner-insight-count	Security Center Insights	/zones/{zone_id}/security-center/insights/partner-count	200	ok	-	
+get-security-center-zone-scans	Security Center Scans	/zones/{zone_id}/security-center/insights/scans	200	ok	-	
+get-zone-security-center-insight-counts-by-severity	Security Center Insights	/zones/{zone_id}/security-center/insights/severity	200	ok	-	
+get-zone-security-center-insight-counts-by-type	Security Center Insights	/zones/{zone_id}/security-center/insights/type	200	ok	-	
+get-security-txt	security.txt	/zones/{zone_id}/security-center/securitytxt	200	ok	-	
+zone-settings-get-all-zone-settings	Zone Settings	/zones/{zone_id}/settings	200	ok	-	
+zone-cache-settings-get-aegis-setting	Zone Settings	/zones/{zone_id}/settings/aegis	200	ok	-	
+ssl-detector-auto-origin-tls-kex-get-enrollment	Origin TLS	/zones/{zone_id}/settings/auto_origin_tls_kex	200	ok	-	
+zone-settings-get-automatic-platform-optimization-setting	Zone Settings	/zones/{zone_id}/settings/automatic_platform_optimization	200	ok	-	
+zone-settings-get-binary-ast-setting	Zone Settings	/zones/{zone_id}/settings/binary_ast	200	ok	-	
+csam-scanner-get-setting	CSAM Scanner Settings	/zones/{zone_id}/settings/csam_scanner_third_party	200	ok	-	
+zone-settings-get-fonts-setting	Zone Settings	/zones/{zone_id}/settings/fonts	200	ok	-	
+zone-settings-get-google-tag-gateway-config	Google Tag Gateway	/zones/{zone_id}/settings/google-tag-gateway/config	200	ok	-	
+zone-settings-get-h2-prioritization-setting	Zone Settings	/zones/{zone_id}/settings/h2_prioritization	200	ok	-	
+zone-settings-get-image-resizing-setting	Zone Settings	/zones/{zone_id}/settings/image_resizing	200	ok	-	
+nel-settings-get	NEL Settings	/zones/{zone_id}/settings/nel	200	ok	-	
+zone-cache-settings-get-origin-h2-max-streams-setting	Zone Settings	/zones/{zone_id}/settings/origin_h2_max_streams	200	ok	-	
+zone-cache-settings-get-origin-max-http-version-setting	Zone Settings	/zones/{zone_id}/settings/origin_max_http_version	200	ok	-	
+zone-cache-settings-get-origin-tls-compliance-modes-setting	Origin TLS	/zones/{zone_id}/settings/origin_tls_compliance_modes	200	ok	-	
+web-analytics-get-rum-status	Web Analytics	/zones/{zone_id}/settings/rum	200	ok	-	
+zone-settings-get-speed-brain-setting	Zone Settings	/zones/{zone_id}/settings/speed_brain	200	ok	-	
+ssl-detector-automatic-mode-get-enrollment	Automatic SSL/TLS	/zones/{zone_id}/settings/ssl_automatic_mode	200	ok	-	
+zone-settings-get-transformations-allowed-origins-setting	Zone Settings	/zones/{zone_id}/settings/transformations_allowed_origins	200	ok	-	
+zone-settings-get-transformations-c2pa-setting	Zone Settings	/zones/{zone_id}/settings/transformations_c2pa	200	ok	-	
+zone-settings-get-transformations-config	Zone Settings	/zones/{zone_id}/settings/transformations_config	200	ok	-	
+get-zones-zone_identifier-zaraz-config	Zaraz	/zones/{zone_id}/settings/zaraz/config	200	ok	-	
+get-zones-zone_identifier-zaraz-default	Zaraz	/zones/{zone_id}/settings/zaraz/default	200	ok	-	
+get-zones-zone_identifier-zaraz-export	Zaraz	/zones/{zone_id}/settings/zaraz/export	500	5xx	-	HTTP 500: Internal Server Error (code 500)
+get-zones-zone_identifier-zaraz-history	Zaraz	/zones/{zone_id}/settings/zaraz/history	403	expected-4xx	-	HTTP 403: Forbidden: you have to be in preview mode to work with configs history (code 403)
+get-zones-zone_identifier-zaraz-config-history	Zaraz	/zones/{zone_id}/settings/zaraz/history/configs	-	skipped	-	required query param ids has no enum/default
+get-zones-zone_identifier-zaraz-workflow	Zaraz	/zones/{zone_id}/settings/zaraz/workflow	200	ok	-	
+smart-shield-get-settings	Smart Shield Settings	/zones/{zone_id}/smart_shield	200	ok	-	
+smart-shield-settings-get-cache-reserve-clear	Cache Reserve Clear	/zones/{zone_id}/smart_shield/cache_reserve_clear	403	expected-4xx	-	HTTP 403: Sorry, this zone setting is not available for your plan type. (code 1135)
+smart-shield-list-health-checks	Health Checks	/zones/{zone_id}/smart_shield/healthchecks	200	ok	ok	
+listZoneSnippets	Zone Snippets	/zones/{zone_id}/snippets	200	ok	ok	
+listZoneSnippetRules	Zone Snippets	/zones/{zone_id}/snippets/snippet_rules	404	expected-4xx	-	HTTP 404: could not find entrypoint ruleset in the http_request_snippets phase (code 10003)
+spectrum-aggregate-analytics-get-current-aggregated-analytics	Spectrum Analytics	/zones/{zone_id}/spectrum/analytics/aggregate/current	401	expected-4xx	-	HTTP 401: Unauthorised. (code 1033)
+spectrum-analytics-(-by-time)-get-analytics-by-time	Spectrum Analytics	/zones/{zone_id}/spectrum/analytics/events/bytime	401	expected-4xx	-	HTTP 401: Unauthorised. (code 1033)
+spectrum-analytics-(-summary)-get-analytics-summary	Spectrum Analytics	/zones/{zone_id}/spectrum/analytics/events/summary	401	expected-4xx	-	HTTP 401: Unauthorised. (code 1033)
+spectrum-applications-list-spectrum-applications	Spectrum Applications	/zones/{zone_id}/spectrum/apps	403	expected-4xx	-	HTTP 403: Forbidden. (code 10007)
+spectrum-applications-list-spectrum-application-protocols	Spectrum Applications	/zones/{zone_id}/spectrum/protocols	403	expected-4xx	-	HTTP 403: Forbidden. (code 10007)
+speed-get-availabilities	Observatory	/zones/{zone_id}/speed_api/availabilities	200	ok	-	
+speed-list-pages	Observatory	/zones/{zone_id}/speed_api/pages	200	ok	-	
+certificate-packs-list-certificate-packs	Certificate Packs	/zones/{zone_id}/ssl/certificate_packs	200	ok	ok	
+certificate-packs-get-certificate-pack-quotas	Certificate Packs	/zones/{zone_id}/ssl/certificate_packs/quota	200	ok	-	
+ssl/-tls-mode-recommendation-ssl/-tls-recommendation	SSL/TLS Mode Recommendation	/zones/{zone_id}/ssl/recommendation	400	expected-4xx	-	HTTP 400: Could not route to /zones/{zone_id}/ssl/recommendation, perhaps your object identifier is invalid? (code 7003); No route for...
+universal-ssl-settings-for-a-zone-universal-ssl-settings-details	Universal SSL Settings for a Zone	/zones/{zone_id}/ssl/universal/settings	200	ok	-	
+ssl-verification-ssl-verification-details	SSL Verification	/zones/{zone_id}/ssl/verification	200	ok	-	
+usage-analytics-get-zone-stream-usage	Usage Analytics	/zones/{zone_id}/stream/usage	403	expected-4xx	-	HTTP 403: Authorization Failure: The authentication credentials are not authorized to perform the request. Verify the credentials and try again. (code 10002)
+zone-subscription-zone-subscription-details	Zone Subscription	/zones/{zone_id}/subscription	404	expected-4xx	-	HTTP 404: Add a core subscription first and try again. The zone does not have an active core subscription. (code 1207)
+tags-zone-get	Resource Tagging	/zones/{zone_id}/tags	-	skipped	-	required query param resource_id has no enum/default
+token-validation-config-list	Token Validation Token Configuration	/zones/{zone_id}/token_validation/config	403	expected-4xx	-	HTTP 403: You are not entitled for this service (code 10403)
+token-validation-rules-list	Token Validation Token Rules	/zones/{zone_id}/token_validation/rules	403	expected-4xx	-	HTTP 403: You are not entitled for this service (code 10403)
+getUrlNormalization	URL Normalization	/zones/{zone_id}/url_normalization	200	ok	-	
+waiting-room-list-waiting-rooms	Waiting Room	/zones/{zone_id}/waiting_rooms	200	ok	ok	
+waiting-room-get-zone-settings	Waiting Room	/zones/{zone_id}/waiting_rooms/settings	200	ok	-	
+web3-hostname-list-web3-hostnames	Web3 Hostname	/zones/{zone_id}/web3/hostnames	200	ok	-	
+worker-routes-list-routes	Worker Routes	/zones/{zone_id}/workers/routes	200	ok	-	
