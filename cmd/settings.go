@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -55,7 +56,7 @@ Examples:
   cfctl zones settings set example.com browser_cache_ttl 14400`,
 		Method: "PATCH", Scope: scopeZone, Path: "/zones/{zone_id}/settings/{setting_id}", Args: []string{"setting_id", "value"},
 		Body: func(c *cobra.Command, args []string) (any, error) {
-			return map[string]any{"value": parseValue(args[2])}, nil
+			return map[string]any{"value": settingValue(args[1], args[2])}, nil
 		},
 		Feature: "zone settings",
 		Human: func(v any) {
@@ -63,6 +64,19 @@ Examples:
 		},
 	}.build(),
 )
+
+// stringValueSettings take a string value even when it looks like a number
+// (the API rejects min_tls_version 1.2 sent as a JSON number).
+var stringValueSettings = map[string]bool{"min_tls_version": true, "origin_max_http_version": true}
+
+// settingValue parses a setting value for the API (see parseValue).
+func settingValue(setting, raw string) any {
+	v := parseValue(raw)
+	if _, isNum := v.(json.Number); isNum && stringValueSettings[setting] {
+		return strings.TrimSpace(raw)
+	}
+	return v
+}
 
 // withFilter builds a settings list command with a --filter flag.
 func (r readSpec) withFilter() *cobra.Command {
