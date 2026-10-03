@@ -159,7 +159,16 @@ func TestRecordsDelete(t *testing.T) {
 	testEnv(t, f)
 	login(t)
 
-	stdout, stderr, err := runCLI(t, "", "records", "delete", "example.com", recordID)
+	// Without a terminal and without --yes it refuses, before sending anything.
+	_, _, err := runCLI(t, "y\n", "records", "delete", "example.com", recordID)
+	if err == nil || !strings.Contains(err.Error(), "pass --yes") {
+		t.Fatalf("expected confirmation refusal, got %v", err)
+	}
+	if f.find("DELETE", recordsPath+"/"+recordID) != nil {
+		t.Fatal("DELETE sent without confirmation")
+	}
+
+	stdout, stderr, err := runCLI(t, "", "records", "delete", "example.com", recordID, "--yes")
 	if err != nil {
 		t.Fatal(err)
 	}
