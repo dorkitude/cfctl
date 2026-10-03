@@ -10,6 +10,62 @@ cfctl counts versions as `0.MINOR.NNN` (`0.2.001`, `0.2.002`, ...), bumping
 
 ## [Unreleased]
 
+## [0.2.004] - 2026-10-03
+
+Hand-written, wrangler-shaped command groups on top of the generated API tree.
+
+### Workers
+
+#### Added (Workers core, area A)
+
+- `cfctl workers` group: `list`, `get`, `delete`, `deploy`, `versions`,
+  `deployments`, `rollback`, `secret`, `triggers`, `crons`, `routes`,
+  `domains`, `subdomain`, `dev-url`, `tail`, `logs`, `dispatch-namespace`,
+  `preview`. Top-level shortcuts like wrangler's: `cfctl deploy`, `tail`,
+  `rollback`, `secret`, `versions`, `deployments`, `triggers`,
+  `dispatch-namespace`, `preview`.
+- `deploy` / `versions upload`: upload a pre-built ES module or service-worker
+  script with metadata and bindings, from flags (`--var`, `--kv`, `--r2`,
+  `--d1`, `--service`, `--queue`, `--ai`, `--binding JSON`, `--bindings-file`)
+  or a `wrangler.toml` / `wrangler.json` / `wrangler.jsonc` (`--config`,
+  `--env`). Static assets go through the assets upload-session API
+  (`_headers`, `_redirects`, `.assetsignore` honored). Durable Object
+  migrations are applied from the script's current tag. Relative imports of an
+  unbundled entry point are uploaded as modules; `--bundle` runs esbuild if it
+  is on PATH. `--dry-run` prints the metadata without sending anything.
+  Existing secrets are always kept (`keep_bindings`); `--keep-vars` keeps vars.
+- `deploy` / `triggers deploy` apply cron triggers, routes (zone inferred from
+  the hostname), custom domains, and the workers.dev setting.
+- `versions list|view|upload|deploy`: version prefixes and `latest` resolve to
+  IDs; `versions deploy a@10 b` splits traffic 10/90.
+- `versions secret put|delete|bulk|list`: change secrets in a new version
+  without deploying it (Workers Versions API, other bindings inherited).
+- `secret put|list|delete|bulk`: values come from a hidden prompt or stdin and
+  are never printed; `bulk` takes JSON (`null` deletes) or `.env` input.
+- `tail`: creates a tail, streams it over a WebSocket (`--format pretty|json`,
+  `--status`, `--method`, `--header`, `--ip`, `--search`, `--sampling-rate`),
+  and deletes the tail on exit or Ctrl-C.
+- `workers logs`: query Workers Logs (observability telemetry query API).
+- `dispatch-namespace list|get|create|rename|delete|scripts`.
+- `workers preview deploy|list|get|delete|deployments`, `preview secret
+  put|delete|list|bulk`, `preview base-config secret ...` (Worker Previews,
+  open beta).
+- Destructive commands (`workers delete`, `rollback`, `secret delete`,
+  deletions in `secret bulk`, `routes delete`, `domains delete`,
+  `crons clear`, `subdomain set`, `dispatch-namespace delete`,
+  `preview delete`) confirm on a terminal and need `--yes` otherwise.
+
+#### Changed
+
+- `github.com/pelletier/go-toml/v2` is now a direct dependency (it was already
+  in the module graph via viper) for reading `wrangler.toml`.
+
+#### Docs
+
+- `docs/commands/workers.md`: command reference for the Workers commands.
+- `docs/wrangler-map/workers.tsv`: every wrangler Workers-core command and its
+  cfctl equivalent.
+
 ## [0.2.003] - 2026-10-03
 
 ### Changed
