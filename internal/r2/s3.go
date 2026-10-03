@@ -56,6 +56,32 @@ func NewS3(acct, jurisdiction string, creds TempCredentials) *s3.Client {
 	})
 }
 
+// S3StorageClass maps a storage class to the S3 API's name: R2's S3 API
+// takes x-amz-storage-class STANDARD or STANDARD_IA, while the REST API
+// (cf-r2-storage-class) takes Standard or InfrequentAccess.
+func S3StorageClass(c string) string {
+	switch strings.ToLower(c) {
+	case "standard":
+		return "STANDARD"
+	case "infrequentaccess", "standard_ia":
+		return "STANDARD_IA"
+	}
+	return c
+}
+
+// RESTStorageClass maps a storage class to the REST API's name (the
+// cf-r2-storage-class header and bucket storageClass): Standard or
+// InfrequentAccess.
+func RESTStorageClass(c string) string {
+	switch strings.ToLower(c) {
+	case "standard":
+		return Standard
+	case "infrequentaccess", "standard_ia":
+		return InfrequentAccess
+	}
+	return c
+}
+
 // PutOptions are the object metadata for an upload.
 type PutOptions struct {
 	ContentType        string
@@ -129,7 +155,7 @@ func applyPut(in *s3.PutObjectInput, o PutOptions) {
 		in.ContentLanguage = aws.String(o.ContentLanguage)
 	}
 	if o.StorageClass != "" {
-		in.StorageClass = types.StorageClass(o.StorageClass)
+		in.StorageClass = types.StorageClass(S3StorageClass(o.StorageClass))
 	}
 	if len(o.Metadata) > 0 {
 		in.Metadata = o.Metadata
@@ -154,7 +180,7 @@ func uploadMultipart(ctx context.Context, c *s3.Client, bucket, key string, f io
 		create.ContentLanguage = aws.String(o.ContentLanguage)
 	}
 	if o.StorageClass != "" {
-		create.StorageClass = types.StorageClass(o.StorageClass)
+		create.StorageClass = types.StorageClass(S3StorageClass(o.StorageClass))
 	}
 	if len(o.Metadata) > 0 {
 		create.Metadata = o.Metadata
