@@ -97,7 +97,10 @@ func k2Body(cmd *cobra.Command) (map[string]any, error) {
 	}
 	stFlagInt(cmd, body, "retention", "retention_seconds")
 	stFlagBool(cmd, body, "http", "http.enabled")
-	if cmd.Flags().Changed("http-auth") || cmd.Flags().Changed("cors-origins") {
+	// http.enabled is required whenever http is sent. --http-auth or
+	// --cors-origins alone imply an enabled endpoint, but never override an
+	// explicit --http=false (or a value from --data).
+	if (cmd.Flags().Changed("http-auth") || cmd.Flags().Changed("cors-origins")) && stGet(body, "http.enabled") == nil {
 		stSet(body, "http.enabled", true)
 	}
 	stFlagBool(cmd, body, "http-auth", "http.authentication")

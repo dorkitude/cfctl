@@ -124,6 +124,11 @@ Examples:
 		if err != nil {
 			return err
 		}
+		// Like wrangler: send the queue name and carry the current settings
+		// over, so a settings object with one field doesn't reset the others.
+		if err := queueMergeCurrent(c, id, body); err != nil {
+			return err
+		}
 		return sbSendShow(c, "PATCH", c.p("queues", id), nil, body, "Updated queue "+args[0])
 	}),
 }
@@ -143,6 +148,7 @@ func queueSetPaused(paused bool) func(cmd *cobra.Command, c *stClient, args []st
 			return err
 		}
 		var q struct {
+			Name     string         `json:"queue_name"`
 			Settings map[string]any `json:"settings"`
 		}
 		_ = json.Unmarshal(raw, &q)
@@ -154,8 +160,37 @@ func queueSetPaused(paused bool) func(cmd *cobra.Command, c *stClient, args []st
 		if paused {
 			verb = "Paused"
 		}
-		return sbSend(c, "PATCH", c.p("queues", id), nil, map[string]any{"settings": q.Settings}, verb+" delivery for "+args[0])
+		body := map[string]any{"settings": q.Settings}
+		if q.Name != "" {
+			body["queue_name"] = q.Name // wrangler sends it too
+		}
+		return sbSend(c, "PATCH", c.p("queues", id), nil, body, verb+" delivery for "+args[0])
 	}
+}
+
+// queueMergeCurrent fills a PATCH body from the queue's current state: the
+// queue_name (unless renaming) and any settings the body doesn't set.
+func queueMergeCurrent(c *stClient, id string, body map[string]any) error {
+	raw, err := c.get(c.p("queues", id), nil)
+	if err != nil {
+		return err
+	}
+	var q struct {
+		Name     string         `json:"queue_name"`
+		Settings map[string]any `json:"settings"`
+	}
+	_ = json.Unmarshal(raw, &q)
+	if body["queue_name"] == nil && q.Name != "" {
+		body["queue_name"] = q.Name
+	}
+	if s, ok := body["settings"].(map[string]any); ok {
+		for k, v := range q.Settings {
+			if _, set := s[k]; !set && v != nil {
+				s[k] = v
+			}
+		}
+	}
+	return nil
 }
 
 var queuesPauseCmd = &cobra.Command{
