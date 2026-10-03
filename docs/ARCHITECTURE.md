@@ -36,7 +36,7 @@ internal/apispec/          the embedded Cloudflare OpenAPI spec
 internal/client/           cloudflare-go SDK construction, token verification, zone resolution, SDK error formatting
 internal/config/           Viper config + token file (~/.config/cfctl)
 internal/output/ ui/       JSON output helper; lipgloss styles
-internal/version/          Version = "0.2.NNN"
+internal/version/          Version = "0.2.710" (semver, large patch numbers)
 scripts/update-spec.sh     `make spec`: refresh the vendored spec
 ```
 
@@ -197,16 +197,15 @@ Conventions (see `cmd/records.go` and `cmd/zones.go` for examples):
 
 ## Versioning and the changelog
 
-- The version lives in `internal/version/version.go` as `0.MINOR.NNN`
-  (`0.2.001`, `0.2.002`, ...). `cfctl --version` prints it (an `-ldflags`
+- The version lives in `internal/version/version.go` as semver with large
+  patch numbers (`0.2.710`, `0.2.711`, ...). `cfctl --version` prints it (an `-ldflags`
   value passed to `main.version` overrides it for release builds).
-- Bump `NNN` at each meaningful milestone commit and add a
-  `## [0.2.NNN] - YYYY-MM-DD` section to `CHANGELOG.md` (Keep a Changelog:
+- Bump the patch at each meaningful milestone commit and add a
+  `## [X.Y.Z] - YYYY-MM-DD` section to `CHANGELOG.md` (Keep a Changelog:
   Added / Changed / Fixed / Docs). Put in-progress notes under
   `## [Unreleased]`.
-- `0.2.NNN` isn't valid semver (leading zeros), so it is never a git tag. At
-  release time, `0.2.NNN` is tagged `v0.2.N` (`0.2.012` → `v0.2.12`), and the
-  tag push runs GoReleaser. Only the maintainer cuts releases.
+- Releases are tagged with the version (`v0.2.710`); the tag push runs
+  GoReleaser. Only the maintainer cuts releases.
 
 ## Refreshing the API spec
 

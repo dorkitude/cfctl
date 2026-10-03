@@ -70,18 +70,35 @@ migration cheatsheet.
 
 ## 📦 Installation
 
-### Go install (private repo)
-
-The repo is private, so tell Go not to use the public module proxy for it:
-
+### Homebrew (macOS/Linux)
 ```bash
-go env -w GOPRIVATE='github.com/dorkitude/*'
-gh auth setup-git                # lets git (and so go) fetch private GitHub repos
-go install github.com/dorkitude/cfctl@latest
+brew install dorkitude/tap/cfctl
 cfctl docs                       # render this README
 ```
 
-Homebrew and Nix packages aren't available (the repo is private).
+### Scoop (Windows)
+```powershell
+scoop bucket add dorkitude https://github.com/dorkitude/scoop-bucket
+scoop install dorkitude/cfctl
+cfctl docs
+```
+
+### Ubuntu/Debian (.deb) and Fedora/RHEL (.rpm)
+Download the package for your architecture from the
+[latest release](https://github.com/dorkitude/cfctl/releases/latest), then:
+```bash
+sudo apt install ./cfctl_*_amd64.deb      # Ubuntu/Debian
+sudo dnf install ./cfctl-*.x86_64.rpm     # Fedora/RHEL
+```
+
+### Prebuilt binaries
+macOS, Linux, and Windows archives (amd64 and arm64) are attached to every
+[release](https://github.com/dorkitude/cfctl/releases), with `checksums.txt`.
+
+### Go install
+```bash
+go install github.com/dorkitude/cfctl@latest
+```
 
 ### From source
 
@@ -444,16 +461,16 @@ offline.
 
 ## 🔢 Versioning
 
-`cfctl --version` prints `0.MINOR.NNN` (`0.2.005`, ...), bumped at each
-milestone and recorded in [CHANGELOG.md](CHANGELOG.md). Because that isn't
-valid semver, a release of `0.2.NNN` is tagged `v0.2.N` (`0.2.007` →
-`v0.2.7`).
+cfctl uses semver with large patch numbers so small changes have room
+(`0.2.710`, `0.2.711`, ...); each release is tagged with its version
+(`v0.2.710`). Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## 🤝 Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, Make targets, testing rules,
 and the release checklist, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 for how the pieces fit together. Coding agents: read [AGENTS.md](AGENTS.md).
+Security reports: see [SECURITY.md](SECURITY.md).
 
 ## 📄 License
 

@@ -36,5 +36,5 @@ shows the topics).
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Package layout, request layer, read-only guard, generated commands, adding a command group, versioning | `architecture` |
 | [../CONTRIBUTING.md](../CONTRIBUTING.md) | Dev setup, Make targets, testing rules, release checklist | — |
 | [../AGENTS.md](../AGENTS.md) | Rules for coding agents working on cfctl | — |
-| [../CHANGELOG.md](../CHANGELOG.md) | What changed in each `0.2.NNN` | `changelog` |
+| [../CHANGELOG.md](../CHANGELOG.md) | What changed in each version | `changelog` |
 | [../ROADMAP.md](../ROADMAP.md) | What's next | `roadmap` |

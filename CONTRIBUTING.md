@@ -104,15 +104,14 @@ the ergonomic layer on top, not a replacement.
 
 ## Versioning
 
-- `internal/version/version.go` holds the version as `0.MINOR.NNN`
-  (`0.2.001`, `0.2.002`, ...). Bump `NNN` at each meaningful milestone.
-- `0.2.NNN` isn't valid semver (leading zeros), so it is never a git tag. A
-  release of `0.2.NNN` is tagged **`v0.2.N`**: drop the leading zeros
-  (`0.2.007` → `v0.2.7`, `0.2.012` → `v0.2.12`).
+- `internal/version/version.go` holds the version: semver with large patch
+  numbers (`0.2.710`, `0.2.711`, ...) so small changes have room. Bump the
+  patch at each meaningful milestone; bump the minor for big shifts.
+- The release tag is the version with a `v`: `0.2.710` → **`v0.2.710`**.
 
 ## Changelog
 
-- Every version bump gets a `## [0.2.NNN] - YYYY-MM-DD` section in
+- Every version bump gets a `## [X.Y.Z] - YYYY-MM-DD` section in
   `CHANGELOG.md` ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
   headings: Added / Changed / Fixed / Docs).
 - In-progress notes go under `## [Unreleased]`.
@@ -139,28 +138,36 @@ Only the maintainer releases. Agents must not create or push tags.
 2) Merge
 - Merge the release branch into `main` and pull it.
 
-3) Tag and release (`0.2.NNN` → `v0.2.N`)
+3) Tag and release (`X.Y.Z` → `vX.Y.Z`)
 - Create and push the tag:
   ```bash
-  git tag v0.2.N -a -m "v0.2.N (0.2.NNN): short summary"
-  git push origin v0.2.N
+  git tag vX.Y.Z -a -m "vX.Y.Z: short summary"
+  git push origin vX.Y.Z
   ```
 - The tag push runs `.github/workflows/release.yml` (vet + tests, then
-  GoReleaser), which attaches darwin/linux amd64/arm64 tarballs to the GitHub
-  release. Paste the release notes into it:
+  GoReleaser), which attaches macOS/Linux tarballs, Windows zips, `.deb` and
+  `.rpm` packages, and `checksums.txt` to the GitHub release. Paste the
+  release notes into it:
   ```bash
-  gh release edit v0.2.N --notes "<highlights/fixes>"
+  gh release edit vX.Y.Z --notes "<highlights/fixes>"
   ```
 
 4) Validate
   ```bash
-  GOPRIVATE='github.com/dorkitude/*' go install github.com/dorkitude/cfctl@v0.2.N
+  go install github.com/dorkitude/cfctl@vX.Y.Z
   cfctl --version
   cfctl docs | head -n 5
   CFCTL_READONLY=1 cfctl whoami
   ```
 
-5) Housekeeping
+5) Publish the Homebrew formula and Scoop manifest
+  ```bash
+  scripts/publish-packages.sh vX.Y.Z   # updates dorkitude/homebrew-tap and dorkitude/scoop-bucket
+  ```
+  Then check `brew install dorkitude/tap/cfctl` and
+  `scoop install dorkitude/cfctl` pick up the new version.
+
+6) Housekeeping
 - Add a fresh `## [Unreleased]` section to `CHANGELOG.md` if the release
   consumed it.
 - Update `ROADMAP.md`.

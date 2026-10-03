@@ -3,12 +3,36 @@
 All notable user-facing changes to `cfctl` are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-cfctl counts versions as `0.MINOR.NNN` (`0.2.001`, `0.2.002`, ...), bumping
-`NNN` at each meaningful milestone. That isn't valid semver, so a release of
-`0.2.NNN` is tagged `v0.2.N` (e.g. `0.2.007` → `v0.2.7`). See
-`docs/ARCHITECTURE.md` for how to bump.
+cfctl uses semver with large patch numbers, so small changes have room:
+`0.2.710`, `0.2.711`, ... Each release is tagged with its version
+(`v0.2.710`). Versions `0.2.001` through `0.2.007` were unreleased
+development milestones.
 
 ## [Unreleased]
+
+## [0.2.710] - 2026-10-03
+
+First public release.
+
+### Added
+
+- Packages for every platform: Homebrew (`brew install dorkitude/tap/cfctl`),
+  Scoop (`scoop install dorkitude/cfctl`), `.deb` and `.rpm` packages, and
+  macOS/Linux/Windows archives for amd64 and arm64.
+- `scripts/publish-packages.sh` updates the Homebrew formula and Scoop
+  manifest from a release.
+- CI on every push and pull request: gofmt, vet, race tests, docs-example and
+  wrangler-doc checks on Linux; builds on macOS and Windows.
+- `SECURITY.md`: how to report vulnerabilities and how cfctl handles tokens.
+
+### Changed
+
+- Versioning: semver with large patch numbers (`0.2.710`, `0.2.711`, ...),
+  tagged as-is (`v0.2.710`). The earlier `0.2.001`–`0.2.007` numbers were
+  unreleased development milestones.
+- Install docs cover Homebrew, Scoop, `.deb`/`.rpm`, prebuilt binaries, and
+  `go install` (no `GOPRIVATE` setup needed).
+- Smoke-test results no longer name the zone they ran against.
 
 ## [0.2.007] - 2026-10-03
 

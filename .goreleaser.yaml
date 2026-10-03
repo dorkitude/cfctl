@@ -17,6 +17,7 @@ builds:
     goos:
       - darwin
       - linux
+      - windows
     goarch:
       - amd64
       - arm64
@@ -27,9 +28,43 @@ archives:
       - cfctl
     formats:
       - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - LICENSE
+      - README.md
+      - internal/apispec/LICENSE-cloudflare-api-schemas
+
+# Ubuntu/Debian (.deb) and Fedora/RHEL (.rpm) packages, attached to the release.
+nfpms:
+  - id: packages
+    package_name: cfctl
+    ids:
+      - cfctl
+    formats:
+      - deb
+      - rpm
+    vendor: Kyle Wild
+    maintainer: Kyle Wild <kyle@kylewild.com>
+    homepage: https://github.com/dorkitude/cfctl
+    description: |-
+      The whole Cloudflare platform from your terminal: Workers, R2/KV/D1, Pages,
+      AI, DNS, zone security, and every Cloudflare API operation.
+    license: MIT
+    bindir: /usr/bin
+    contents:
+      - src: LICENSE
+        dst: /usr/share/doc/cfctl/LICENSE
+      - src: internal/apispec/LICENSE-cloudflare-api-schemas
+        dst: /usr/share/doc/cfctl/LICENSE-cloudflare-api-schemas
 
 checksum:
   name_template: checksums.txt
+
+release:
+  name_template: "cfctl {{ .Tag }}"
 
 changelog:
   disable: true

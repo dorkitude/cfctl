@@ -69,7 +69,7 @@ every Cloudflare API operation.
 }
 
 // SetVersion sets the version shown by --version. Release builds may pass
-// one in via -ldflags; otherwise it is internal/version.Version (0.2.NNN).
+// one in via -ldflags; otherwise it is internal/version.Version (e.g. 0.2.710).
 func SetVersion(v string) {
 	if v == "" || v == "dev" {
 		v = version.Version
