@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+"""Check that every `cfctl ...` example in the docs exists.
+
+For each cfctl command line in a Markdown code block (and each inline
+`cfctl ...` code span), resolve the command path against the binary's --help
+and check that every --flag is accepted by that command (or is global).
+Exits 1 if any example names an unknown subcommand or flag.
+
+Usage:
+  scripts/docs-check [--bin ./cfctl] [file.md ...]
+  make docs-check
+
+Default files: README.md, SKILL.md, CONTRIBUTING.md, AGENTS.md, docs/**/*.md.
+Without --bin, builds the binary into a temp dir with `go build`. Runs with an
+empty config dir, so no token or network is needed.
+"""
+import functools
+import glob
+import shutil
+import os
+import re
+import shlex
+import subprocess
+import sys
+import tempfile
+
+# Commands that exist only to point at wrangler (they print "not applicable"
+# instead of help), so their examples are fine.
+STUBS = {("dev",), ("types",), ("setup",), ("pages", "dev"), ("pages", "functions"),
+         ("pages", "functions", "build"), ("containers", "ssh")}
+# Placeholder command paths used to describe a pattern, not a real command.
+PLACEHOLDER = re.compile(r"cfctl api <(tag|tag-slug)>")
+GLOBAL_FLAGS = {"--help", "-h", "--json", "--account", "--no-color", "--debug",
+                "--read-only", "--timeout", "--version", "-v"}
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV = None
+BIN = None
+
+
+@functools.lru_cache(maxsize=None)
+def help_for(path):
+    p = subprocess.run([BIN, *path, "--help"], capture_output=True, text=True, env=ENV)
+    return p.stdout + p.stderr
+
+
+def usage_path(h):
+    m = re.search(r"Usage:\n\s+(\S+(?: [a-z0-9][a-z0-9_.:-]*)*)", h)
+    return m.group(1).split()[1:] if m else None
+
+
+def subcmds(h):
+    out, inblock = set(), False
+    for line in h.splitlines():
+        if not line.startswith(" ") and line.endswith("Commands:"):
+            inblock = True
+            continue
+        if inblock:
+            m = re.match(r"^  (\S+)\s", line)
+            if m:
+                out.add(m.group(1))
+            elif line.strip() and not line.startswith(" "):
+                inblock = False
+    return out
+
+
+def flags(h):
+    return set(re.findall(r"(?:^|\s)(--[a-z0-9][a-z0-9.-]*)", h)) | set(re.findall(r"^\s+(-[a-zA-Z]),", h, re.M))
+
+
+def candidates(path):
+    """Yield (line number, command text) for every cfctl example in a file."""
+    inblock = False
+    for n, line in enumerate(open(path, encoding="utf-8"), 1):
+        if line.lstrip().startswith("```"):
+            inblock = not inblock
+            continue
+        for raw in ([line] if inblock else re.findall(r"`(cfctl [^`]+)`", line)):
+            i = raw.find("cfctl ")
+            if i < 0 or (i > 0 and re.match(r"[\w.-]", raw[i - 1])):
+                continue
+            yield n, raw[i:].strip()
+
+
+def check(text):
+    """Return a list of problems for one example."""
+    if PLACEHOLDER.search(text):
+        return []
+    s = re.split(r"\s#\s|\s#$", text)[0]
+    try:
+        toks = shlex.split(s)
+    except ValueError:
+        toks = s.split()
+    words, depth = [], 0
+    for t in toks[1:]:
+        if depth == 0 and (t in ("|", "&&", ";", "\\", "2>&1") or t[:1] in (">", "|")):
+            break
+        depth += t.count("[") - t.count("]")
+        words.append(t)
+    path = []
+    for t in words:
+        if t.startswith("-") or not re.match(r"^[a-z][a-z0-9-]*$", t):
+            break
+        path.append(t)
+    if not path:
+        return []
+    if any(tuple(path[:k]) in STUBS for k in range(1, len(path) + 1)):
+        return []
+    cur = ()
+    for t in path:
+        if t in subcmds(help_for(cur)):
+            cur += (t,)
+            continue
+        up = usage_path(help_for(cur + (t,)))  # aliases resolve to the real command
+        if up and len(up) == len(cur) + 1:
+            cur += (t,)
+            continue
+        break
+    h = help_for(cur)
+    if usage_path(h) is None:
+        return [f"no help for 'cfctl {' '.join(cur)}'"]
+    problems = []
+    depth = len(cur)
+    if depth < len(path) and subcmds(h):
+        usage = h.split("Usage:", 1)[1].split("\n\n", 1)[0].splitlines()
+        takes_args = any("[command]" not in l and len(l.split()) > len(cur) + 2 for l in usage if l.strip())
+        if not takes_args:
+            return [f"unknown subcommand '{path[depth]}' under 'cfctl {' '.join(cur)}'"]
+    fl = flags(h) | GLOBAL_FLAGS
+    if depth < len(words) and re.match(r"^[a-z-]+(\|[a-z-]+)+$", words[depth]):
+        sc = subcmds(h)
+        for alt in words[depth].split("|"):
+            if sc and alt not in sc:
+                problems.append(f"unknown subcommand '{alt}' under 'cfctl {' '.join(cur)}'")
+            elif alt in sc:
+                fl |= flags(help_for(cur + (alt,)))
+    for t in words:
+        t = t.lstrip("[(")
+        if t.startswith("--") and t != "--":
+            name = re.split(r"[=\])|]", t)[0]
+            if name not in fl:
+                problems.append(f"unknown flag {name} for 'cfctl {' '.join(cur)}'")
+    return problems
+
+
+def main():
+    global BIN, ENV
+    args = sys.argv[1:]
+    if "--bin" in args:
+        i = args.index("--bin")
+        BIN = os.path.abspath(args[i + 1])
+        del args[i:i + 2]
+    tmp = tempfile.mkdtemp(prefix="cfctl-docs-check-")
+    if not BIN:
+        BIN = os.path.join(tmp, "cfctl")
+        subprocess.run(["go", "build", "-o", BIN, "."], cwd=ROOT, check=True)
+    ENV = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": tmp,
+           "CFCTL_CONFIG_DIR": os.path.join(tmp, "config"), "NO_COLOR": "1"}
+    files = args or sorted(
+        [os.path.join(ROOT, f) for f in ("README.md", "SKILL.md", "CONTRIBUTING.md", "AGENTS.md")
+         if os.path.exists(os.path.join(ROOT, f))]
+        + glob.glob(os.path.join(ROOT, "docs", "**", "*.md"), recursive=True))
+    checked = bad = 0
+    for f in files:
+        for n, text in candidates(f):
+            checked += 1
+            for p in check(text):
+                bad += 1
+                print(f"{os.path.relpath(f, ROOT)}:{n}: {p}\n    {text[:120]}")
+    shutil.rmtree(tmp, ignore_errors=True)
+    print(f"docs-check: {checked} examples in {len(files)} files, {bad} problems", file=sys.stderr)
+    sys.exit(1 if bad else 0)
+
+
+if __name__ == "__main__":
+    main()

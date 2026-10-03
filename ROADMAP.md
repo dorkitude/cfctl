@@ -1,11 +1,27 @@
 # ROADMAP
 
-## Current State (v0.1.0)
+## Current State (0.2.x)
 
-- CLI: auth (login/logout/status/setup), whoami, domains (list/get/autorenew),
-  zones (list/get/file), records (list/get/create/update/delete)
-- Global `--json`, `--account`, `--no-color`
-- Tests against a fake Cloudflare API
+- Core: auth (user and `cfat_` account tokens), whoami, domains
+  (list/get/autorenew), zones, records
+- Every API-backed wrangler command: 361 wrangler commands mapped, 321 full,
+  24 partial, 16 not applicable (see docs/cfctl-vs-wrangler.md)
+- Workers, storage (KV, R2, D1, Queues, Hyperdrive, Vectorize, Secrets Store,
+  K2, Basin, Artifacts, Agent Memory), platform (Pages, AI, AI Search,
+  Workflows, Containers, Browser Run, Flagship, Email, Turnstile, Tunnels,
+  VPC, mTLS), and zone/account admin groups
+- `cfctl api`: a generated command for each of the 3,645 operations in the
+  official OpenAPI spec, `api request`, discovery, `cfctl graphql`
+- Global `--json`, `--account`, `--no-color`, `--debug`, `--read-only`, `--timeout`
+- Built-in docs (`cfctl docs`), shell completion
+- Tests against a fake Cloudflare API; coverage test over every spec operation
+
+## Next
+
+- Close the remaining wrangler gaps that are API-backed: `tail` reconnect and
+  `--ip self`, route/domain removal on deploy
+- Read-only smoke test across every read command (`make smoke`)
+- First tagged release (`v0.2.N`)
 
 ## Principles
 
@@ -18,7 +34,7 @@
 
 - TUI (Bubble Tea) mirroring simple's: tabs, domain dashboard, guarded mutations
 - `cfctl demo`: the TUI against a seeded in-memory backend
-- `accounts list` and an account switch command
+- ~~`accounts list`~~ (done); an account switch command
 - Interactive installer / Homebrew tap (once the repo is public)
 
 ## Phase 2: DNS power features
@@ -26,8 +42,8 @@
 - Structured record types that need `data` (SRV, CAA, HTTPS/SVCB, TLSA, ...)
 - Record tags and comments filters
 - Batch record changes (`POST /zones/{id}/dns_records/batch`) with a preview diff
-- Zone file import (`zones import`)
-- DNSSEC status / enable / disable and DS record display
+- ~~Zone file import~~ (done: `dns import`)
+- ~~DNSSEC status / enable / disable~~ (done: `dns dnssec`); DS record display
 - `records list --proxied` / `--content` filters
 
 ## Phase 3: Registrar lifecycle
@@ -40,12 +56,12 @@
 
 ## Phase 4: Zone operations
 
-- Zone create / delete / pause / unpause
-- Zone settings (SSL mode, always HTTPS, min TLS) get/set
-- Cache purge (by URL, tag, everything)
-- Page rules / redirect rules basics
+- ~~Zone create / delete / pause / unpause~~ (done: `zones`)
+- ~~Zone settings (SSL mode, always HTTPS, min TLS) get/set~~ (done: `zones settings`, `ssl`)
+- ~~Cache purge (by URL, tag, everything)~~ (done: `cache purge`)
+- ~~Page rules / redirect rules basics~~ (done: `page-rules`, `redirects`)
 
 ## Tooling
 
-- Shell completions
-- Coverage matrix against the Cloudflare OpenAPI spec for the resources above
+- ~~Shell completions~~ (done: `cfctl completion`)
+- ~~Coverage matrix against the Cloudflare OpenAPI spec~~ (done: `cfctl api`, TestCoverage)

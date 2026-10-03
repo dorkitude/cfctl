@@ -10,6 +10,39 @@ cfctl counts versions as `0.MINOR.NNN` (`0.2.001`, `0.2.002`, ...), bumping
 
 ## [Unreleased]
 
+## [0.2.005] - 2026-10-03
+
+### Docs
+
+- README rewritten as a scannable tour: why cfctl (vs wrangler), features,
+  install from the private repo, read-only guard and confirmations, a
+  numbered Quick Start per area, output modes, tokens and config,
+  scripting, troubleshooting, built-in docs, versioning.
+- New `docs/cfctl-vs-wrangler.md`: quick matrix (wrangler's groups plus
+  everything beyond wrangler), all 361 wrangler commands mapped (321 full,
+  24 partial, 16 not applicable), when to still use wrangler, and a
+  migration cheatsheet.
+- New `docs/api.md` (generated tree, discovery, raw requests, GraphQL,
+  pagination styles, read-only guard), `docs/commands/core.md` (auth,
+  whoami, domains, zones, records, config), and a `docs/README.md` index.
+  `cfctl docs api`, `cfctl docs core`, and `cfctl docs cfctl-vs-wrangler`
+  render them offline.
+- Command reference pages cleaned up: consistent titles, navigation, agent
+  notes, and wrangler-parity sections. Every documented command and flag was
+  checked against `--help`.
+- CONTRIBUTING.md (Make targets, adding a command, testing rules,
+  versioning, release checklist), AGENTS.md, ROADMAP.md, and a SKILL.md for
+  coding agents.
+
+### Changed
+
+- `cfctl --help` groups commands by area: Core, Workers, Storage, Platform,
+  Zone & account, API & raw.
+- `--all` help now names every pagination style it follows (page, cursor,
+  offset, before-time).
+- Makefile: `help`, `test` (no `-race`), `race`, `fmt`, `fmt-check`, `lint`,
+  `smoke` (runs `scripts/smoke.sh` read-only), `clean`.
+
 ## [0.2.004] - 2026-10-03
 
 Hand-written, wrangler-shaped command groups on top of the generated API tree.
