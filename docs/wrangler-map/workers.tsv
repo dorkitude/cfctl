@@ -1,0 +1,40 @@
+wrangler	cfctl	status	notes
+wrangler delete	cfctl workers delete [name]	full	Confirms (or --yes); --force deletes even if other Workers reference it; --dry-run.
+wrangler deploy	cfctl deploy [script] (= cfctl workers deploy)	partial	Uploads a pre-built ES module or service-worker script with bindings from wrangler.toml/json/jsonc ([env.X] supported) or flags, static assets (upload-session API), DO migrations, then applies crons/routes/custom domains/workers.dev. Unbundled multi-file Workers: relative imports are followed. Bundling only via --bundle with esbuild on PATH (no built-in bundler, no TypeScript without esbuild). Routes/domains are added, never removed. No resource auto-provisioning, containers, or Python package vendoring.
+wrangler deployments	cfctl deployments (= cfctl workers deployments)	full	
+wrangler deployments list	cfctl deployments list [name]	full	Shows every deployment the API returns, newest first, with version splits.
+wrangler deployments status	cfctl deployments status [name]	full	
+wrangler dispatch-namespace	cfctl dispatch-namespace (= cfctl workers dispatch-namespace)	full	Needs the Workers for Platforms add-on; also 'scripts <ns>' to list a namespace's scripts.
+wrangler dispatch-namespace list	cfctl dispatch-namespace list	full	
+wrangler dispatch-namespace get	cfctl dispatch-namespace get <name>	full	
+wrangler dispatch-namespace create	cfctl dispatch-namespace create <name>	full	
+wrangler dispatch-namespace delete	cfctl dispatch-namespace delete <name>	full	Confirms (or --yes).
+wrangler dispatch-namespace rename	cfctl dispatch-namespace rename <old> <new>	full	
+wrangler preview	cfctl workers preview deploy [script] --preview <name>	partial	Creates the Preview if missing, then a preview deployment (JSON modules API). ES modules only; preview name defaults to the git branch. Also preview list|get|deployments.
+wrangler preview delete	cfctl workers preview delete --preview <name>	full	Confirms (or --yes).
+wrangler preview secret	cfctl workers preview secret	full	
+wrangler preview secret put	cfctl workers preview secret put <KEY> --preview <name>	full	Value from hidden prompt or stdin; patches the latest preview deployment's env.
+wrangler preview secret delete	cfctl workers preview secret delete <KEY> --preview <name>	full	Confirms (or --yes).
+wrangler preview secret list	cfctl workers preview secret list --preview <name>	full	Names only.
+wrangler preview secret bulk	cfctl workers preview secret bulk [file|-] --preview <name>	full	JSON object or .env; null deletes.
+wrangler preview base-config	cfctl workers preview base-config	full	Secrets only (the base config's other fields: cfctl api workers edit-worker).
+wrangler preview base-config secret	cfctl workers preview base-config secret put|delete|list|bulk	full	Patches previews_base_config.env on the Worker.
+wrangler rollback	cfctl rollback [version-id] (= cfctl workers rollback)	full	Defaults to the previous deployment's versions; confirms (or --yes); sends force=true like wrangler.
+wrangler secret	cfctl secret (= cfctl workers secret)	full	
+wrangler secret put	cfctl secret put <KEY> --name <worker>	full	Hidden prompt on a TTY, else stdin; value never printed.
+wrangler secret delete	cfctl secret delete <KEY> --name <worker>	full	Confirms (or --yes).
+wrangler secret list	cfctl secret list --name <worker>	full	Names and types only.
+wrangler secret bulk	cfctl secret bulk [file|-] --name <worker>	full	JSON object or .env; null deletes (confirms); max 100; one version via secrets-bulk.
+wrangler tail	cfctl tail [name] (= cfctl workers tail)	partial	--format pretty|json, --status, --method, --header, --ip, --search, --sampling-rate; Ctrl-C deletes the tail. No '--ip self', no auto-reconnect when the tail expires, no --version-id.
+wrangler triggers	cfctl triggers (= cfctl workers triggers)	full	Adds 'triggers list' (crons, routes on every zone, custom domains, workers.dev).
+wrangler triggers deploy	cfctl triggers deploy [name]	partial	Applies crons (replaced), routes and custom domains (added/re-pointed, never removed), workers.dev from config or flags.
+wrangler versions	cfctl versions (= cfctl workers versions)	full	
+wrangler versions view	cfctl versions view <version-id|prefix|latest> --name <worker>	full	
+wrangler versions list	cfctl versions list [name]	full	--limit (default 10, 0 = all), paginated.
+wrangler versions upload	cfctl versions upload [script]	partial	Same inputs and caveats as deploy (bundling only via --bundle + esbuild); --message, --tag, --preview-alias; never touches triggers.
+wrangler versions deploy	cfctl versions deploy <version[@pct]>... --name <worker>	full	Non-interactive: 1 or 2 versions, prefixes or 'latest', remainder split automatically; --message, --force.
+wrangler versions secret	cfctl versions secret	full	Creates a new undeployed version via PATCH /workers/workers/{id}/versions/latest, inheriting every other binding.
+wrangler versions secret put	cfctl versions secret put <KEY> --name <worker>	full	
+wrangler versions secret bulk	cfctl versions secret bulk [file|-] --name <worker>	full	JSON object or .env; null removes (confirms).
+wrangler versions secret delete	cfctl versions secret delete <KEY> --name <worker>	full	Confirms (or --yes).
+wrangler versions secret list	cfctl versions secret list --name <worker>	full	Secrets in the latest version.
