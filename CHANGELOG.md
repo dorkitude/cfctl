@@ -34,6 +34,47 @@ First public release.
   `go install` (no `GOPRIVATE` setup needed).
 - Smoke-test results no longer name the zone they ran against.
 
+### Fixed
+
+Every hand-written write command was checked against Cloudflare's API spec,
+docs, and wrangler's own requests (`docs/write-paths.md`: 163 OK, 28 fixed,
+6 noted as uncertain). Fixes, each with a regression test:
+
+- `workflows instances restart --from` sends the step as an object (new
+  `--from-count`, `--from-type`).
+- `containers registries configure` sends the required `kind` (inferred, or
+  `--kind`); removed `--public`, which the API rejects.
+- `containers images delete` deletes by tag, so other tags on the same image
+  are kept.
+- `workers versions upload` leaves out logpush/observability and refuses
+  service-worker scripts.
+- `workers deploy` honours the config's `preview_urls`.
+- Worker bindings: dispatch-namespace `outbound`, queue `delivery_delay`,
+  service `props`, pipelines `stream`.
+- Worker static assets with unknown types upload as `application/null`;
+  single-asset upload mode is supported.
+- KV key names are percent-encoded like wrangler (encodeURIComponent).
+- `r2 put --storage-class InfrequentAccess` works through the S3 path (sends
+  `STANDARD_IA`); S3-style names work on the REST path.
+- `queues update` sends the queue name and keeps unchanged settings;
+  pause-delivery and resume-delivery send the queue name.
+- `k2 streams --http=false` is no longer overridden by `--http-auth` or
+  `--cors-origins`.
+- `basin streams update` keeps the stream's current HTTP and authentication
+  settings.
+- `d1 import` (and `d1 execute --file` over 5 MB) uploads as soon as the API
+  returns an upload URL.
+- `pages deploy` uploads `_worker.js/` directories, takes its file limit from
+  your plan, and truncates long commit messages without breaking UTF-8.
+- `ai-search jobs create` always sends a JSON body (new `--description`);
+  `--type builtin` leaves out `type`.
+- `rulesets rules update` keeps the fields you didn't pass.
+- `zones settings set` sends `min_tls_version` and `origin_max_http_version`
+  as strings.
+- `vpc service create`/`update` accept `--data` alone.
+- `dns import` uploads the zone file as a real file part.
+- `firewall access-rules create` sends ASNs as `AS<number>`.
+
 ## [0.2.007] - 2026-10-03
 
 ### Docs

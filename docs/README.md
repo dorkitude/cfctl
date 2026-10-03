@@ -34,6 +34,8 @@ shows the topics).
 | Page | What's in it | `cfctl docs` topic |
 |---|---|---|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Package layout, request layer, read-only guard, generated commands, adding a command group, versioning | `architecture` |
+| [write-paths.md](write-paths.md) | Every write command, the endpoints it calls, and how it was checked against Cloudflare's API | `write-paths` |
+| [smoke/README.md](smoke/README.md) | Read-only smoke tests against a live account, and the latest results | |
 | [../CONTRIBUTING.md](../CONTRIBUTING.md) | Dev setup, Make targets, testing rules, release checklist | — |
 | [../AGENTS.md](../AGENTS.md) | Rules for coding agents working on cfctl | — |
 | [../CHANGELOG.md](../CHANGELOG.md) | What changed in each version | `changelog` |
