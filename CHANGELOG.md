@@ -89,6 +89,45 @@ Hand-written, wrangler-shaped command groups on top of the generated API tree.
 - Every create/update in these groups accepts `--data` JSON with flags merged on top; destructive commands confirm (or `--yes`).
 - Test: no storage-group command defines a local flag that shadows a global flag (a local `--read-only` would bypass the read-only guard; Artifacts uses `--read-only-repo`).
 
+### Platform
+
+#### Added (platform & apps)
+
+- `cfctl pages`: `project list|get|create|edit|delete|purge-build-cache`,
+  `deployment list|get|logs|tail|retry|rollback|delete`, `deploy <dir>` (Direct
+  Upload: blake3 hashing, check-missing, bucketed upload, upsert, deployment with
+  `_headers`, `_redirects`, `_routes.json`, and a pre-built `_worker.js`),
+  `domains list|get|add|retry|delete`, `secret list|put|bulk|delete`,
+  `download config` (writes `wrangler.jsonc`).
+- `cfctl ai`: `models list|search|get|schema`, `tasks`, `authors`,
+  `run <model>` (`--prompt`/`--system`/`--data`/`--file`, `--stream`, binary
+  output to `--output`), `finetune list|public|create|delete`, `markdown <files>`.
+- `cfctl ai-search`: instances, `search`, `stats`, `jobs`, `items`, `namespace`, `tokens`.
+- `cfctl workflows`: `list|describe|delete|trigger`, `instances
+  list|describe|pause|resume|terminate|restart|send-event|delete` ("latest"
+  accepted), `versions list|get|graph`.
+- `cfctl containers`: `list|info|instances|versions|delete`, `images list|delete`
+  (managed registry), `registries list|configure|delete|credentials`, `build` /
+  `push` (wrap docker; registry password via stdin).
+- `cfctl browser`: sessions (`list|get|create|view|close`) and one-shot
+  `screenshot|pdf|markdown|content|links`.
+- `cfctl flagship`: `apps …`, `flags list|get|create|update|delete|changelog|evaluate|enable|disable|set|rollout|split|rules|pull`.
+- `cfctl email routing …` (settings, enable/disable, rules, catch-all,
+  addresses, DNS) and `cfctl email sending …` (subdomains, DNS, `send`, `send-raw`).
+- `cfctl turnstile widget list|get|create|update|delete|rotate-secret` (secrets
+  redacted unless `--reveal`).
+- `cfctl tunnel list|info|create|delete|token|config|connections|cleanup|route|vnet|run|quick-start`
+  (`token` needs `--reveal`; `run` passes the token to cloudflared via `TUNNEL_TOKEN`).
+- `cfctl vpc service list|get|create|update|delete`.
+- `cfctl cert` and `cfctl mtls-certificate` (upload, list, get, associations, delete).
+- `cfctl docs` (embedded README/docs rendered in the terminal, `--list`,
+  `--search`, `--raw`), `cfctl completion bash|zsh|fish|powershell`, `cfctl init`
+  (worker / scheduled / assets templates).
+- `cfctl dev`, `types`, `setup`, `pages dev`, `pages functions build`,
+  `containers ssh`: explain they need wrangler's local runtime.
+- Friendlier errors for products not enabled / missing token permissions.
+- Docs: `docs/commands/platform.md`, `docs/wrangler-map/platform.tsv`.
+
 ## [0.2.003] - 2026-10-03
 
 ### Changed
