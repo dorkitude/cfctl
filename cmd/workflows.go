@@ -61,7 +61,24 @@ func wfStatusSpec(verb, status, short string, confirmIt bool) platSpec {
 				}
 			}
 			if c.Flags().Lookup("from") != nil {
-				platSetStr(c, b, "from", "from")
+				// The API takes the step as an object: {name, count?, type?}.
+				if name, _ := c.Flags().GetString("from"); name != "" {
+					from := map[string]any{"name": name}
+					if n, _ := c.Flags().GetInt("from-count"); n > 0 {
+						from["count"] = n
+					}
+					if t, _ := c.Flags().GetString("from-type"); t != "" {
+						switch t {
+						case "do", "sleep", "waitForEvent":
+						default:
+							return nil, fmt.Errorf("--from-type %q: want do, sleep, or waitForEvent", t)
+						}
+						from["type"] = t
+					}
+					b["from"] = from
+				} else if c.Flags().Changed("from-count") || c.Flags().Changed("from-type") {
+					return nil, fmt.Errorf("--from-count and --from-type need --from")
+				}
 			}
 			return b, nil
 		},
@@ -74,7 +91,11 @@ func wfStatusSpec(verb, status, short string, confirmIt bool) platSpec {
 	case "terminate":
 		sp.Flags = func(c *cobra.Command) { c.Flags().Bool("rollback", false, "Run the workflow's rollback steps") }
 	case "restart":
-		sp.Flags = func(c *cobra.Command) { c.Flags().String("from", "", "Restart from this step name") }
+		sp.Flags = func(c *cobra.Command) {
+			c.Flags().String("from", "", "Restart from this step name")
+			c.Flags().Int("from-count", 0, "Which occurrence of the --from step (1-based; default 1)")
+			c.Flags().String("from-type", "", "Step type of --from when names are shared: do, sleep, waitForEvent")
+		}
 	}
 	return sp
 }

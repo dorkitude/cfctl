@@ -27,11 +27,21 @@ func TestContainersCommands(t *testing.T) {
 		{args: []string{"containers", "versions", "web"}, method: "GET", path: ct + "/applications/" + ctAppID + "/versions"},
 		{args: []string{"containers", "delete", "web", "--yes"}, method: "DELETE", path: ct + "/applications/" + ctAppID},
 		{args: []string{"containers", "registries", "list"}, method: "GET", path: ct + "/registries", want: "amazonaws.com"},
-		{args: []string{"containers", "registries", "configure", "docker.io", "--public"}, method: "POST", path: ct + "/registries", body: map[string]any{"domain": "docker.io", "is_public": true}},
+		{args: []string{"containers", "registries", "configure", "docker.io", "--data", `{"auth":{"public_credential":"me","private_credential":{"store_id":"s1","secret_name":"pat"}}}`}, method: "POST", path: ct + "/registries",
+			body: map[string]any{"domain": "docker.io", "kind": "DockerHub", "is_public": false, "auth": map[string]any{"public_credential": "me", "private_credential": map[string]any{"store_id": "s1", "secret_name": "pat"}}}},
+		{args: []string{"containers", "registries", "configure", "123456789012.dkr.ecr.us-east-1.amazonaws.com"}, method: "POST", path: ct + "/registries",
+			body: map[string]any{"domain": "123456789012.dkr.ecr.us-east-1.amazonaws.com", "kind": "ECR", "is_public": false}},
+		{args: []string{"containers", "registries", "configure", "my-proj-docker.pkg.dev"}, method: "POST", path: ct + "/registries",
+			body: map[string]any{"domain": "my-proj-docker.pkg.dev", "kind": "GAR", "is_public": false}},
+		{args: []string{"containers", "registries", "configure", "reg.example.com", "--kind", "ECR"}, method: "POST", path: ct + "/registries",
+			body: map[string]any{"domain": "reg.example.com", "kind": "ECR", "is_public": false}},
 		{args: []string{"containers", "registries", "delete", "docker.io", "--yes"}, method: "DELETE", path: ct + "/registries/docker.io"},
 		{args: []string{"containers", "registries", "credentials", "docker.io", "--permissions", "pull,push"}, method: "POST", path: ct + "/registries/docker.io/credentials",
 			body: map[string]any{"permissions": []any{"pull", "push"}, "expiration_minutes": 15}, want: "redacted"},
 	})
+	if msg := platRunErr(t, "", "containers", "registries", "configure", "reg.example.com"); !strings.Contains(msg, "--kind") {
+		t.Fatal(msg)
+	}
 	if msg := platRunErr(t, "", "containers", "info", "nope"); !strings.Contains(msg, "no container application named") {
 		t.Fatal(msg)
 	}
@@ -54,7 +64,7 @@ func fakeRegistry(t *testing.T) (*httptest.Server, *[]string) {
 	var log []string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mu.Lock()
-		log = append(log, r.Method+" "+r.URL.RequestURI())
+		log = append(log, r.Method+" "+r.URL.RequestURI()+" "+r.Header.Get("Content-Type"))
 		mu.Unlock()
 		if r.Header.Get("Authorization") != "Basic "+base64.StdEncoding.EncodeToString([]byte("v1:REGPW")) {
 			w.WriteHeader(401)
@@ -68,9 +78,9 @@ func fakeRegistry(t *testing.T) (*httptest.Server, *[]string) {
 			_, _ = w.Write([]byte(`{"repositories":{"` + acctID + `/api":["latest"]}}`))
 		case r.Method == "HEAD" && strings.HasSuffix(r.URL.Path, "/manifests/v1"):
 			w.Header().Set("Docker-Content-Digest", "sha256:abc")
-		case r.Method == "DELETE" && strings.HasSuffix(r.URL.Path, "/manifests/sha256:abc"):
+		case r.Method == "DELETE" && strings.HasSuffix(r.URL.Path, "/manifests/v1"):
 			w.WriteHeader(202)
-		case r.Method == "PUT" && r.URL.Path == "/v2/gc/layers":
+		case r.Method == "PUT" && r.URL.Path == "/v2/gc/layers" && r.Header.Get("Content-Type") == "application/json":
 			w.WriteHeader(200)
 		default:
 			w.WriteHeader(404)
@@ -102,7 +112,7 @@ func TestContainersImagesAndDocker(t *testing.T) {
 		t.Fatal(out)
 	}
 	joined := strings.Join(*log, "\n")
-	for _, want := range []string{"HEAD /v2/" + acctID + "/web/manifests/v1", "DELETE /v2/" + acctID + "/web/manifests/sha256:abc", "PUT /v2/gc/layers"} {
+	for _, want := range []string{"HEAD /v2/" + acctID + "/web/manifests/v1", "DELETE /v2/" + acctID + "/web/manifests/v1", "PUT /v2/gc/layers application/json"} {
 		if !strings.Contains(joined, want) {
 			t.Fatalf("registry log lacks %s:\n%s", want, joined)
 		}

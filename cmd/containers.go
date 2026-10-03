@@ -84,11 +84,18 @@ registry's auth configuration with --data, for example:
     --data '{"auth":{"public_credential":"AKIA...","private_credential":{"store_id":"...","secret_name":"..."}}}'
 
 See 'cfctl api describe containers ...' for the full schema.`,
-				Flags: func(c *cobra.Command) { c.Flags().Bool("public", false, "The registry is public (no credentials)") },
+				Flags: func(c *cobra.Command) {
+					c.Flags().String("kind", "", "Registry provider: ECR, DockerHub, or GAR (default: inferred from the domain)")
+				},
 				Body: func(c *cobra.Command, args []string) (any, error) {
-					b := map[string]any{"domain": args[0]}
-					platSetBool(c, b, "public", "is_public")
-					return b, nil
+					kind, _ := c.Flags().GetString("kind")
+					if kind == "" {
+						kind = ctRegistryKind(args[0])
+					}
+					if kind == "" {
+						return nil, fmt.Errorf("can't tell the registry kind of %q; pass --kind ECR, DockerHub, or GAR", args[0])
+					}
+					return map[string]any{"domain": args[0], "kind": kind, "is_public": false}, nil
 				}, Data: true, Done: "Configured registry %s", Secrets: []string{"auth.private_credential"}, Product: "Containers"},
 			platSpec{Use: "delete <domain>", Short: "Delete a configured registry", Aliases: []string{"rm"}, Method: "DELETE", Path: ctBase + "/registries/{domain}",
 				Confirm: "delete registry %s", Done: "Deleted registry %s", Product: "Containers"},
@@ -137,6 +144,25 @@ Applications accept a name or an ID. Generated: 'cfctl api container-instances .
 	rootCmd.AddCommand(ctCmd)
 }
 
+// ctRegistryKind infers the API's registry "kind" from its domain, using
+// the same patterns as wrangler; "" when it can't tell.
+func ctRegistryKind(domain string) string {
+	switch {
+	case ctECRDomain.MatchString(domain):
+		return "ECR"
+	case domain == "docker.io":
+		return "DockerHub"
+	case ctGARDomain.MatchString(domain):
+		return "GAR"
+	}
+	return ""
+}
+
+var (
+	ctECRDomain = regexp.MustCompile(`^[0-9]{12}\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com$`)
+	ctGARDomain = regexp.MustCompile(`^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?-docker\.pkg\.dev$`)
+)
+
 // ctRegistryCreds asks the API for short-lived managed-registry credentials.
 func ctRegistryCreds(ctx context.Context, s *apiSession, perms []string) (user, pass string, err error) {
 	path, _, err := platFill(ctx, s, ctBase+"/registries/{domain}/credentials", []string{ctRegistryHost()})
@@ -173,6 +199,9 @@ func ctRegistry(ctx context.Context, method, path, password string, accept strin
 	req.Header.Set("User-Agent", "cfctl/"+version.Version)
 	if accept != "" {
 		req.Header.Set("Accept", accept)
+	}
+	if method == "PUT" {
+		req.Header.Set("Content-Type", "application/json") // as wrangler sends for /v2/gc/layers
 	}
 	resp, err := api.NewHTTPClient().Do(req)
 	if err != nil {
@@ -313,7 +342,9 @@ func ctImagesDelete() *cobra.Command {
 			if digest == "" {
 				return fmt.Errorf("no digest for %s", args[0])
 			}
-			if _, _, err := ctRegistry(ctx, "DELETE", fmt.Sprintf("/v2/%s/%s/manifests/%s", acct, name, digest), pass, accept); err != nil {
+			// Delete by tag, like wrangler: deleting by digest would also
+			// remove every other tag that points at the same manifest.
+			if _, _, err := ctRegistry(ctx, "DELETE", mpath, pass, accept); err != nil {
 				return err
 			}
 			if _, _, err := ctRegistry(ctx, "PUT", "/v2/gc/layers", pass, ""); err != nil {
