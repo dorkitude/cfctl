@@ -52,7 +52,7 @@ var adminWrites = []writeCase{
 	{[]string{"waf", "custom", "delete", "example.com", "rule-1"}, "DELETE", zp + "/rulesets/rs-1/rules/rule-1", "", true},
 	{[]string{"page-rules", "delete", "example.com", "pr1"}, "DELETE", zp + "/pagerules/pr1", "", true},
 	{[]string{"firewall", "access-rules", "create", "198.51.100.0/24", "--mode", "challenge", "--zone", "example.com"}, "POST", zp + "/firewall/access_rules/rules", `"target":"ip_range"`, false},
-	{[]string{"firewall", "access-rules", "create", "AS64496"}, "POST", ap + "/firewall/access_rules/rules", `"value":"64496"`, false},
+	{[]string{"firewall", "access-rules", "create", "AS64496"}, "POST", ap + "/firewall/access_rules/rules", `"value":"AS64496"`, false},
 	{[]string{"firewall", "access-rules", "delete", "r1"}, "DELETE", ap + "/firewall/access_rules/rules/r1", "", true},
 	{[]string{"lists", "create", "bad_ips", "--kind", "ip"}, "POST", ap + "/rules/lists", `"kind":"ip"`, false},
 	{[]string{"lists", "delete", "l1"}, "DELETE", ap + "/rules/lists/l1", "", true},
