@@ -293,13 +293,13 @@ Examples:
 			return err
 		}
 		if meta, _ := cmd.Flags().GetBool("metadata"); meta {
-			raw, err := c.get(c.p("storage/kv/namespaces", id, "metadata", args[1]), nil)
+			raw, err := c.get(kvKeyPath(c, id, "metadata", args[1]), nil)
 			if err != nil {
 				return err
 			}
 			return printBody(stNonNull(raw), nil)
 		}
-		resp, err := c.do(stReq{Method: "GET", Path: c.p("storage/kv/namespaces", id, "values", args[1])})
+		resp, err := c.do(stReq{Method: "GET", Path: kvKeyPath(c, id, "values", args[1])})
 		if err != nil {
 			return err
 		}
@@ -364,7 +364,7 @@ Examples:
 		if err != nil {
 			return err
 		}
-		req := stReq{Method: "PUT", Path: c.p("storage/kv/namespaces", id, "values", args[1]), Query: q, Body: value}
+		req := stReq{Method: "PUT", Path: kvKeyPath(c, id, "values", args[1]), Query: q, Body: value}
 		if meta, _ := cmd.Flags().GetString("metadata"); meta != "" {
 			if !json.Valid([]byte(meta)) {
 				return fmt.Errorf("--metadata must be JSON")
@@ -393,6 +393,19 @@ Examples:
 		}
 		return stOK(raw, fmt.Sprintf("Wrote %s (%d bytes)", args[1], len(value)))
 	},
+}
+
+// kvKeyPath is …/storage/kv/namespaces/{id}/<sub>/{key}, with the key
+// escaped like JavaScript's encodeURIComponent (as wrangler does). The API
+// docs ask for percent-encoding of characters such as ":", "!" and "%";
+// url.PathEscape leaves ":", "@", "+", "&", "=" and "$" as-is.
+func kvKeyPath(c *stClient, id, sub, key string) string {
+	return c.p("storage/kv/namespaces", id, sub) + "/" + kvEscapeKey(key)
+}
+
+// kvEscapeKey percent-encodes everything but unreserved characters.
+func kvEscapeKey(key string) string {
+	return strings.ReplaceAll(url.QueryEscape(key), "+", "%20")
 }
 
 // kvExpirationQuery maps --ttl / --expiration to query params.
@@ -429,7 +442,7 @@ var kvKeyDeleteCmd = &cobra.Command{
 		if err := confirm(cmd, fmt.Sprintf("delete key %q from %s", args[1], args[0])); err != nil {
 			return err
 		}
-		raw, err := c.result(stReq{Method: "DELETE", Path: c.p("storage/kv/namespaces", id, "values", args[1])})
+		raw, err := c.result(stReq{Method: "DELETE", Path: kvKeyPath(c, id, "values", args[1])})
 		if err != nil {
 			return err
 		}

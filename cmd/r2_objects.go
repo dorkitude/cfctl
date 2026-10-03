@@ -300,7 +300,7 @@ Examples:
 		}
 		h.Set("Content-Type", opts.ContentType)
 		if opts.StorageClass != "" {
-			h.Set("cf-r2-storage-class", opts.StorageClass)
+			h.Set("cf-r2-storage-class", r2.RESTStorageClass(opts.StorageClass))
 		}
 		reopen := func() (io.ReadCloser, error) { return os.Open(file) }
 		resp, err := c.stream("PUT", r2.ObjectPath(c.acct, bucket, key), nil, h, f, st.Size(), reopen)
