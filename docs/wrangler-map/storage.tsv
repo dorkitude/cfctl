@@ -1,0 +1,146 @@
+wrangler	cfctl	status	notes
+kv	cfctl kv	full	group: namespace, key, bulk
+kv namespace	cfctl kv namespace	full	also `get`; namespace by title or ID
+kv namespace create	cfctl kv namespace create	full	--jurisdiction; prints binding snippet
+kv namespace list	cfctl kv namespace list	full	
+kv namespace delete	cfctl kv namespace delete	full	confirms (--yes)
+kv namespace rename	cfctl kv namespace rename	full	
+kv key	cfctl kv key	full	
+kv key put	cfctl kv key put	full	value arg, - (stdin), or --path; --ttl, --expiration, --metadata (multipart)
+kv key list	cfctl kv key list	full	follows the cursor; --prefix, --limit
+kv key get	cfctl kv key get	full	raw value to stdout or -o file; --metadata
+kv key delete	cfctl kv key delete	full	confirms (--yes)
+kv bulk	cfctl kv bulk	full	
+kv bulk get	cfctl kv bulk get	full	JSON file or keys as args; batches of 100; --metadata, --type json
+kv bulk put	cfctl kv bulk put	full	batches of 10,000
+kv bulk delete	cfctl kv bulk delete	full	batches of 10,000; confirms; reports unsuccessful keys
+r2	cfctl r2	full	plus ls/stat/du/usage/sync/temp-credentials beyond wrangler
+r2 object	cfctl r2 object (also r2 get/put/rm/stat)	full	REST API; S3 multipart above --multipart-threshold
+r2 object get	cfctl r2 get / r2 object get	full	streams to stdout or --file
+r2 object put	cfctl r2 put / r2 object put	full	content type detection; stdin; >100 MB or extra metadata → S3 multipart with temp credentials
+r2 object delete	cfctl r2 rm / r2 object delete	full	multiple keys; -r prefix with confirmation; --dry-run
+r2 bucket	cfctl r2 buckets (alias bucket)	full	
+r2 bucket create	cfctl r2 buckets create	full	--location, --storage-class, --jurisdiction
+r2 bucket update	cfctl r2 buckets update	full	--storage-class (default storage class)
+r2 bucket list	cfctl r2 buckets list	full	
+r2 bucket info	cfctl r2 buckets get (alias info)	full	object count and size from GraphQL
+r2 bucket delete	cfctl r2 buckets delete	full	--force empties the bucket first (confirms)
+r2 bucket sippy	cfctl r2 buckets sippy get|enable|disable	full	aws, gcs (key file), s3, azure providers
+r2 bucket notification	cfctl r2 buckets notification list|create|delete	full	queue by name or ID; object-create/object-delete event types
+r2 bucket domain	cfctl r2 buckets domain list|get|add|update|remove	full	zone found from the domain
+r2 bucket dev-url	cfctl r2 buckets dev-url get|enable|disable	full	
+r2 bucket local-uploads	cfctl r2 buckets local-uploads get|enable|disable	full	
+r2 bucket lifecycle	cfctl r2 buckets lifecycle list|add|remove|set	full	
+r2 bucket cors	cfctl r2 buckets cors list|set|delete	full	
+r2 bucket lock	cfctl r2 buckets lock list|add|remove|set	full	
+d1	cfctl d1	full	remote only (no --local; use wrangler/Miniflare for local)
+d1 create	cfctl d1 create	full	--location, --jurisdiction, --read-replication; prints binding snippet
+d1 info	cfctl d1 info	full	includes 24h query/row counts from GraphQL
+d1 list	cfctl d1 list	full	
+d1 delete	cfctl d1 delete	full	confirms (--yes)
+d1 execute	cfctl d1 execute	partial	remote only; --command/--file/--param/--json; files over 5 MB use the import API; no --local
+d1 export	cfctl d1 export	partial	remote only; --no-data, --no-schema, --table
+d1 time-travel	cfctl d1 time-travel	full	
+d1 time-travel info	cfctl d1 time-travel info	full	
+d1 time-travel restore	cfctl d1 time-travel restore	full	prints the undo bookmark
+d1 migrations	cfctl d1 migrations	partial	wrangler-compatible files and d1_migrations table; reads --migrations-dir, not wrangler.toml
+d1 migrations create	cfctl d1 migrations create	full	
+d1 migrations list	cfctl d1 migrations list	partial	remote only
+d1 migrations apply	cfctl d1 migrations apply	partial	remote only; prints a Time Travel bookmark first
+d1 insights	cfctl d1 insights	full	GraphQL d1QueriesAdaptiveGroups; --since, --sort-by, --limit
+agent-memory	cfctl agent-memory	full	group; also profile, memories (list/get/delete/remember/recall/ingest), session delete
+agent-memory namespace	cfctl agent-memory namespace	full	
+agent-memory namespace create	cfctl agent-memory namespace create	full	
+agent-memory namespace list	cfctl agent-memory namespace list	full	private beta: this account gets HTTP 401 (code 10018)
+agent-memory namespace get	cfctl agent-memory namespace get	full	
+agent-memory namespace delete	cfctl agent-memory namespace delete	full	confirms; --yes
+queues	cfctl queues	full	also send, send-batch, pull, ack, peek, metrics, purge status (beyond wrangler)
+queues list	cfctl queues list	full	
+queues create	cfctl queues create	full	--delivery-delay, --message-retention-period, --jurisdiction, --data
+queues update	cfctl queues update	full	PATCH; --name renames
+queues delete	cfctl queues delete	full	confirms; --yes
+queues info	cfctl queues get (alias info)	full	
+queues consumer	cfctl queues consumer	full	also consumer get, consumer update
+queues consumer add	cfctl queues consumer add	full	worker consumer; --batch-timeout seconds → max_wait_time_ms
+queues consumer remove	cfctl queues consumer remove	full	by script name or consumer ID
+queues consumer list	cfctl queues consumer list	full	
+queues consumer http	cfctl queues consumer http add/remove	full	http_pull consumers
+queues consumer worker	cfctl queues consumer worker add/remove	full	same as consumer add/remove
+queues pause-delivery	cfctl queues pause-delivery	full	PATCH settings.delivery_paused (other settings kept)
+queues resume-delivery	cfctl queues resume-delivery	full	
+queues purge	cfctl queues purge	full	confirms; 'queues purge status' shows progress
+queues subscription	cfctl queues subscription	full	
+queues subscription create	cfctl queues subscription create	full	--source/--events/--name + source-specific flags
+queues subscription list	cfctl queues subscription list [queue]	full	optional queue filter
+queues subscription get	cfctl queues subscription get <id>	full	takes the subscription ID (wrangler: <queue> --id)
+queues subscription delete	cfctl queues subscription delete <id>	full	confirms
+queues subscription update	cfctl queues subscription update <id>	full	
+artifacts	cfctl artifacts	full	
+artifacts namespaces	cfctl artifacts namespaces	full	also create, delete (API-backed, beyond wrangler)
+artifacts namespaces list	cfctl artifacts namespaces list	full	private beta: this account gets HTTP 403 (code 10004)
+artifacts namespaces get	cfctl artifacts namespaces get	full	
+artifacts repos	cfctl artifacts repos	full	also fork, import, log, file, blob/commit/tree, tokens, revoke-token
+artifacts repos create	cfctl artifacts repos create	full	--read-only-repo (not --read-only, which is the global guard)
+artifacts repos list	cfctl artifacts repos list	full	
+artifacts repos get	cfctl artifacts repos get	full	
+artifacts repos delete	cfctl artifacts repos delete	full	confirms
+artifacts repos issue-token	cfctl artifacts repos issue-token	full	prints the repo token once
+basin	cfctl basin	partial	basin sql is not REST-backed
+basin sql	—	not-applicable	R2 SQL runs on a separate query endpoint, not the Cloudflare REST API; use wrangler
+basin sql query	—	not-applicable	see basin sql
+basin catalog	cfctl basin catalog	full	newCatalogCmd also backs 'cfctl r2 bucket catalog' (r2-catalog)
+basin catalog enable	cfctl basin catalog enable	full	
+basin catalog disable	cfctl basin catalog disable	full	confirms
+basin catalog get	cfctl basin catalog get	full	also credential set/status, maintenance get/set, namespaces, tables, table
+basin catalog compaction	cfctl basin catalog compaction enable/disable	full	--target-size
+basin catalog snapshot-expiration	cfctl basin catalog snapshot-expiration enable/disable	full	--max-age, --min-snapshots
+basin pipelines	cfctl basin pipelines	full	v1 API; also validate-sql
+basin pipelines setup	—	not-applicable	interactive wizard; compose 'streams create', 'sinks create', 'pipelines create'
+basin pipelines create	cfctl basin pipelines create	full	--sql / --sql-file
+basin pipelines list	cfctl basin pipelines list	full	Workers Paid: this account gets HTTP 403 (code 1021)
+basin pipelines get	cfctl basin pipelines get	full	
+basin pipelines update	cfctl basin pipelines update --legacy	partial	legacy pipelines only (PUT --data); v1 pipelines have no update endpoint
+basin pipelines delete	cfctl basin pipelines delete	full	confirms
+basin pipelines streams	cfctl basin pipelines streams list/get/create/update/delete	full	
+basin pipelines sinks	cfctl basin pipelines sinks list/get/create/delete	full	r2 and r2_data_catalog flags; --data for anything else
+hyperdrive	cfctl hyperdrive	full	also restart
+hyperdrive create	cfctl hyperdrive create	full	--connection-string or --origin-*; Access (tunnel) and VPC origins; caching, mTLS
+hyperdrive delete	cfctl hyperdrive delete	full	confirms
+hyperdrive get	cfctl hyperdrive get	full	
+hyperdrive list	cfctl hyperdrive list	full	
+hyperdrive planetscale	cfctl hyperdrive planetscale	full	
+hyperdrive planetscale signature	cfctl hyperdrive planetscale signature	full	
+hyperdrive update	cfctl hyperdrive update	full	PATCH
+k2	cfctl k2	full	
+k2 streams	cfctl k2 streams	full	also update, subscriptions
+k2 streams create	cfctl k2 streams create	full	
+k2 streams get	cfctl k2 streams get	full	
+k2 streams list	cfctl k2 streams list	full	Workers Paid: this account gets HTTP 403 (code 1021)
+k2 streams delete	cfctl k2 streams delete	full	confirms
+secrets-store	cfctl secrets-store	full	also quota
+secrets-store store	cfctl secrets-store store	full	also get
+secrets-store store create	cfctl secrets-store store create	full	
+secrets-store store delete	cfctl secrets-store store delete	full	confirms; --force cascades
+secrets-store store list	cfctl secrets-store store list	full	
+secrets-store secret	cfctl secrets-store secret	full	values are never printed
+secrets-store secret create	cfctl secrets-store secret create	full	value from no-echo prompt, stdin, --value-file, or --value
+secrets-store secret list	cfctl secrets-store secret list	full	
+secrets-store secret get	cfctl secrets-store secret get	full	
+secrets-store secret update	cfctl secrets-store secret update	full	
+secrets-store secret delete	cfctl secrets-store secret delete	full	confirms
+secrets-store secret duplicate	cfctl secrets-store secret duplicate	full	keeps the original's scopes unless --scopes
+vectorize	cfctl vectorize	full	v2 API
+vectorize create	cfctl vectorize create	full	--dimensions/--metric or --preset
+vectorize delete	cfctl vectorize delete	full	confirms
+vectorize get	cfctl vectorize get	full	
+vectorize list	cfctl vectorize list	full	
+vectorize list-vectors	cfctl vectorize list-vectors	full	--all follows the cursor
+vectorize query	cfctl vectorize query	full	--vector / --vector-file, --filter
+vectorize insert	cfctl vectorize insert	full	NDJSON, batches of 5000 lines
+vectorize upsert	cfctl vectorize upsert	full	
+vectorize get-vectors	cfctl vectorize get-vectors	full	
+vectorize delete-vectors	cfctl vectorize delete-vectors	full	confirms
+vectorize info	cfctl vectorize info	full	
+vectorize create-metadata-index	cfctl vectorize create-metadata-index	full	also 'vectorize metadata-index create'
+vectorize list-metadata-index	cfctl vectorize list-metadata-index	full	
+vectorize delete-metadata-index	cfctl vectorize delete-metadata-index	full	confirms

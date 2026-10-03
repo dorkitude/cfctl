@@ -66,6 +66,29 @@ Hand-written, wrangler-shaped command groups on top of the generated API tree.
 - `docs/wrangler-map/workers.tsv`: every wrangler Workers-core command and its
   cfctl equivalent.
 
+### Storage
+
+#### Added (storage and data)
+
+- `cfctl kv`: namespace list/get/create/rename/delete; key list/get/put/delete with metadata, `--ttl` and `--expiration`; bulk put/get/delete from JSON files (batched to the API limits). Namespaces by title or ID.
+- `cfctl r2 buckets`: list/get (with object count and size from GraphQL)/create/update (default storage class)/delete (`--force` empties first), and bucket settings: `cors`, `lifecycle` (add/remove/set), `lock`, `domain`, `dev-url`, `local-uploads`, `notification`, `sippy` (aws/gcs/s3/azure), `jobs` (prefix delete, storage-class migration), `catalog` (R2 Data Catalog).
+- `cfctl r2 ls|stat|get|put|rm|du` (plus wrangler-style `r2 object get|put|delete`): folder view and `-r` listing, streaming downloads, uploads with content-type detection, recursive delete with confirmation and `--dry-run`, and `du --by ext|prefix|class --top N`.
+- `cfctl r2 usage`: per-bucket objects and size, Class A/B operations this month and last month (GraphQL `r2OperationsAdaptiveGroups`), and an estimated bill (last month, month to date, projected) from one price table (developers.cloudflare.com/r2/pricing, checked 2026-10-03), with free tier and round-up rules.
+- `cfctl r2 temp-credentials`: short-lived S3 credentials scoped to a bucket, prefixes, or objects (`--env` for `AWS_*` exports).
+- `cfctl r2 sync <dir> <bucket>/<prefix>` (and the reverse): MD5/size comparison, `--delete`, `--exclude`, `--dry-run` (works read-only), parallel transfers over the S3 API with temporary credentials. Large `r2 put` uploads use S3 multipart.
+- `cfctl d1`: list/info (with 24h query stats)/create/update/delete, `execute` (tables or `--json`, `--param`, large files via the import API), `export`, `import`, `time-travel info|restore`, `insights` (GraphQL), and wrangler-compatible `migrations create|list|apply` (`d1_migrations` table; prints a Time Travel bookmark before applying).
+- New dependency: `github.com/aws/aws-sdk-go-v2` (`service/s3`, `credentials`) for R2's S3 API. The S3 client uses cfctl's shared HTTP client, so the read-only guard and `--debug` apply.
+- `cfctl queues`: list/get(info)/create/update/delete, consumer list/get/add/update/remove (+ `consumer http add|remove`, `consumer worker add|remove`), pause-delivery/resume-delivery (keeps other settings), purge (+ `purge status`), metrics, send/send-batch/pull/ack/peek, and event `subscription list|get|create|update|delete`. Queues resolve by name or ID.
+- `cfctl hyperdrive`: list/get/create/update/delete/restart with `--connection-string` or `--origin-*` flags (public, Access/Tunnel, and Workers VPC origins), caching and mTLS flags, and `planetscale signature`. Passwords are never printed.
+- `cfctl vectorize` (v2): list/get/create/delete/info, insert/upsert (NDJSON, batched 5,000 lines), query, get-vectors, delete-vectors, list-vectors (`--all`), and create-/list-/delete-metadata-index (also `metadata-index create|list|delete`).
+- `cfctl secrets-store`: store list/get/create/delete (`--force`), secret list/get/create/update/delete/duplicate, quota. Values come from a no-echo prompt, stdin, `--value-file`, or `--value` and are never printed.
+- `cfctl k2 streams`: list/get/create/update/delete/subscriptions.
+- `cfctl basin`: pipelines (v1) list/get/create/delete/validate-sql and legacy `update --legacy`, `pipelines streams` and `pipelines sinks` CRUD, and `basin catalog` (enable/disable/delete, credential, maintenance, compaction/snapshot-expiration toggles, namespaces, tables, table maintenance). The catalog tree is shared with `r2 bucket catalog` via `newCatalogCmd`.
+- `cfctl artifacts`: namespaces list/get/create/delete; repos list/get/create/delete/fork/import/log/file/blob/commit/tree/tokens/issue-token/revoke-token.
+- `cfctl agent-memory`: namespace list/get/create/delete; profile list/summary/delete; memories list/get/delete/remember/recall/ingest; session delete.
+- Every create/update in these groups accepts `--data` JSON with flags merged on top; destructive commands confirm (or `--yes`).
+- Test: no storage-group command defines a local flag that shadows a global flag (a local `--read-only` would bypass the read-only guard; Artifacts uses `--read-only-repo`).
+
 ## [0.2.003] - 2026-10-03
 
 ### Changed
