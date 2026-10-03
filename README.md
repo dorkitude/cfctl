@@ -1,16 +1,38 @@
 # ☁️ cfctl
 
-A command-line interface for Cloudflare, built with Go and Cobra: Registrar
-domains, DNS, Workers, storage, zone and account administration, and **every
-one of the 3,645 operations** in Cloudflare's API.
+The whole Cloudflare platform from your terminal, built with Go and Cobra in
+the style of [linctl](https://github.com/dorkitude/linctl): Workers, KV, R2,
+D1 and the rest of the storage products, Pages, Workers AI, Tunnels, zone
+settings, SSL, cache, WAF, analytics, accounts and API tokens, Registrar
+domains and DNS. Plus a generated command for **every one of the 3,645
+operations** in Cloudflare's API, and raw JSON / GraphQL escape hatches for
+anything else.
 
-**Why not just wrangler?** `wrangler` is a great Workers dev tool, but it has
-no Registrar, DNS, zone settings, SSL, cache, WAF, or token commands, and its
-OAuth login can't get Registrar/DNS write scopes. cfctl talks to the
-Cloudflare REST API v4 with an API token, covers every API-backed wrangler
-command (deploy, versions, secrets, KV, R2, D1, Queues, Pages, AI, ...), and
-the rest of Cloudflare on top. Keep wrangler for its local dev server and
-bundler.
+**Is it a superset of wrangler?** For everything wrangler does *to your
+Cloudflare account*, yes: every API-backed wrangler command has a cfctl
+equivalent (321 of 361 fully, 24 partially), and cfctl adds everything wrangler
+can't reach (Registrar, DNS, zone settings, SSL, cache, WAF, API tokens, and the
+other 3,000+ API operations). It is **not** a replacement for wrangler's *local
+tooling*: the `wrangler dev` / `pages dev` local runtime, `types`, built-in
+bundling (cfctl deploys pre-built scripts, or bundles with `esbuild` if it's on
+your `PATH`), Pages Functions builds, and D1 `--local`. Keep wrangler for local
+development; use cfctl for everything that talks to Cloudflare.
+
+Everyday wrangler tasks in cfctl:
+
+| Task | wrangler | cfctl |
+|---|---|---|
+| Deploy a Worker | `wrangler deploy` | `cfctl deploy` |
+| Gradual rollout / rollback | `wrangler versions deploy`, `wrangler rollback` | `cfctl versions deploy <id>@10 <id>`, `cfctl rollback` |
+| Live logs | `wrangler tail` | `cfctl tail my-worker` |
+| Secrets | `wrangler secret put API_KEY` | `cfctl secret put API_KEY --name my-worker` |
+| KV | `wrangler kv key put` | `cfctl kv key put my-cache greeting hello` |
+| R2 | `wrangler r2 object put` | `cfctl r2 put my-bucket/img/logo.png --file logo.png` |
+| D1 | `wrangler d1 execute` | `cfctl d1 execute my-db --command "SELECT 1"` |
+| Pages | `wrangler pages deploy` | `cfctl pages deploy ./dist --project-name my-site` |
+| Queues | `wrangler queues create` | `cfctl queues create jobs` |
+| Workers AI | `wrangler ai models` | `cfctl ai models list` |
+| Local dev server | `wrangler dev` | not covered: use wrangler |
 
 ➡️ **[cfctl vs wrangler](docs/cfctl-vs-wrangler.md)**: the quick matrix, all
 361 wrangler commands mapped (321 full, 24 partial, 16 not applicable), and a
@@ -18,11 +40,10 @@ migration cheatsheet.
 
 ## ✨ Features
 
-- **Authentication**: API token login (user tokens or `cfat_` account tokens),
-  account ID first, hidden prompt or piped stdin, verified before saving.
-- **Registrar**: list domains with expiry, toggle auto-renew.
-- **DNS**: zones list/get/export, records list/get/create/update/delete,
-  DNSSEC, zone file import.
+- **Every API operation**: `cfctl api <tag> <op>`, generated from Cloudflare's
+  OpenAPI spec, with `api search` / `describe` discovery.
+- **Raw escape hatches**: `cfctl api request` (any method, any path) and
+  `cfctl graphql`.
 - **Workers**: deploy from `wrangler.toml`/`.json(c)`, versions and gradual
   rollouts, rollback, secrets, triggers, routes, custom domains, live tail,
   stored logs, dispatch namespaces, Previews.
@@ -35,15 +56,17 @@ migration cheatsheet.
   transforms, WAF, firewall, lists, load balancing, analytics, accounts,
   members, roles, API tokens, audit logs, billing, Logpush, notifications,
   health checks, waiting rooms, Spectrum, Access.
-- **Every API operation**: `cfctl api <tag> <op>`, generated from Cloudflare's
-  OpenAPI spec, with `api search` / `describe` discovery.
-- **Raw escape hatches**: `cfctl api request` (any method, any path) and
-  `cfctl graphql`.
+- **DNS**: zones list/get/export, records list/get/create/update/delete,
+  DNSSEC, zone file import.
+- **Registrar**: list domains with expiry, toggle auto-renew.
+- **Authentication**: API token login (user tokens or `cfat_` account tokens),
+  account ID first, hidden prompt or piped stdin, verified before saving.
 - **Read-only guard**: `--read-only` / `CFCTL_READONLY=1` refuses every
   write, for every command, before it's sent.
 - **Output modes**: styled tables, `--json`, `--no-color`.
 - **Built-in docs**: `cfctl docs`, offline.
 - **Never prints your token**: not in output, errors, `--json`, or `--debug`.
+
 
 ## 📦 Installation
 
@@ -126,27 +149,7 @@ cfctl auth status --verify
 cfctl whoami
 ```
 
-### 2. Domains & DNS
-```bash
-# Registrar domains, with expiry and auto-renew (↻)
-cfctl domains list
-cfctl domains autorenew example.com on
-
-# Zones
-cfctl zones list
-cfctl zones file example.com               # BIND export
-
-# DNS records (zone by name or ID; names relative, @, or FQDN)
-cfctl records list example.com --type A
-cfctl records create example.com --type A --name www --content 192.0.2.1 --proxied
-cfctl records update example.com <record-id> --proxied=false --ttl 300
-cfctl records delete example.com <record-id>
-
-# DNSSEC
-cfctl dns dnssec status example.com
-```
-
-### 3. Workers
+### 2. Workers
 ```bash
 # Browse
 cfctl workers list
@@ -171,7 +174,7 @@ cfctl tail my-worker --status error
 cfctl workers logs my-worker
 ```
 
-### 4. Storage
+### 3. Storage
 ```bash
 # KV (namespaces by title or ID)
 cfctl kv namespace list
@@ -196,7 +199,7 @@ cfctl hyperdrive list
 cfctl vectorize list
 ```
 
-### 5. Platform
+### 4. Platform
 ```bash
 # Pages (Direct Upload)
 cfctl pages project list
@@ -213,7 +216,7 @@ cfctl turnstile widget list
 cfctl email routing status example.com
 ```
 
-### 6. Zone & account admin
+### 5. Zone & account admin
 ```bash
 # Zone settings, SSL, cache
 cfctl zones settings get example.com min_tls_version
@@ -232,6 +235,26 @@ cfctl analytics zone example.com --since 7d
 cfctl accounts list
 cfctl tokens list
 cfctl audit-logs list --since 7d
+```
+
+### 6. Domains & DNS
+```bash
+# Registrar domains, with expiry and auto-renew (↻)
+cfctl domains list
+cfctl domains autorenew example.com on
+
+# Zones
+cfctl zones list
+cfctl zones file example.com               # BIND export
+
+# DNS records (zone by name or ID; names relative, @, or FQDN)
+cfctl records list example.com --type A
+cfctl records create example.com --type A --name www --content 192.0.2.1 --proxied
+cfctl records update example.com <record-id> --proxied=false --ttl 300
+cfctl records delete example.com <record-id>
+
+# DNSSEC
+cfctl dns dnssec status example.com
 ```
 
 ### 7. Every API operation
@@ -436,9 +459,17 @@ for how the pieces fit together. Coding agents: read [AGENTS.md](AGENTS.md).
 
 MIT. See [LICENSE](LICENSE).
 
+cfctl bundles Cloudflare's OpenAPI schema
+([cloudflare/api-schemas](https://github.com/cloudflare/api-schemas)), which is
+BSD-3-Clause licensed; see
+[internal/apispec/LICENSE-cloudflare-api-schemas](internal/apispec/LICENSE-cloudflare-api-schemas).
+
+cfctl is an independent project. It is not affiliated with or endorsed by
+Cloudflare, Inc.
+
 ## 🔗 Links
 
 - [Cloudflare API reference](https://developers.cloudflare.com/api/)
 - [Cloudflare OpenAPI schemas](https://github.com/cloudflare/api-schemas)
 - [wrangler](https://developers.cloudflare.com/workers/wrangler/)
-- [simple](https://github.com/dorkitude/simple), the DNSimple sibling CLI
+- [linctl](https://github.com/dorkitude/linctl), the Linear CLI whose design cfctl follows

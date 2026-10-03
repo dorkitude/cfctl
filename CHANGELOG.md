@@ -10,6 +10,22 @@ cfctl counts versions as `0.MINOR.NNN` (`0.2.001`, `0.2.002`, ...), bumping
 
 ## [Unreleased]
 
+## [0.2.007] - 2026-10-03
+
+### Docs
+
+- README leads with the whole platform (Workers, storage, Pages, AI, zone
+  security and performance, accounts) instead of Registrar and DNS; Features
+  and Quick Start are reordered to match.
+- README says plainly what cfctl replaces: every API-backed wrangler command,
+  but not wrangler's local tooling (`dev`, `types`, built-in bundling, Pages
+  Functions builds, D1 `--local`), with an everyday-tasks table.
+- Docs reference [linctl](https://github.com/dorkitude/linctl) as cfctl's
+  design model.
+- Third-party notice for the bundled Cloudflare OpenAPI schema (BSD-3-Clause,
+  `internal/apispec/LICENSE-cloudflare-api-schemas`), and a note that cfctl is
+  not affiliated with Cloudflare.
+
 ## [0.2.006] - 2026-10-03
 
 Live read-only verification against a real account: `make smoke` (255

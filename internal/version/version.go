@@ -7,4 +7,4 @@ package version
 
 // Version is the version printed by `cfctl --version`. Release builds may
 // override it with -ldflags "-X github.com/dorkitude/cfctl/internal/version.Version=...".
-var Version = "0.2.006"
+var Version = "0.2.007"

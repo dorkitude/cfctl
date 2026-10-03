@@ -1,10 +1,9 @@
 # Contributing to cfctl
 
 Thanks for contributing! This repo aims to keep changes simple, focused, and
-tested. cfctl is a sibling of [simple](https://github.com/dorkitude/simple)
-(the DNSimple CLI) and [linctl](https://github.com/dorkitude/linctl): keep
-verbs, flags, and output style consistent with them where Cloudflare's model
-allows.
+tested. cfctl's design follows [linctl](https://github.com/dorkitude/linctl)
+(the Linear CLI): keep verbs, flags, output style, and docs consistent with it
+where Cloudflare's model allows.
 
 ## Development
 

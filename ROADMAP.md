@@ -25,14 +25,14 @@
 
 ## Principles
 
-- Stay a sibling of [simple](https://github.com/dorkitude/simple): same verbs,
-  flags, and output style, adapted only where Cloudflare's model differs
+- Follow [linctl](https://github.com/dorkitude/linctl)'s design: same verbs,
+  flags, output style, and docs, adapted only where Cloudflare's model differs
 - High-leverage, everyday operations first
 - Never print or persist the token anywhere but its 0600 file
 
-## Phase 1: Parity with simple
+## Phase 1: TUI and polish
 
-- TUI (Bubble Tea) mirroring simple's: tabs, domain dashboard, guarded mutations
+- TUI (Bubble Tea): tabs, domain and zone dashboard, guarded mutations
 - `cfctl demo`: the TUI against a seeded in-memory backend
 - ~~`accounts list`~~ (done); an account switch command
 - Interactive installer / Homebrew tap (once the repo is public)

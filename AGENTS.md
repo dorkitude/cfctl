@@ -8,10 +8,10 @@ Guidance for coding agents (Claude Code, Codex, ...) working on cfctl.
 cfctl is a CLI for Cloudflare, built in Go with Cobra + Viper and lipgloss for
 styled output: Registrar domains, zones, DNS, every API-backed wrangler command
 (Workers, KV, R2, D1, Queues, Pages, AI, ...), zone and account admin, and a
-generated command for every Cloudflare API operation. It is a sibling of
-[simple](https://github.com/dorkitude/simple) (the DNSimple CLI): keep command
-names, flags, output, and file layout parallel to simple wherever Cloudflare's
-model allows.
+generated command for every Cloudflare API operation. Its design follows
+[linctl](https://github.com/dorkitude/linctl) (the Linear CLI): keep command
+names, flags, output, docs, and file layout consistent with linctl wherever
+Cloudflare's model allows.
 
 It uses a Cloudflare **API token** against REST API v4, via the official SDK
 `github.com/cloudflare/cloudflare-go/v7` for hand-written commands and a raw
