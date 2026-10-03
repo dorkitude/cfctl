@@ -87,8 +87,8 @@ cfctl docs
 Download the package for your architecture from the
 [latest release](https://github.com/dorkitude/cfctl/releases/latest), then:
 ```bash
-sudo apt install ./cfctl_*_amd64.deb      # Ubuntu/Debian
-sudo dnf install ./cfctl-*.x86_64.rpm     # Fedora/RHEL
+sudo apt install ./cfctl_*_linux_amd64.deb   # Ubuntu/Debian
+sudo dnf install ./cfctl_*_linux_amd64.rpm   # Fedora/RHEL (use arm64 on ARM)
 ```
 
 ### Prebuilt binaries
