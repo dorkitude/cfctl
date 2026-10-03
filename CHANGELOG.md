@@ -10,6 +10,65 @@ cfctl counts versions as `0.MINOR.NNN` (`0.2.001`, `0.2.002`, ...), bumping
 
 ## [Unreleased]
 
+## [0.2.006] - 2026-10-03
+
+Live read-only verification against a real account: `make smoke` (255
+hand-written read commands, text and `--json`) and `cfctl api smoke` (895
+generated GET operations) both finish with 0 failures. Results:
+`docs/smoke/`.
+
+### Added
+
+- `scripts/smoke.sh` (`make smoke`): runs every hand-written read command
+  (255 commands, text and `--json`) with arguments discovered at runtime,
+  checks exit codes, `--json` validity, and that errors are friendly; prints a
+  PASS / EXPECTED-UNAVAILABLE / FAIL table and exits non-zero on any FAIL.
+  It exports `CFCTL_READONLY=1` and proves the guard refuses a DELETE (sent
+  at a closed local port) before touching the account.
+- `cfctl api smoke` (hidden; `make smoke-sweep SMOKE_ZONE=...`): runs every
+  generated GET whose only path parameters are the account and/or zone (plus
+  `/user/...`, `/radar/...` and other parameterless GETs: 917 operations)
+  through the real CLI, records status and outcome per operation in
+  `docs/smoke/generated-get-sweep.tsv`, and re-runs paginated successes with
+  `--all --max-pages 3`. Forces read-only mode in itself and every child.
+- `docs/smoke/README.md`: how to run both and read the TSV.
+
+### Fixed
+
+- **Errors leaked raw JSON.** Some services answer with a body that isn't a
+  Cloudflare envelope (`{"message": ...}`, `{"error": ...}`,
+  `{"code":1000,"error":"not_found"}` pretty-printed over several lines, zod
+  validation errors `{"formErrors":[],"fieldErrors":{...}}`), and Containers
+  and AI Gateway put their own JSON body inside the envelope's error message.
+  cfctl printed those verbatim (`HTTP 401: {"error":"Unauthorized: ..."}`).
+  Errors now show the text inside: `HTTP 401: Unauthorized: You do not have
+  access to Cloudflare Containers... (code 1000)`, `HTTP 400: end_time:
+  Invalid input...; start_time: ...`. `--raw` still prints the full body.
+  (internal/api/client.go: `jsonErrorMessages`, `unwrapJSONMessages`)
+- **`HTTP 200: ...` errors.** A 200 whose envelope says `success:false` now
+  reads `API error: <message>` instead of `HTTP 200: <message>`.
+- **`--json` printed `null` for empty lists** (`notifications history` and
+  any declarative list whose endpoint answers `result: null`; also nil Go
+  slices such as `containers images list` with no images). Empty lists print
+  `[]`; a `--json` read with an empty body prints `null` instead of nothing.
+- **`dns export --json` printed the BIND file**, which isn't JSON. It now
+  prints `{"zone": "<zone file>"}`, the same shape as `zones file --json`.
+- **`billing history` table was mostly blank**: its columns named fields
+  (`action`, `description`, `amount`) the live API no longer returns. It now
+  shows status, receipt, and `amount_to_pay`, falling back to the old fields.
+  Table columns can name fallbacks (`"a|b"`).
+- **`cfctl api <tag> <typo> --raw`** said `unknown flag: --raw` instead of
+  naming the unknown operation (with suggestions).
+
+Each fix has a fake-server regression test (`cmd/smoke_regress_test.go`,
+`internal/api/errors_smoke_test.go`).
+- `r2 buckets list` no longer shows empty LOCATION / CLASS columns (the list
+  endpoint omits them); they appear only when a bucket reports them.
+- `zones list` shows each zone's plan and ID.
+- A mistyped `api` tag followed by flags (`cfctl api zonez list-zones
+  --per-page 2`) now says `unknown command "zonez"` with suggestions instead of
+  `unknown flag`.
+
 ## [0.2.005] - 2026-10-03
 
 ### Docs
