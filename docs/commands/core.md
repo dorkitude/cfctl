@@ -5,9 +5,9 @@
 In the terminal: `cfctl docs core`.
 
 The commands cfctl started with: logging in, checking who you are, Cloudflare
-Registrar domains, zones, and DNS records. They mirror
-[`simple`](https://github.com/dorkitude/simple) (the DNSimple CLI): same verbs,
-flags, and output style.
+Registrar domains, zones, and DNS records. They follow the same conventions as
+[`linctl`](https://github.com/dorkitude/linctl): same verbs, flags, and output
+style.
 
 > **Agents:** pass `--json` on every read. Output is the API's own objects,
 > never styled text, and the token never appears in it.
