@@ -20,14 +20,14 @@ var tableBindings = []struct {
 	{"kv_namespaces", "kv_namespace", "binding", map[string]string{"id": "namespace_id"}},
 	{"r2_buckets", "r2_bucket", "binding", map[string]string{"bucket_name": "bucket_name", "jurisdiction": "jurisdiction"}},
 	{"d1_databases", "d1", "binding", map[string]string{"database_id": "id"}},
-	{"services", "service", "binding", map[string]string{"service": "service", "entrypoint": "entrypoint", "environment": "environment"}},
+	{"services", "service", "binding", map[string]string{"service": "service", "entrypoint": "entrypoint", "environment": "environment", "props": "props"}},
 	{"analytics_engine_datasets", "analytics_engine", "binding", map[string]string{"dataset": "dataset"}},
 	{"hyperdrive", "hyperdrive", "binding", map[string]string{"id": "id"}},
 	{"vectorize", "vectorize", "binding", map[string]string{"index_name": "index_name"}},
-	{"dispatch_namespaces", "dispatch_namespace", "binding", map[string]string{"namespace": "namespace", "outbound": "outbound"}},
+	{"dispatch_namespaces", "dispatch_namespace", "binding", map[string]string{"namespace": "namespace"}},
 	{"mtls_certificates", "mtls_certificate", "binding", map[string]string{"certificate_id": "certificate_id"}},
 	{"send_email", "send_email", "name", map[string]string{"destination_address": "destination_address", "allowed_destination_addresses": "allowed_destination_addresses", "allowed_sender_addresses": "allowed_sender_addresses"}},
-	{"pipelines", "pipelines", "binding", map[string]string{"pipeline": "pipeline"}},
+	{"pipelines", "pipelines", "binding", map[string]string{"pipeline": "pipeline", "stream": "stream"}},
 	{"workflows", "workflow", "binding", map[string]string{"name": "workflow_name", "class_name": "class_name", "script_name": "script_name"}},
 	{"secrets_store_secrets", "secrets_store_secret", "binding", map[string]string{"store_id": "store_id", "secret_name": "secret_name"}},
 }
@@ -69,6 +69,11 @@ func (c *Config) Bindings() ([]Binding, error) {
 					b[to] = v
 				}
 			}
+			if tb.key == "dispatch_namespaces" {
+				if ob, ok := it["outbound"].(map[string]any); ok {
+					b["outbound"] = outboundBinding(ob)
+				}
+			}
 			out = append(out, b)
 		}
 	}
@@ -101,13 +106,41 @@ func (c *Config) Bindings() ([]Binding, error) {
 			return nil, fmt.Errorf("queues.producers: %w", err)
 		}
 		for _, it := range items {
-			out = append(out, Binding{"type": "queue", "name": it["binding"], "queue_name": it["queue"]})
+			b := Binding{"type": "queue", "name": it["binding"], "queue_name": it["queue"]}
+			if d, ok := it["delivery_delay"]; ok {
+				b["delivery_delay"] = d
+			}
+			out = append(out, b)
 		}
 	}
 	if c.Assets != nil && c.Assets.Binding != "" {
 		out = append(out, Binding{"type": "assets", "name": c.Assets.Binding})
 	}
 	return out, nil
+}
+
+// outboundBinding converts wrangler's dispatch-namespace outbound config
+// ({service, environment, parameters}) to the API's
+// {worker: {service, environment}, params: [{name}]}.
+func outboundBinding(ob map[string]any) map[string]any {
+	if _, ok := ob["worker"]; ok {
+		return ob // already in API form
+	}
+	w := map[string]any{}
+	for _, k := range []string{"service", "environment", "entrypoint"} {
+		if v, ok := ob[k]; ok {
+			w[k] = v
+		}
+	}
+	out := map[string]any{"worker": w}
+	if ps, ok := ob["parameters"].([]any); ok {
+		params := make([]map[string]any, 0, len(ps))
+		for _, p := range ps {
+			params = append(params, map[string]any{"name": p})
+		}
+		out["params"] = params
+	}
+	return out
 }
 
 func tableList(v any) ([]map[string]any, error) {

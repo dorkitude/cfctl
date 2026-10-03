@@ -127,7 +127,9 @@ func (a *Assets) FileFor(hash string) (string, string, bool) {
 	}
 	ct := mime.TypeByExtension(filepath.Ext(p))
 	if ct == "" {
-		ct = "application/octet-stream"
+		// wrangler sends "application/null" for unknown types: the API reads
+		// it as "serve without a Content-Type" (octet-stream would be stored).
+		ct = "application/null"
 	}
 	return p, ct, true
 }
