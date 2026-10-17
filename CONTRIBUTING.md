@@ -160,7 +160,7 @@ Only the maintainer releases. Agents must not create or push tags.
   CFCTL_READONLY=1 cfctl whoami
   ```
 
-5) Publish the Homebrew formula and Scoop manifest
+5) Publish the Homebrew cask and Scoop manifest (prebuilt binaries; nothing compiles on install)
   ```bash
   scripts/publish-packages.sh vX.Y.Z   # updates dorkitude/homebrew-tap and dorkitude/scoop-bucket
   ```

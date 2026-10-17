@@ -75,6 +75,8 @@ brew install dorkitude/tap/cfctl
 cfctl docs                       # render this README
 ```
 
+This installs the release's prebuilt, signed and notarized binary (one universal binary on macOS), so it needs neither Go nor the Xcode Command Line Tools. If you installed cfctl from the tap when it was a formula built from source, switch once: `brew uninstall cfctl && brew install dorkitude/tap/cfctl`.
+
 ### Scoop (Windows)
 ```powershell
 scoop bucket add dorkitude https://github.com/dorkitude/scoop-bucket

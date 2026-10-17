@@ -10,6 +10,22 @@ development milestones.
 
 ## [Unreleased]
 
+## [0.2.711] - 2026-10-16
+
+### Changed
+
+- Homebrew installs cfctl as a cask holding the release's prebuilt binary,
+  not a formula built from source. On macOS Tahoe Homebrew refuses any source
+  build without the Xcode Command Line Tools. If you installed the formula,
+  switch once: `brew uninstall cfctl && brew install dorkitude/tap/cfctl`.
+- macOS binaries are signed with a Developer ID certificate and notarized by
+  Apple, so they run without a Gatekeeper warning however they're installed.
+
+### Added
+
+- A universal macOS binary (`cfctl_X_darwin_all.tar.gz`, Apple Silicon and
+  Intel in one file), which the cask installs.
+
 ## [0.2.710] - 2026-10-03
 
 First public release.
