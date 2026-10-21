@@ -1,6 +1,6 @@
 module github.com/dorkitude/cfctl
 
-go 1.26.0
+go 1.27.3
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.47.1
@@ -53,5 +53,5 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/text v0.28.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 )

@@ -10,6 +10,11 @@ development milestones.
 
 ## [Unreleased]
 
+### Security
+
+- Require Go 1.27.3 for builds and releases to reject compromised eMudhra certificate authorities (CVE-2026-111943).
+- Update the Unicode text dependency to its patched release.
+
 ## [0.2.711] - 2026-10-16
 
 ### Changed
